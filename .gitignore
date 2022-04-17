@@ -1,0 +1,7 @@
+utils/.env
+vendor/
+tmp/
+.trash/
+.vscode/
+TODO
+test.php
