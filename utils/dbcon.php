@@ -91,6 +91,85 @@ class DatabaseConn
     return false;
   }
 
+  public function check_balance(string $owner_id, string $acc_no)
+  {
+    if (!($this->conn instanceof mysqli)) return null;
+    ($this->conn)->begin_transaction();
+    try {
+      if ($owner_id == null || $acc_no == null) {
+        return null;
+      } else {
+        $q0 = 'SELECT balance FROM Account WHERE owner_id = ? and acc_no = ?';
+        $stmt = $this->conn->prepare($q0);
+        $stmt->bind_param('ss', $owner_id, $acc_no);
+      }
+      $stmt->execute();
+      $stmt->store_result();
+      if ($stmt->num_rows() == 0) {
+        return null;
+      }
+      $stmt->bind_result($balance);
+      $stmt->fetch();
+      $stmt->close();
+      ($this->conn)->commit();
+      return $balance;
+    } catch (Exception $e) {
+      ($this->conn)->rollback();
+      return null;
+    }
+  }
+
+  public function view_transaction_history(string $acc_no, DateTime $start_date, DateTime $end_date)
+  {
+    if (!($this->conn instanceof mysqli)) return null;
+    ($this->conn)->begin_transaction();
+    try {
+      $arr = array();
+      if ($acc_no == null) {
+        return $arr;
+      } else if ($start_date == null && $end_date = null){
+        $q0 = 'SELECT trans_id, from_acc, to_acc, init_id, trans_time, amount FROM Transaction WHERE from_acc = ? or to_acc = ?';
+        $stmt = $this->conn->prepare($q0);
+        $stmt->bind_param('ss', $acc_no, $acc_no);
+      } else if ($end_date == null) {
+        $start_date_str = $start_date->format('Y-m-d');
+        $q0 = 'SELECT trans_id, from_acc, to_acc, init_id, trans_time, amount FROM Transaction WHERE (from_acc = ? or to_acc = ?) and trans_time >= ?';
+        $stmt = $this->conn->prepare($q0);
+        $stmt->bind_param('sss', $acc_no, $acc_no, $start_date_str);
+      } else if ($start_date == null) {
+        $end_date_str = $end_date->format('Y-m-d');
+        $q0 = 'SELECT trans_id, from_acc, to_acc, init_id, trans_time, amount FROM Transaction WHERE (from_acc = ? or to_acc = ?) and trans_time <= ?';
+        $stmt = $this->conn->prepare($q0);
+        $stmt->bind_param('sss', $acc_no, $acc_no, $end_date_str);
+      } else {
+        $start_date_str = $start_date->format('Y-m-d');
+        $end_date_str = $end_date->format('Y-m-d');
+        $q0 = 'SELECT trans_id, from_acc, to_acc, init_id, trans_time, amount FROM Transaction WHERE (from_acc = ? or to_acc = ?) and trans_time >= ? and trans_time <= ?';
+        $stmt = $this->conn->prepare($q0);
+        $stmt->bind_param('sss', $acc_no, $acc_no, $start_date_str, $end_date_str);
+      }
+      $stmt->execute();
+      $result = $stmt->get_result();
+      if ($stmt->num_rows() == 0) {
+        return $arr;
+      }
+      while ($row = $result->fetch_assoc()) {
+        $trans_id = $row['trans_id'];
+        $from_acc = $row['from_acc'];
+        $to_acc = $row['to_acc'];
+        $init_id = $row['init_id'];
+        $trans_time = $row['trans_time'];
+        $amount = $row['amount'];
+        array_push($arr, array('trans_id' => $trans_id, 'from_acc' => $from_acc, 'to_acc' => $to_acc, 'init_id' => $init_id, 'trans_time' => $trans_time, 'amount' => $amount));
+      }
+      ($this->conn)->commit();
+      return $arr;
+    } catch (Exception $e) {
+      ($this->conn)->rollback();
+      return [];
+    }
+  }
+
   public function close_conn()
   {
     if (DatabaseConn::$dbconn != null && $this->conn instanceof mysqli) {
