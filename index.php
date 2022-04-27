@@ -1,3 +1,2 @@
 <?php
-header('Location: /login.php');
-die();
+include("views/index.php");

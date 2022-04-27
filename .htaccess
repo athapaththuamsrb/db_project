@@ -4,6 +4,7 @@ RewriteRule ^.*\.html?$ - [L,R=404]
 RewriteRule ^composer.json$ - [L,R=404]
 RewriteRule ^composer.lock$ - [L,R=404]
 RewriteRule ^utils/.*$ - [L,R=404]
+RewriteRule ^views/.*$ - [L,R=404]
 RewriteRule ^vendor/.*$ - [L,R=404]
 RewriteRule ^tmp/.*$ - [L,R=404]
 
