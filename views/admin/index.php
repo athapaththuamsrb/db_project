@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="/styles/bootstrap-5.1.3-dist/css/bootstrap.min.css" />
     <script src="/styles/bootstrap-5.1.3-dist/js/bootstrap.min.js"></script>
     <title>Admin Dashboard</title>
+    <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
     <style>
         h1 {
             text-align: center;
@@ -47,11 +48,25 @@
 </head>
 
 <body>
-    <nav class="navbar navbar-light bg-warning">
-        <span class="navbar-brand mb-0 h1"><img src="images/favicon-32X32.png" alt="logo" /></span>
+    <nav class="navbar navbar-light bg-warning" style="width: 100vw;">
+        <span class="navbar-brand mb-0 h1"><img src="./../../images/favicon-32x32.png" alt="logo" /></span>
         <a href="/login.php?logout=1"><button type="button" class="btn btn-success">Log out</button></a>
     </nav>
-    <h1>Admin Dashboard</h1>
+    <div style="height: 80vh;">
+        <h1>Admin Dashboard</h1>
+    </div>
+    <footer class="text-center text-white row" style="background-color: #21081a;">
+        <!-- Grid container -->
+        <div class="container p-4"></div>
+        <!-- Grid container -->
+
+        <!-- Copyright -->
+        <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.2);">
+            © 2020 Copyright:
+            <a class="text-white" href="https://mdbootstrap.com/">MDBootstrap.com</a>
+        </div>
+        <!-- Copyright -->
+    </footer>
 </body>
 
 </html>

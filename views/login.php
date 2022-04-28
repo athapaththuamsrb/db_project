@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="/styles/bootstrap-5.1.3-dist/css/bootstrap.min.css" />
     <script src="/styles/bootstrap-5.1.3-dist/js/bootstrap.min.js"></script>
     <title>Admin Dashboard</title>
+    <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
     <style>
         h1 {
             text-align: center;
@@ -46,7 +47,7 @@
 
         .screen {
             background-color: "#bbd0c9";
-            height: 100vh;
+            /* height: 100vh; */
         }
 
         .box {
@@ -160,12 +161,12 @@
 </head>
 
 <body style="background-color: #be847a;">
-    <nav class="navbar navbar-light bg-warning">
+    <nav class="navbar navbar-light bg-warning" style="width: 99vw;">
         <span class="navbar-brand mb-0 h1"> <img src="images/favicon-32X32.png" alt="logo" /> </span>
         <a href="/"><button type="button" class="btn btn-success">Home page</button></a>
     </nav>
 
-    <div class="box container">
+    <div class="box container" style="height: 80vh;">
         <div class="row">
             <div class="col-4 form" style="background-color: #880808; color: white;">
                 <form method="post">
@@ -213,8 +214,20 @@
                 </div>
             </div>
         </div>
+        <br><br>
     </div>
+    <footer class="text-center text-white row" style="background-color: #21081a;width: 100vw;">
+        <!-- Grid container -->
+        <div class="container p-4"></div>
+        <!-- Grid container -->
 
+        <!-- Copyright -->
+        <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.2);">
+            © 2020 Copyright:
+            <a class="text-white" href="https://mdbootstrap.com/">MDBootstrap.com</a>
+        </div>
+        <!-- Copyright -->
+    </footer>
 
     <script type="text/javascript">
         let slideIndex = 0;
