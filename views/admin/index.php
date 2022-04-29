@@ -54,6 +54,7 @@
     </nav>
     <div style="height: 80vh;">
         <h1>Admin Dashboard</h1>
+        <a href="addUser.php"><button style="height: 10vh; width: 100%; font-size: larger;">Add User</button></a>
     </div>
     <footer class="text-center text-white row" style="background-color: #21081a;">
         <!-- Grid container -->
