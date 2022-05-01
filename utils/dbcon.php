@@ -47,7 +47,7 @@ class DatabaseConn
     if (!($this->conn instanceof mysqli)) return null;
     if ($this->validate($username, $password)) {
       try {
-        $q = 'SELECT password, type FROM user_account WHERE username=?';
+        $q = 'SELECT password, type FROM users WHERE username=?';
         $stmt = $this->conn->prepare($q);
         $stmt->bind_param('s', $username);
         $stmt->execute();
@@ -76,7 +76,7 @@ class DatabaseConn
       ($this->conn)->begin_transaction();
       try {
         $hashed = password_hash($password, PASSWORD_BCRYPT, ['cost' => 12]);
-        $q = 'INSERT INTO user_account (username, password, type) VALUES (?, ?, ?);';
+        $q = 'INSERT INTO users (username, password, type) VALUES (?, ?, ?);';
         $stmt = $this->conn->prepare($q);
         $stmt->bind_param('sss', $username, $hashed, $type);
         $status = $stmt->execute();
