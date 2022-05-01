@@ -31,7 +31,6 @@
             position: relative;
             animation-name: nav-header;
             animation-duration: 2s;
-            animation-delay: 1s;
         }
 
         @keyframes nav-header {
@@ -44,24 +43,28 @@
                 top: 0px;
             }
         }
+
+        .btn {
+            border: #21081a solid 2px
+        }
     </style>
 </head>
 
 <body>
-    <nav class="navbar navbar-light bg-warning" style="width: 100vw;">
+    <nav class="navbar navbar-light bg-warning">
         <span class="navbar-brand mb-0 h1"><img src="images/favicon-32x32.png" alt="logo" /></span>
         <a href="/login.php?logout=1"><button type="button" class="btn btn-success">Sign in</button></a>
     </nav>
     <div style="height: 80vh;">
         <h1>Home page</h1>
     </div>
-    <footer class="text-center text-white row" style="background-color: #21081a;width: 100vw;">
+    <footer class="text-center text-white fixed-bottom row" style="background-color: #21081a;">
         <!-- Grid container -->
-        <div class="container p-4"></div>
+        <div class="container p-3"></div>
         <!-- Grid container -->
 
         <!-- Copyright -->
-        <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.2);">
+        <div class="text-center p-2" style="background-color: rgba(0, 0, 0, 0.2);">
             © 2020 Copyright:
             <a class="text-white" href="https://mdbootstrap.com/">MDBootstrap.com</a>
         </div>
