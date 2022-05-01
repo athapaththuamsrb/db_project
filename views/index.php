@@ -44,8 +44,37 @@
             }
         }
 
+        .fun-item:hover {
+            -ms-transform: scale(1.05);
+            /* IE 9 */
+            -webkit-transform: scale(1.05);
+            /* Safari 3-8 */
+            transform: scale(1.05);
+            background-color: #525252;
+        }
+
+        .fade {
+            animation: fadeInAnimation ease 3s;
+            animation-iteration-count: 1;
+            animation-fill-mode: forwards;
+        }
+
+        @keyframes fadeInAnimation {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        .item {
+            padding-bottom: 2%;
+        }
+
         .btn {
-            border: #21081a solid 2px
+            border: #21081a solid 2px;
         }
     </style>
 </head>
@@ -55,8 +84,18 @@
         <span class="navbar-brand mb-0 h1"><img src="images/favicon-32x32.png" alt="logo" /></span>
         <a href="/login.php?logout=1"><button type="button" class="btn btn-success">Sign in</button></a>
     </nav>
-    <div style="height: 80vh;">
+    <div class="container">
         <h1>Home page</h1>
+        <br />
+        <div class="row">
+            <div class="col-4"></div>
+            <div class="col-4">
+                <a href="checkBalance.php"><button style="height: 10vh; width: 100%; font-size: larger" type="button" class="btn btn-primary fun-item fade">
+                        Check Balance
+                    </button></a>
+            </div>
+            <div class="col-4"></div>
+        </div>
     </div>
     <footer class="text-center text-white fixed-bottom row" style="background-color: #21081a;">
         <!-- Grid container -->

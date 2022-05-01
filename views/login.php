@@ -7,8 +7,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="/styles/all.css" />
     <link rel="stylesheet" href="/styles/bootstrap-5.1.3-dist/css/bootstrap.min.css" />
-    <script src="/styles/bootstrap-5.1.3-dist/js/bootstrap.min.js"></script>
-    <title>Admin Dashboard</title>
+    <script src="/styles/bootstrap-5.1.3-dist/js/bootstrap.min.js" defer></script>
+    <title>Login</title>
     <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
     <style>
         h1 {
