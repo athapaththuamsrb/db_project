@@ -31,7 +31,7 @@
     .navbar {
       position: relative;
       animation-name: nav-header;
-      animation-duration: 2s;
+      animation-duration: 1s;
     }
 
     @keyframes nav-header {

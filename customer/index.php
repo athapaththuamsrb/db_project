@@ -1,9 +1,5 @@
 <?php
 require_once('auth.php');
 (new Authenticator())->checkAuth();
-?>
-<html>
-    <body>
-        Hello customer!
-    </body>
-</html>
+
+include($_SERVER['DOCUMENT_ROOT'] . '/views/customer/index.php');

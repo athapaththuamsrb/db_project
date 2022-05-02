@@ -85,13 +85,13 @@
     <a href="/login.php?logout=1"><button type="button" class="btn btn-success">Log out</button></a>
   </nav>
   <div class="container">
-    <h1>Admin Dashboard</h1>
+    <h1>Customer Dashboard</h1>
     <br />
     <div class="row item">
       <div class="col-4"></div>
       <div class="col-4">
-        <a href="addUser.php"><button style="height: 10vh; width: 100%; font-size: larger" type="button" class="btn btn-primary fun-item fade">
-            Add User
+        <a href="/checkBalance.php"><button style="height: 10vh; width: 100%; font-size: larger" type="button" class="btn btn-primary fun-item fade">
+            Check Balance
           </button></a>
       </div>
       <div class="col-4"></div>
