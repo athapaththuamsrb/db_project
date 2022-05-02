@@ -1,6 +1,6 @@
 <?php
-require_once($_SERVER['DOCUMENT_ROOT'] . '/utils/auth.php');
-checkAuth();
+require_once('auth.php');
+(new Authenticator())->checkAuth();
 
 if ($_SERVER['REQUEST_METHOD']==='GET'){
     include($_SERVER['DOCUMENT_ROOT'] . '/views/admin/addUser.php');

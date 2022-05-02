@@ -1,4 +1,6 @@
 <?php
+require_once('User.php');
+
 class DatabaseConn
 {
   /** @var \DatabaseConn */
@@ -42,7 +44,7 @@ class DatabaseConn
     }
   }
 
-  public function auth(string $username, string $password): ?string
+  public function auth(string $username, string $password): ?User
   {
     if (!($this->conn instanceof mysqli)) return null;
     if ($this->validate($username, $password)) {
@@ -58,7 +60,7 @@ class DatabaseConn
           $stmt->fetch();
           if (password_verify($password, $pw_hash)) {
             $stmt->close();
-            return $type;
+            return new User($username, $type);
           }
         }
         $stmt->close();
