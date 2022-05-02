@@ -81,8 +81,8 @@
 
 <body>
     <nav class="navbar navbar-light bg-warning">
-        <span class="navbar-brand mb-0 h1"><img src="images/favicon-32x32.png" alt="logo" /></span>
-        <a href="/login.php?logout=1"><button type="button" class="btn btn-success">Sign in</button></a>
+        <span class="navbar-brand mb-0 h1"><img src="/images/favicon-32x32.png" alt="logo" /></span>
+        <a href="/login.php"><button type="button" class="btn btn-success">Sign in</button></a>
     </nav>
     <div class="container">
         <h1>Home page</h1>

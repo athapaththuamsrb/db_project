@@ -165,7 +165,7 @@
 
 <body style="background-color: #be847a;">
     <nav class="navbar navbar-light bg-warning">
-        <span class="navbar-brand mb-0 h1"> <img src="images/favicon-32X32.png" alt="logo" /> </span>
+        <span class="navbar-brand mb-0 h1"> <img src="/images/favicon-32x32.png" alt="logo" /> </span>
         <a href="/"><button type="button" class="btn btn-success">Home page</button></a>
     </nav>
 
@@ -201,12 +201,12 @@
                 <div class="slideshow-container">
                     <div class="mySlides fade">
                         <div class="numbertext">1 / 2</div>
-                        <img src="images/slide-1.jpg" alt="slide-1" style=" width: 100%; height: 450px" />
+                        <img src="/images/slide-1.jpg" alt="slide-1" style=" width: 100%; height: 450px" />
                     </div>
 
                     <div class="mySlides fade">
                         <div class="numbertext">2 / 2</div>
-                        <img src="images/slide-2.jpg" alt="slide-2" style=" width: 100%; height: 450px;" />
+                        <img src="/images/slide-2.jpg" alt="slide-2" style=" width: 100%; height: 450px;" />
                     </div>
                 </div>
                 <br />

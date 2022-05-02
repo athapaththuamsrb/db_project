@@ -5,7 +5,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['logout'])) {
     $_SESSION['target'] = null;
     $_SESSION['user'] = null;
     session_write_close();
-    header('Location: /login.php');
+    header('Location: /index.php');
     die();
 }
 
