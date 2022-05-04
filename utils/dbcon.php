@@ -71,16 +71,16 @@ class DatabaseConn
     return null;
   }
 
-  public function createAccount(string $username, string $password, string $type): bool
+  public function createAccount(string $username, string $password, string $type, string $creator): bool
   {
     if (!($this->conn instanceof mysqli)) return false;
     if ($this->validate($username, $password)) {
       ($this->conn)->begin_transaction();
       try {
         $hashed = password_hash($password, PASSWORD_BCRYPT, ['cost' => 12]);
-        $q = 'INSERT INTO users (username, password, type) VALUES (?, ?, ?);';
+        $q = 'INSERT INTO users (username, password, type, created_by) VALUES (?, ?, ?, ?);';
         $stmt = $this->conn->prepare($q);
-        $stmt->bind_param('sss', $username, $hashed, $type);
+        $stmt->bind_param('ssss', $username, $hashed, $type, $creator);
         $status = $stmt->execute();
         $stmt->close();
         ($this->conn)->commit();

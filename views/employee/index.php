@@ -87,15 +87,15 @@
   <div class="container">
     <h1>Employee Dashboard</h1>
     <br />
-    <!-- <div class="row item">
+    <div class="row item">
       <div class="col-4"></div>
       <div class="col-4">
-        <a href="/checkBalance.php"><button style="height: 10vh; width: 100%; font-size: larger" type="button" class="btn btn-primary fun-item fade">
-            Check Balance
+        <a href="addUser.php"><button style="height: 10vh; width: 100%; font-size: larger" type="button" class="btn btn-primary fun-item fade">
+            Add Customer
           </button></a>
       </div>
       <div class="col-4"></div>
-    </div> -->
+    </div>
   </div>
   <footer class="text-center text-white fixed-bottom row" style="background-color: #21081a">
     <!-- Grid container -->

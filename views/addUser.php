@@ -95,13 +95,35 @@
             </div>
             <div class="col-1 item"></div>
             <div class="col-3 item">
-              <select name="type" id="type" style="width: 130%" lass="custom-select mr-sm-2" required>
-                <option selected>Choose...</option>
-                <option value="admin">Administrator</option>
-                <option value="manager">Manager</option>
-                <option value="employee">Employee</option>
-                <option value="customer">Customer</option>
-              </select>
+              <?php
+              if (isset($types) && is_array($types) && sizeof($types) > 0) {
+                if (sizeof($types) > 1) {
+              ?>
+                  <select name="type" id="type" style="width: 130%" lass="custom-select mr-sm-2" required>
+                    <option selected>Choose...</option>
+                    <?php
+                    foreach ($types as $type => $name) {
+                    ?>
+                      <option value="<?php echo $type; ?>"><?php echo $name; ?></option>
+                    <?php
+                    }
+                  } else if (sizeof($types) === 1) {
+                    ?>
+                    <select name="type" id="type" style="width: 130%" lass="custom-select mr-sm-2" required disabled>
+                      <?php
+                      foreach ($types as $type => $name) {
+                      ?>
+                        <option value="<?php echo $type; ?>" selected><?php echo $name; ?></option>
+                      <?php
+                      }
+                      ?>
+                    <?php
+                  }
+                    ?>
+                    </select>
+                  <?php
+                }
+                  ?>
             </div>
           </div>
           <div class="row">
