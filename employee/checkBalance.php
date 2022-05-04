@@ -16,4 +16,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   getBalance($owner_id, $acc_no);
 }
 
-@include_once($_SERVER['DOCUMENT_ROOT'] . '/views/checkBalance.php');
+@include_once($_SERVER['DOCUMENT_ROOT'] . '/views/employee/checkBalance.php');
