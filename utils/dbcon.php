@@ -98,7 +98,7 @@ class DatabaseConn
     if (!($this->conn instanceof mysqli)) return null;
     ($this->conn)->begin_transaction();
     try {
-      if ($owner_id == null || $acc_no == null) {
+      if (!$owner_id || !$acc_no) {
         return null;
       } else {
         $q0 = 'SELECT balance FROM Account WHERE owner_id = ? and acc_no = ?';
@@ -121,7 +121,7 @@ class DatabaseConn
     }
   }
 
-  public function view_transaction_history(string $acc_no, DateTime $start_date, DateTime $end_date)
+  public function view_transaction_history(string $owner_id, string $acc_no, DateTime $start_date, DateTime $end_date)
   {
     if (!($this->conn instanceof mysqli)) return null;
     ($this->conn)->begin_transaction();
@@ -130,9 +130,9 @@ class DatabaseConn
       if ($acc_no == null) {
         return $arr;
       } else if ($start_date == null && $end_date = null){
-        $q0 = 'SELECT trans_id, from_acc, to_acc, init_id, trans_time, amount FROM Transaction WHERE from_acc = ? or to_acc = ?';
+        $q0 = 'SELECT trans_id, from_acc, to_acc, init_id, trans_time, amount FROM Transaction WHERE owner_id = ? and (from_acc = ? or to_acc = ?)';
         $stmt = $this->conn->prepare($q0);
-        $stmt->bind_param('ss', $acc_no, $acc_no);
+        $stmt->bind_param('sss', $owner_id, $acc_no, $acc_no);
       } else if ($end_date == null) {
         $start_date_str = $start_date->format('Y-m-d');
         $q0 = 'SELECT trans_id, from_acc, to_acc, init_id, trans_time, amount FROM Transaction WHERE (from_acc = ? or to_acc = ?) and trans_time >= ?';

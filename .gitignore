@@ -5,3 +5,5 @@ tmp/
 .vscode/
 TODO
 test.php
+.DS_Store
+.gitignore

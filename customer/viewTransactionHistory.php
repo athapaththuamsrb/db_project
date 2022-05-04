@@ -1,13 +1,20 @@
 <?php
+require_once('auth.php');
+$user = (new Authenticator())->checkAuth();
+$type = $user->getType();
+if ($type != "customer") {
+    echo json_encode(null);
+    die();
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $data = array();
     if (!isset($_POST['acc_no']) || !$_POST['acc_no']) {
         echo json_encode($data);
         die();
     }
-    else {
-        $acc_no = $_POST['acc_no'];
-    }
+    $owner_id = $user->getUsername();
+    $acc_no = $_POST['acc_no'];
     if (strlen($acc_no) < 4 || strlen($acc_no) > 12) { // change according to relavent constraints
         echo json_encode($data);
         die();
@@ -24,10 +31,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     else {
         $end_date = $_POST['end_date'];
     }
-    require_once('utils/dbcon.php');
+    require_once('../utils/dbcon.php');
     $conn = DatabaseConn::get_conn();
     if ($conn) {
-        $data = $conn->view_transaction_history($acc_no, $start_date, $end_date);
+        $data = $conn->view_transaction_history($owner_id, $acc_no, $start_date, $end_date);
     }
     echo json_encode($data);
     die();
