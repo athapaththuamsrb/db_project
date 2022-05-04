@@ -8,9 +8,8 @@
     <link rel="stylesheet" type="text/css" href="/styles/all.css" />
     <link rel="stylesheet" href="/styles/bootstrap-5.1.3-dist/css/bootstrap.min.css" />
     <script src="/styles/bootstrap-5.1.3-dist/js/bootstrap.min.js"></script>
-    <title>Check Balance</title>
+    <title>Transactions</title>
     <link rel="icon" type="image/x-icon" href="/images/favicon.ico" />
-
     <style>
         h1 {
             text-align: center;
@@ -78,41 +77,73 @@
 </head>
 
 <body>
+
+
+
+
+
+
+
+
+
+    <label for="amount">AMOUNT</label>
+    <input type="number" min="0.00" step="0.01" required />
+
+    <input type="submit" value="submit">
+
+
+
+    ///////////////////////////
     <nav class="navbar navbar-light bg-warning">
         <span class="navbar-brand mb-0 h1"><img src="/images/favicon-32x32.png" alt="logo" /></span>
-        <a href="/customer/index.php"><button type="button" class="btn btn-success">Dashboard</button></a>
+        <a href="/admin/index.php"><button type="button" class="btn btn-success">Dashboard</button></a>
     </nav>
     <div class="container box fade" style="background-color: #880808; color: white; border: #21081a solid 2px">
-        <h1>Check Your Account Balance</h1>
+        <h1>Add user</h1>
         <br />
         <div class="row">
             <div class="col-3"></div>
             <div class="col-7">
-                <form method="POST" class="form-row align-items-center">
+                <form method="post" class="form-row align-items-center">
                     <div class="row">
                         <div class="col-3 item">
-                            <label for="owner_id"> Owner ID</label>
+                            <label for="to_acc">TO ACCOUNT</label>
                         </div>
                         <div class="col-1 item"></div>
                         <div class="col-3 item">
-                            <input type="text" name="owner_id" id="owner_id" required />
+                            <input type="text" name="to_acc" id="to_acc" required>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-3 item">
-                            <label for="acc_no">Account No</label>
+                            <label for="from acc">FROM ACCOUNT</label>
                         </div>
                         <div class="col-1 item"></div>
                         <div class="col-3 item">
-                            <input type="text" name="acc_no" id="acc_no" required />
-                        </div>
-                    </div>
+                            <select name="from_acc" id="from_acc" required>
+                                <option value="" disabled selected>choose..</option>
+                                <option value="#acc_id1">acc1_no</option>
+                                <option value="#acc_id2">acc2_no</option>
+                                <option value=#acc_id3">acc3_no</option>
 
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-3 item">
+                            <label for="amount">AMOUNT</label>
+                        </div>
+                        <div class="col-1 item"></div>
+                        <div class="col-3 item">
+                            <input type="number" min="0.00" step="0.01" required />
+
+                        </div>
+                    </div>
                     <div class="row">
                         <div class="col-2"></div>
                         <div class="col-4 item">
                             <button type="submit" class="btn btn-info" style="width: 150%">
-                                Check Balance
+                                Transactions
                             </button>
                         </div>
                         <div class="col-1"></div>
@@ -122,9 +153,6 @@
             <div class="col-2"></div>
         </div>
     </div>
-
-
-
     <footer class="text-center text-white fixed-bottom row" style="background-color: #21081a">
         <!-- Grid container -->
         <div class="container p-3"></div>
@@ -137,6 +165,10 @@
         </div>
         <!-- Copyright -->
     </footer>
+
+
+
+
 </body>
 
 </html>

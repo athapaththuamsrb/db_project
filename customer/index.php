@@ -1,5 +1,5 @@
 <?php
-require_once($_SERVER['DOCUMENT_ROOT'] . '/utils/auth.php');
-checkAuth();
+require_once('auth.php');
+(new Authenticator())->checkAuth();
 
 include($_SERVER['DOCUMENT_ROOT'] . '/views/customer/index.php');

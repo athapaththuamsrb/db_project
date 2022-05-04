@@ -31,7 +31,7 @@
     .navbar {
       position: relative;
       animation-name: nav-header;
-      animation-duration: 2s;
+      animation-duration: 1s;
     }
 
     @keyframes nav-header {
@@ -79,7 +79,7 @@
 
 <body>
   <nav class="navbar navbar-light bg-warning">
-    <span class="navbar-brand mb-0 h1"><img src="./../../images/favicon-32x32.png" alt="logo" /></span>
+    <span class="navbar-brand mb-0 h1"><img src="/images/favicon-32x32.png" alt="logo" /></span>
     <a href="/admin/index.php"><button type="button" class="btn btn-success">Dashboard</button></a>
   </nav>
   <div class="container box fade" style="background-color: #880808; color: white; border: #21081a solid 2px">

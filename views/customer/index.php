@@ -30,7 +30,7 @@
     .navbar {
       position: relative;
       animation-name: nav-header;
-      animation-duration: 2s;
+      animation-duration: 1s;
     }
 
     @keyframes nav-header {
@@ -81,7 +81,7 @@
 
 <body>
   <nav class="navbar navbar-light bg-warning">
-    <span class="navbar-brand mb-0 h1"><img src="./../../images/favicon-32x32.png" alt="logo" /></span>
+    <span class="navbar-brand mb-0 h1"><img src="/images/favicon-32x32.png" alt="logo" /></span>
     <a href="/login.php?logout=1"><button type="button" class="btn btn-success">Log out</button></a>
   </nav>
   <div class="container">
@@ -90,8 +90,8 @@
     <div class="row item">
       <div class="col-4"></div>
       <div class="col-4">
-        <a href="/checkBalance.php"><button style="height: 10vh; width: 100%; font-size: larger" type="button" class="btn btn-primary fun-item fade">
-            Check Balance
+        <a href="applyLoan.php"><button style="height: 10vh; width: 100%; font-size: larger" type="button" class="btn btn-primary fun-item fade">
+            apply Loan
           </button></a>
       </div>
       <div class="col-4"></div>

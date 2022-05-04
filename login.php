@@ -3,16 +3,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['logout'])) {
     session_start();
     $_SESSION['logged_in'] = false;
     $_SESSION['target'] = null;
-    $_SESSION['type'] = null;
+    $_SESSION['user'] = null;
     session_write_close();
-    header('Location: /login.php');
+    header('Location: /index.php');
     die();
 }
 
+require_once('utils/User.php');
+
 session_start();
-if (isset($_SESSION['logged_in']) && $_SESSION['logged_in']) {
+if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] && isset($_SESSION['user']) && ($_SESSION['user'] instanceof User)) {
     session_write_close();
-    header('Location: /index.php');
+    $type = $_SESSION['user']->getType();
+    header("Location: /$type/index.php");
     die();
 }
 session_write_close();
@@ -23,16 +26,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $username = $_POST['username'];
         $password = $_POST['password'];
         $dbcon = DatabaseConn::get_conn();
-        $type = null;
+        $user = null;
         if ($dbcon != null) {
-            $type = $dbcon->auth($username, $password);
+            $user = $dbcon->auth($username, $password);
         }
-        if ($type != null) {
+        if ($user != null) {
             session_start();
             $_SESSION['logged_in'] = true;
-            $_SESSION['type'] = $type;
+            $_SESSION['user'] = $user;
+            $type = $user->getType();
             $target = "/$type/index.php";
-            if (isset($_SESSION['target']) && $_SESSION['target'] != null) {
+            if (isset($_SESSION['target']) && $_SESSION['target'] != null && preg_match("/^\\/$type/", $_SESSION['target'])) {
                 $target = $_SESSION['target'];
             }
             $_SESSION['target'] = null;
