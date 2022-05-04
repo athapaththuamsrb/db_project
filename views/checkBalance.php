@@ -83,7 +83,7 @@
         <a href="/customer/index.php"><button type="button" class="btn btn-success">Dashboard</button></a>
     </nav>
     <div class="container box fade" style="background-color: #880808; color: white; border: #21081a solid 2px">
-        <h1>Check Your Account Balance</h1>
+        <h1>Check Account Balance</h1>
         <br />
         <div class="row">
             <div class="col-3"></div>

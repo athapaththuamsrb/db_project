@@ -90,7 +90,7 @@
         <div class="row">
             <div class="col-4"></div>
             <div class="col-4">
-                <a href="checkBalance.php"><button style="height: 10vh; width: 100%; font-size: larger" type="button" class="btn btn-primary fun-item fade">
+                <a href="employee/checkBalance.php"><button style="height: 10vh; width: 100%; font-size: larger" type="button" class="btn btn-primary fun-item fade">
                         Check Balance
                     </button></a>
             </div>
