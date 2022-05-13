@@ -157,6 +157,32 @@ class DatabaseConn
     }
   }
 
+  public function get_accounts_list(string $owner_id){
+    
+    if (!($this->conn instanceof mysqli)) return null;
+    ($this->conn)->begin_transaction();
+    try {
+      $arr = array();
+      $q1 = 'SELECT acc_no FROM accounts WHERE owner_id = ?';
+      $stmt = $this->conn->prepare($q1);
+      $stmt->bind_param('s', $owner_id);
+      $stmt->execute();
+      $result = $stmt->get_result();
+      if ($stmt->num_rows() == 0) {
+        return $arr;
+      }
+      while ($row = $result->fetch_assoc()) {
+        $acc_id = $row['acc_no'];
+        array_push($arr, $acc_id);
+      }
+      ($this->conn)->commit();
+      return $arr;
+    } catch (Exception $e) {
+      ($this->conn)->rollback();
+      return [];
+    }
+  }
+
   public function view_transaction_history(string $owner_id, string $acc_no, DateTime $start_date, DateTime $end_date)
   {
     if (!($this->conn instanceof mysqli)) return null;
