@@ -121,6 +121,68 @@ class DatabaseConn
     }
   }
 
+  public function transaction(string $from_acc, string $to_acc, string $init_id, Datetime $trans_time, float $amount){
+
+    if (!($this->conn instanceof mysqli)) return false;
+    if ($from_acc != null){
+      $balance = $this->check_balance($init_id, $from_acc);
+      if($balance == null || ($balance < $amount) ){
+        return false;
+      }
+    }
+    ($this->conn)->begin_transaction();
+    try{
+      if ($from_acc != null) {
+        $q1 = 'UPDATE accounts SET balance = balance - ? WHERE acc_no = ?';
+        $stmt = $this->conn->prepare($q1);
+        $stmt->bind_param('ds', $amount , $from_acc);
+      }
+      $q2 = 'UPDATE accounts SET balance = balance + ? WHERE acc_no = ?';
+      $stmt = $this->conn->prepare($q2);
+      $stmt->bind_param('ds', $amount , $to_acc);
+
+      $q3 = 'INSERT INTO transactions (from_acc, to_acc, init_id, trans_time, amount) VALUES (?, ?, ?, ?, ?)';
+      $stmt = $this->conn->prepare($q3);
+      $trans_time_str = $trans_time->format('Y-m-d');
+      $stmt->bind_param('ssssd', $amount , $to_acc, $init_id, $trans_time_str, $amount);
+
+      $status = $stmt->execute();
+        $stmt->close();
+        ($this->conn)->commit();
+        return $status;
+    }
+    catch(Exception $e){
+      ($this->conn)->rollback();
+      return false;
+    }
+  }
+
+  public function get_accounts_list(string $owner_id){
+    
+    if (!($this->conn instanceof mysqli)) return null;
+    ($this->conn)->begin_transaction();
+    try {
+      $arr = array();
+      $q1 = 'SELECT acc_no FROM accounts WHERE owner_id = ?';
+      $stmt = $this->conn->prepare($q1);
+      $stmt->bind_param('s', $owner_id);
+      $stmt->execute();
+      $result = $stmt->get_result();
+      if ($stmt->num_rows() == 0) {
+        return $arr;
+      }
+      while ($row = $result->fetch_assoc()) {
+        $acc_id = $row['acc_no'];
+        array_push($arr, $acc_id);
+      }
+      ($this->conn)->commit();
+      return $arr;
+    } catch (Exception $e) {
+      ($this->conn)->rollback();
+      return [];
+    }
+  }
+
   public function view_transaction_history(string $owner_id, string $acc_no, DateTime $start_date, DateTime $end_date)
   {
     if (!($this->conn instanceof mysqli)) return null;

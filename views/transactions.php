@@ -78,22 +78,6 @@
 
 <body>
 
-
-
-
-
-
-
-
-
-    <label for="amount">AMOUNT</label>
-    <input type="number" min="0.00" step="0.01" required />
-
-    <input type="submit" value="submit">
-
-
-
-    ///////////////////////////
     <nav class="navbar navbar-light bg-warning">
         <span class="navbar-brand mb-0 h1"><img src="/images/favicon-32x32.png" alt="logo" /></span>
         <a href="/admin/index.php"><button type="button" class="btn btn-success">Dashboard</button></a>
@@ -121,7 +105,7 @@
                         <div class="col-1 item"></div>
                         <div class="col-3 item">
                             <select name="from_acc" id="from_acc" required>
-                                <option value="" disabled selected>choose..</option>
+                                <option value="" disabled selected></option>
                                 <option value="#acc_id1">acc1_no</option>
                                 <option value="#acc_id2">acc2_no</option>
                                 <option value=#acc_id3">acc3_no</option>
@@ -143,7 +127,7 @@
                         <div class="col-2"></div>
                         <div class="col-4 item">
                             <button type="submit" class="btn btn-info" style="width: 150%">
-                                Transactions
+                                Confirm
                             </button>
                         </div>
                         <div class="col-1"></div>
