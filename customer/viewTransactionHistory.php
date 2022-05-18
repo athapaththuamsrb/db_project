@@ -39,4 +39,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     echo json_encode($data);
     die();
 }
-@include_once($_SERVER['DOCUMENT_ROOT'] . '/views/viewTransactionHistory.php');
+@include_once($_SERVER['DOCUMENT_ROOT'] . '/views/customer/viewTransactionHistory.php');
