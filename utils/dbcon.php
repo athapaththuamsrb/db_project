@@ -121,6 +121,7 @@ class DatabaseConn
     }
   }
 
+
   public function transaction(string $from_acc, string $to_acc, string $init_id, Datetime $trans_time, float $amount){
 
     if (!($this->conn instanceof mysqli)) return false;
@@ -160,17 +161,16 @@ class DatabaseConn
   public function get_accounts_list(string $owner_id){
     
     if (!($this->conn instanceof mysqli)) return null;
+
     ($this->conn)->begin_transaction();
     try {
       $arr = array();
-      $q1 = 'SELECT acc_no FROM accounts WHERE owner_id = ?';
+      $q1 = 'SELECT acc_no FROM accounts WHERE (owner_id = ? and (type = "checking" or type = "savings"))';
       $stmt = $this->conn->prepare($q1);
       $stmt->bind_param('s', $owner_id);
       $stmt->execute();
       $result = $stmt->get_result();
-      if ($stmt->num_rows() == 0) {
-        return $arr;
-      }
+  
       while ($row = $result->fetch_assoc()) {
         $acc_id = $row['acc_no'];
         array_push($arr, $acc_id);
@@ -181,6 +181,38 @@ class DatabaseConn
       ($this->conn)->rollback();
       return [];
     }
+  }
+
+  public function check_account(String $acc_no){
+
+    if (!($this->conn instanceof mysqli)) return null;
+
+    $q1 = ' SELECT * FROM accounts WHERE acc_no = ? ';
+    $stmt = $this->conn->prepare($q1); 
+    $stmt->bind_param('s', $acc_no);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $account = $result->fetch_assoc();
+
+    if($account == null) return null;
+    return $account['type'];
+
+  }
+
+
+  public function check_transaction_count(String $acc_no){
+
+    if (!($this->conn instanceof mysqli)) return null;
+
+    $q1 = ' SELECT transactions FROM accounts WHERE acc_no = ? ';
+    $stmt = $this->conn->prepare($q1); 
+    $stmt->bind_param('s', $acc_no);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $count = $result->fetch_assoc();
+
+    print_r($count);
+
   }
 
   public function view_transaction_history(string $owner_id, string $acc_no, DateTime $start_date, DateTime $end_date)
