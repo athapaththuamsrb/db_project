@@ -175,31 +175,31 @@ class DatabaseConn
   public function create_account(string $owner_id, string $acc_no, string $type, float $balance, string $branch_id, $saving_acc_no, $duration, $customer_type) {
     if (!($this->conn instanceof mysqli)) return null;
     ($this->conn)->begin_transaction();
-    $common_query = "insert into account values (?, ?, ?, ?, ?, ?)";
+    $common_query = 'INSERT into Accounts (owner_id, acc_no, type, balance, opened_date, branch_id) values (?, ?, ?, ?, ?, ?)';
     $date_str = date('Y-m-d');
     $stmt = $this->conn->prepare($common_query);
     $stmt->bind_param('sssdss', $owner_id, $acc_no, $type, $balance, $date_str, $branch_id);
     $stmt->execute();
     try {
       if ($type === "checking"){
-        $q0 = "insert into checking_account (?)";
+        $q0 = 'INSERT into checking_accounts (acc_no) values (?)';
         $stmt0 = $this->conn->prepare($q0);
         $stmt0->bind_param('s', $acc_no);
-        $stmt0->execute();
+        return $stmt0->execute();
       }
       elseif ($type === "savings"){
-        $q0 = "insert into savings_account (?, ?, 0)";
+        $q0 = 'INSERT into savings_accounts (acc_no, customer_type, transactions) values (?, ?, 0)';
         $stmt0 = $this->conn->prepare($q0);
         $stmt0->bind_param('ss', $acc_no, $customer_type);
-        $stmt0->execute();
+        return $stmt0->execute();
       }
       elseif ($type === "fd"){
-        $q0 = "insert into fd (?, ?, ?)";
+        $q0 = 'INSERT into fixed_deposits (acc_no, savings_acc_no, duration) values (?, ?, ?)';
         $stmt0 = $this->conn->prepare($q0);
         $stmt0->bind_param('ssi', $acc_no, $saving_acc_no, $duration);
-        $stmt0->execute();
+        return $stmt0->execute();
       }
-      return true;
+      ($this->conn)->commit();
     } catch (Exception $e) {
       ($this->conn)->rollback();
       return false;

@@ -34,4 +34,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     echo json_encode($result);
     die();
 }
-@include_once($_SERVER['DOCUMENT_ROOT'] . '/views/employee/addAccount.php');
+@include_once($_SERVER['DOCUMENT_ROOT'] . '/views/employee/createAccount.php');
