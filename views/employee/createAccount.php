@@ -15,7 +15,7 @@
         Account No
         <input type="text" name="acc_no" required><br>
 
-        <label for="dog-names">Choose a dog name:</label>
+        <label for="type">Choose an account type:</label>
             <select name="type" id="type">
                 <option value="savings">Savings</option>
                 <option value="checking">Checking</option>

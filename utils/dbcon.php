@@ -176,7 +176,7 @@ class DatabaseConn
     if (!($this->conn instanceof mysqli)) return null;
     ($this->conn)->begin_transaction();
     $common_query = 'INSERT into Accounts (owner_id, acc_no, type, balance, opened_date, branch_id) values (?, ?, ?, ?, ?, ?)';
-    $date_str = date('Y-m-d');
+    $date_str = gmdate('Y-m-d');
     $stmt = $this->conn->prepare($common_query);
     $stmt->bind_param('sssdss', $owner_id, $acc_no, $type, $balance, $date_str, $branch_id);
     $stmt->execute();
