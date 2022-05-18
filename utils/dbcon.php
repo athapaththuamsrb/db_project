@@ -172,6 +172,40 @@ class DatabaseConn
     }
   }
 
+  public function create_account(string $owner_id, string $acc_no, string $type, float $balance, string $branch_id, $saving_acc_no, $duration, $customer_type) {
+    if (!($this->conn instanceof mysqli)) return null;
+    ($this->conn)->begin_transaction();
+    $common_query = "insert into account values (?, ?, ?, ?, ?, ?)";
+    $date_str = date('Y-m-d');
+    $stmt = $this->conn->prepare($common_query);
+    $stmt->bind_param('sssdss', $owner_id, $acc_no, $type, $balance, $date_str, $branch_id);
+    $stmt->execute();
+    try {
+      if ($type === "checking"){
+        $q0 = "insert into checking_account (?)";
+        $stmt0 = $this->conn->prepare($q0);
+        $stmt0->bind_param('s', $acc_no);
+        $stmt0->execute();
+      }
+      elseif ($type === "savings"){
+        $q0 = "insert into savings_account (?, ?, 0)";
+        $stmt0 = $this->conn->prepare($q0);
+        $stmt0->bind_param('ss', $acc_no, $customer_type);
+        $stmt0->execute();
+      }
+      elseif ($type === "fd"){
+        $q0 = "insert into fd (?, ?, ?)";
+        $stmt0 = $this->conn->prepare($q0);
+        $stmt0->bind_param('ssi', $acc_no, $saving_acc_no, $duration);
+        $stmt0->execute();
+      }
+      return true;
+    } catch (Exception $e) {
+      ($this->conn)->rollback();
+      return false;
+    }
+  }
+
   public function close_conn()
   {
     if (DatabaseConn::$dbconn != null && $this->conn instanceof mysqli) {
