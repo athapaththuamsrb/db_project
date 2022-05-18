@@ -101,7 +101,7 @@ class DatabaseConn
       if (!$owner_id || !$acc_no) {
         return null;
       } else {
-        $q0 = 'SELECT balance FROM Account WHERE owner_id = ? and acc_no = ?';
+        $q0 = 'SELECT balance FROM Accounts WHERE owner_id = ? and acc_no = ?';
         $stmt = $this->conn->prepare($q0);
         $stmt->bind_param('ss', $owner_id, $acc_no);
       }
@@ -130,23 +130,23 @@ class DatabaseConn
       if ($acc_no == null) {
         return $arr;
       } else if ($start_date == null && $end_date = null){
-        $q0 = 'SELECT trans_id, from_acc, to_acc, init_id, trans_time, amount FROM Transaction WHERE owner_id = ? and (from_acc = ? or to_acc = ?)';
+        $q0 = 'SELECT trans_id, from_acc, to_acc, init_id, trans_time, amount FROM Transactions WHERE owner_id = ? and (from_acc = ? or to_acc = ?)';
         $stmt = $this->conn->prepare($q0);
         $stmt->bind_param('sss', $owner_id, $acc_no, $acc_no);
       } else if ($end_date == null) {
         $start_date_str = $start_date->format('Y-m-d');
-        $q0 = 'SELECT trans_id, from_acc, to_acc, init_id, trans_time, amount FROM Transaction WHERE (from_acc = ? or to_acc = ?) and trans_time >= ?';
+        $q0 = 'SELECT trans_id, from_acc, to_acc, init_id, trans_time, amount FROM Transactions WHERE (from_acc = ? or to_acc = ?) and trans_time >= ?';
         $stmt = $this->conn->prepare($q0);
         $stmt->bind_param('sss', $acc_no, $acc_no, $start_date_str);
       } else if ($start_date == null) {
         $end_date_str = $end_date->format('Y-m-d');
-        $q0 = 'SELECT trans_id, from_acc, to_acc, init_id, trans_time, amount FROM Transaction WHERE (from_acc = ? or to_acc = ?) and trans_time <= ?';
+        $q0 = 'SELECT trans_id, from_acc, to_acc, init_id, trans_time, amount FROM Transactions WHERE (from_acc = ? or to_acc = ?) and trans_time <= ?';
         $stmt = $this->conn->prepare($q0);
         $stmt->bind_param('sss', $acc_no, $acc_no, $end_date_str);
       } else {
         $start_date_str = $start_date->format('Y-m-d');
         $end_date_str = $end_date->format('Y-m-d');
-        $q0 = 'SELECT trans_id, from_acc, to_acc, init_id, trans_time, amount FROM Transaction WHERE (from_acc = ? or to_acc = ?) and trans_time >= ? and trans_time <= ?';
+        $q0 = 'SELECT trans_id, from_acc, to_acc, init_id, trans_time, amount FROM Transactions WHERE (from_acc = ? or to_acc = ?) and trans_time >= ? and trans_time <= ?';
         $stmt = $this->conn->prepare($q0);
         $stmt->bind_param('sss', $acc_no, $acc_no, $start_date_str, $end_date_str);
       }
