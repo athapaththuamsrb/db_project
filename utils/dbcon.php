@@ -121,7 +121,7 @@ class DatabaseConn
     }
   }
 
-  public function view_transaction_history(string $owner_id, string $acc_no, DateTime $start_date, DateTime $end_date)
+  public function view_transaction_history(string $owner_id, string $acc_no, $start_date, $end_date)
   {
     if (!($this->conn instanceof mysqli)) return null;
     ($this->conn)->begin_transaction();
@@ -129,32 +129,38 @@ class DatabaseConn
       $arr = array();
       if ($acc_no == null) {
         return $arr;
-      } else if ($start_date == null && $end_date = null){
-        $q0 = 'SELECT trans_id, from_acc, to_acc, init_id, trans_time, amount FROM Transactions WHERE owner_id = ? and (from_acc = ? or to_acc = ?)';
+      }
+      $q = 'SELECT * FROM Accounts WHERE owner_id = ? and acc_no = ?';
+      $ps = $this->conn->prepare($q);
+      $ps->bind_param('ss', $owner_id, $acc_no);
+      $ps->execute();
+      $ps->store_result();
+      $ps->fetch();
+      if ($ps->num_rows() == 0){
+        return $arr;
+      } else if (is_null($start_date) && is_null($end_date)){
+        $q0 = 'SELECT trans_id, from_acc, to_acc, init_id, trans_time, amount FROM Transactions WHERE from_acc = ? or to_acc = ?';
         $stmt = $this->conn->prepare($q0);
-        $stmt->bind_param('sss', $owner_id, $acc_no, $acc_no);
-      } else if ($end_date == null) {
-        $start_date_str = $start_date->format('Y-m-d');
+        $stmt->bind_param('ss', $acc_no, $acc_no);
+      } else if (is_null($end_date)) {
+        $start_date_str = $start_date->format('Y-m-d H:i:s');
         $q0 = 'SELECT trans_id, from_acc, to_acc, init_id, trans_time, amount FROM Transactions WHERE (from_acc = ? or to_acc = ?) and trans_time >= ?';
         $stmt = $this->conn->prepare($q0);
         $stmt->bind_param('sss', $acc_no, $acc_no, $start_date_str);
-      } else if ($start_date == null) {
-        $end_date_str = $end_date->format('Y-m-d');
+      } else if (is_null($start_date)) {
+        $end_date_str = $end_date->format('Y-m-d H:i:s');
         $q0 = 'SELECT trans_id, from_acc, to_acc, init_id, trans_time, amount FROM Transactions WHERE (from_acc = ? or to_acc = ?) and trans_time <= ?';
         $stmt = $this->conn->prepare($q0);
         $stmt->bind_param('sss', $acc_no, $acc_no, $end_date_str);
       } else {
-        $start_date_str = $start_date->format('Y-m-d');
-        $end_date_str = $end_date->format('Y-m-d');
+        $start_date_str = $start_date->format('Y-m-d H:i:s');
+        $end_date_str = $end_date->format('Y-m-d H:i:s');
         $q0 = 'SELECT trans_id, from_acc, to_acc, init_id, trans_time, amount FROM Transactions WHERE (from_acc = ? or to_acc = ?) and trans_time >= ? and trans_time <= ?';
         $stmt = $this->conn->prepare($q0);
         $stmt->bind_param('sss', $acc_no, $acc_no, $start_date_str, $end_date_str);
       }
       $stmt->execute();
       $result = $stmt->get_result();
-      if ($stmt->num_rows() == 0) {
-        return $arr;
-      }
       while ($row = $result->fetch_assoc()) {
         $trans_id = $row['trans_id'];
         $from_acc = $row['from_acc'];

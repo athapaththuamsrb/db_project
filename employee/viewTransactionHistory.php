@@ -2,8 +2,11 @@
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $data = array();
     if (!isset($_POST['owner_id']) || !$_POST['owner_id']) {
-        echo json_encode($balance);
+        echo json_encode($data);
         die();
+    }
+    else {
+        $acc_no = $_POST['owner_id'];
     }
     if (!isset($_POST['acc_no']) || !$_POST['acc_no']) {
         echo json_encode($data);

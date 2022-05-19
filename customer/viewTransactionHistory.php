@@ -1,11 +1,6 @@
 <?php
 require_once('auth.php');
 $user = (new Authenticator())->checkAuth();
-$type = $user->getType();
-if ($type != "customer") {
-    echo json_encode(null);
-    die();
-}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $data = array();
