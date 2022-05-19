@@ -6,7 +6,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         die();
     }
     else {
-        $acc_no = $_POST['owner_id'];
+        $owner_id = $_POST['owner_id'];
     }
     if (!isset($_POST['acc_no']) || !$_POST['acc_no']) {
         echo json_encode($data);
@@ -23,13 +23,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $start_date = null;
     }
     else {
-        $start_date = $_POST['start_date'];
+        $start_date = new DateTime($_POST['start_date']);
     }
     if (!isset($_POST['end_date']) || !$_POST['end_date']) {
         $end_date = null;
     }
     else {
-        $end_date = $_POST['end_date'];
+        $end_date =new DateTime($_POST['end_date']);
     }
     require_once('../utils/dbcon.php');
     $conn = DatabaseConn::get_conn();
