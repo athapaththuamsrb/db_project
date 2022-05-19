@@ -180,26 +180,28 @@ class DatabaseConn
     $stmt = $this->conn->prepare($common_query);
     $stmt->bind_param('sssdss', $owner_id, $acc_no, $type, $balance, $date_str, $branch_id);
     $stmt->execute();
+    $result = false;
     try {
       if ($type === "checking"){
         $q0 = 'INSERT into checking_accounts (acc_no) values (?)';
         $stmt0 = $this->conn->prepare($q0);
         $stmt0->bind_param('s', $acc_no);
-        return $stmt0->execute();
+        $result = $stmt0->execute();
       }
       elseif ($type === "savings"){
         $q0 = 'INSERT into savings_accounts (acc_no, customer_type, transactions) values (?, ?, 0)';
         $stmt0 = $this->conn->prepare($q0);
         $stmt0->bind_param('ss', $acc_no, $customer_type);
-        return $stmt0->execute();
+        $result = $stmt0->execute();
       }
       elseif ($type === "fd"){
         $q0 = 'INSERT into fixed_deposits (acc_no, savings_acc_no, duration) values (?, ?, ?)';
         $stmt0 = $this->conn->prepare($q0);
         $stmt0->bind_param('ssi', $acc_no, $saving_acc_no, $duration);
-        return $stmt0->execute();
+        $result = $stmt0->execute();
       }
       ($this->conn)->commit();
+      return $result;
     } catch (Exception $e) {
       ($this->conn)->rollback();
       return false;
