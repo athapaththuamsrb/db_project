@@ -1,8 +1,8 @@
 <?php
 function fail()
 {
-    header('Location: addUser.php');
-    //echo json_encode(['status' => false]);
+    //header('Location: addUser.php');
+    echo json_encode(['success' => false]);
     die();
 }
 
@@ -37,7 +37,8 @@ function addUser(User $creator, array $allowed)
     require_once($_SERVER['DOCUMENT_ROOT'] . '/utils/dbcon.php');
     $dbcon = DatabaseConn::get_conn();
     if ($dbcon->createAccount($_POST['username'], $_POST['password'], $type, $creator->getUsername())){
-        header('Location: index.php');
+        //header('Location: index.php');
+        echo json_encode(['success' => true]);
         die();
     }else{
         fail();

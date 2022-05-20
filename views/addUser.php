@@ -132,7 +132,7 @@
             </div>
             <div class="col-1 item"></div>
             <div class="col-3 item">
-              <input type="text" name="username" id="username" required />
+              <input type="text" name="username" id="username" onkeypress="keyPressFn(event, 'password')" required />
             </div>
           </div>
           <div class="row">
@@ -141,7 +141,7 @@
             </div>
             <div class="col-1 item"></div>
             <div class="col-3 item">
-              <input type="password" name="password" id="password" required />
+              <input type="password" name="password" id="password" onkeypress="keyPressFn(event, 'cnfpassword')" required />
             </div>
           </div>
           <div class="row">
@@ -150,13 +150,13 @@
             </div>
             <div class="col-1 item"></div>
             <div class="col-3 item">
-              <input type="password" name="password" id="password" required />
+              <input type="password" id="cnfpassword" onkeypress="keyPressFn(event, '')" required />
             </div>
           </div>
           <div class="row">
             <div class="col-2"></div>
             <div class="col-4 item">
-              <button type="submit" class="btn btn-info" style="width: 150%">
+              <button id="submitBtn" type="submit" class="btn btn-info" style="width: 150%">
                 Add
               </button>
             </div>
@@ -179,6 +179,8 @@
     </div>
     <!-- Copyright -->
   </footer>
+  <script src="/scripts/common.js"></script>
+  <script src="/scripts/addUser.js"></script>
 </body>
 
 </html>
