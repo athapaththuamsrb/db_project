@@ -1,7 +1,6 @@
 <?php
 function fail()
 {
-    //header('Location: addUser.php');
     echo json_encode(['success' => false]);
     die();
 }
@@ -14,7 +13,7 @@ function addUser(User $creator, array $allowed)
         foreach ($allowed as $type) {
             $types[$type] = $TYPES[$type];
         }
-        include($_SERVER['DOCUMENT_ROOT'] . '/views/addUser.php');
+        @include($_SERVER['DOCUMENT_ROOT'] . '/views/addUser.php');
         die();
     }
 
@@ -36,7 +35,7 @@ function addUser(User $creator, array $allowed)
     
     require_once($_SERVER['DOCUMENT_ROOT'] . '/utils/dbcon.php');
     $dbcon = DatabaseConn::get_conn();
-    if ($dbcon->createAccount($_POST['username'], $_POST['password'], $type, $creator->getUsername())){
+    if ($dbcon->createUser($_POST['username'], $_POST['password'], $type, $creator->getUsername())){
         //header('Location: index.php');
         echo json_encode(['success' => true]);
         die();

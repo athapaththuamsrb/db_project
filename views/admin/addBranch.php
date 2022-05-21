@@ -8,7 +8,7 @@
   <link rel="stylesheet" type="text/css" href="/styles/all.css" />
   <link rel="stylesheet" href="/styles/bootstrap-5.1.3-dist/css/bootstrap.min.css" />
   <script src="/styles/bootstrap-5.1.3-dist/js/bootstrap.min.js"></script>
-  <title>Add User</title>
+  <title>Add Branch</title>
   <link rel="icon" type="image/x-icon" href="/images/favicon.ico" />
 
   <style>
@@ -78,10 +78,10 @@
 </head>
 
 <body>
-  <?php @include('navbar.php'); ?>
+  <?php @include(__DIR__ . '/../navbar.php'); ?>
 
   <div class="container box fade" style="background-color: #880808; color: white; border: #21081a solid 2px">
-    <h1>Add user</h1>
+    <h1>Add Branch</h1>
     <br />
     <div class="row">
       <div class="col-3"></div>
@@ -89,66 +89,38 @@
         <form method="post" class="form-row align-items-center">
           <div class="row">
             <div class="col-3 item">
-              <label for="type"> Type</label>
+              <label for="id">Branch ID</label>
             </div>
             <div class="col-1 item"></div>
             <div class="col-3 item">
-              <?php
-              if (isset($types) && is_array($types) && sizeof($types) > 0) {
-                if (sizeof($types) > 1) {
-              ?>
-                  <select name="type" id="type" style="width: 130%" lass="custom-select mr-sm-2" required>
-                    <option selected>Choose...</option>
-                    <?php
-                    foreach ($types as $type => $name) {
-                    ?>
-                      <option value="<?php echo $type; ?>"><?php echo $name; ?></option>
-                    <?php
-                    }
-                  } else if (sizeof($types) === 1) {
-                    ?>
-                    <select name="type" id="type" style="width: 130%" lass="custom-select mr-sm-2" required disabled>
-                      <?php
-                      foreach ($types as $type => $name) {
-                      ?>
-                        <option value="<?php echo $type; ?>" selected><?php echo $name; ?></option>
-                      <?php
-                      }
-                      ?>
-                    <?php
-                  }
-                    ?>
-                    </select>
-                  <?php
-                }
-                  ?>
+              <input type="text" name="id" id="id" onkeypress="keyPressFn(event, 'name')" required />
             </div>
           </div>
           <div class="row">
             <div class="col-3 item">
-              <label for="username"> Username</label>
+              <label for="name">Branch Name</label>
             </div>
             <div class="col-1 item"></div>
             <div class="col-3 item">
-              <input type="text" name="username" id="username" onkeypress="keyPressFn(event, 'password')" required />
+              <input type="text" name="name" id="name" onkeypress="keyPressFn(event, 'location')" required />
             </div>
           </div>
           <div class="row">
             <div class="col-3 item">
-              <label for="password">Password</label>
+              <label for="location">Location</label>
             </div>
             <div class="col-1 item"></div>
             <div class="col-3 item">
-              <input type="password" name="password" id="password" onkeypress="keyPressFn(event, 'cnfpassword')" required />
+              <input type="text" name="location" id="location" onkeypress="keyPressFn(event, 'manager')" required />
             </div>
           </div>
           <div class="row">
             <div class="col-3 item">
-              <label for="password">Conform password</label>
+              <label for="manager">Manager</label>
             </div>
             <div class="col-1 item"></div>
             <div class="col-3 item">
-              <input type="password" id="cnfpassword" onkeypress="keyPressFn(event, '')" required />
+              <input type="text" name="manager" id="manager" onkeypress="keyPressFn(event, '')" required />
             </div>
           </div>
           <div class="row">
@@ -166,9 +138,9 @@
     </div>
   </div>
 
-  <?php @include('footer.php'); ?>
+  <?php @include(__DIR__ . '/../footer.php'); ?>
   <script src="/scripts/common.js"></script>
-  <script src="/scripts/addUser.js"></script>
+  <script src="/scripts/admin/addBranch.js"></script>
 
 </body>
 
