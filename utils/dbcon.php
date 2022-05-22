@@ -54,7 +54,7 @@ class DatabaseConn
         $stmt->bind_param('s', $username);
         $stmt->execute();
         $stmt->store_result();
-        $rowcount = $stmt->num_rows;
+        $rowcount = $stmt->num_rows();
         if ($rowcount == 1) {
           $stmt->bind_result($pw_hash, $type);
           $stmt->fetch();
@@ -71,7 +71,7 @@ class DatabaseConn
     return null;
   }
 
-  public function createAccount(string $username, string $password, string $type, string $creator): bool
+  public function createUser(string $username, string $password, string $type, string $creator): bool
   {
     if (!($this->conn instanceof mysqli)) return false;
     if ($this->validate($username, $password)) {
@@ -89,6 +89,34 @@ class DatabaseConn
         ($this->conn)->rollback();
         return false;
       }
+    }
+    return false;
+  }
+
+  public function createBranch(string $branch_id, string $branch_name, string $location, string $manager, string $creator): bool
+  {
+    if (!($this->conn instanceof mysqli)) return false;
+    ($this->conn)->begin_transaction();
+    try {
+      $q1 = 'SELECT username FROM users WHERE username=? AND type="manager"';
+      $stmt1 = $this->conn->prepare($q1);
+      $stmt1->bind_param('s', $manager);
+      $stmt1->execute();
+      $stmt1->store_result();
+      if ($stmt1->num_rows() !== 1) {
+        ($this->conn)->rollback();
+        return false;
+      }
+      $q = 'INSERT INTO branch (id, name, location, manager_id, created_by) VALUES (?, ?, ?, ?, ?);';
+      $stmt = $this->conn->prepare($q);
+      $stmt->bind_param('sssss', $branch_id, $branch_name, $location, $manager, $creator);
+      $status = $stmt->execute();
+      $stmt->close();
+      ($this->conn)->commit();
+      return $status;
+    } catch (Exception $e) {
+      ($this->conn)->rollback();
+      return false;
     }
     return false;
   }
@@ -121,44 +149,45 @@ class DatabaseConn
     }
   }
 
-  public function transaction(string $from_acc, string $to_acc, string $init_id, Datetime $trans_time, float $amount){
+  public function transaction(string $from_acc, string $to_acc, string $init_id, Datetime $trans_time, float $amount)
+  {
 
     if (!($this->conn instanceof mysqli)) return false;
-    if ($from_acc != null){
+    if ($from_acc != null) {
       $balance = $this->check_balance($init_id, $from_acc);
-      if($balance == null || ($balance < $amount) ){
+      if ($balance == null || ($balance < $amount)) {
         return false;
       }
     }
     ($this->conn)->begin_transaction();
-    try{
+    try {
       if ($from_acc != null) {
         $q1 = 'UPDATE accounts SET balance = balance - ? WHERE acc_no = ?';
         $stmt = $this->conn->prepare($q1);
-        $stmt->bind_param('ds', $amount , $from_acc);
+        $stmt->bind_param('ds', $amount, $from_acc);
       }
       $q2 = 'UPDATE accounts SET balance = balance + ? WHERE acc_no = ?';
       $stmt = $this->conn->prepare($q2);
-      $stmt->bind_param('ds', $amount , $to_acc);
+      $stmt->bind_param('ds', $amount, $to_acc);
 
       $q3 = 'INSERT INTO transactions (from_acc, to_acc, init_id, trans_time, amount) VALUES (?, ?, ?, ?, ?)';
       $stmt = $this->conn->prepare($q3);
       $trans_time_str = $trans_time->format('Y-m-d');
-      $stmt->bind_param('ssssd', $amount , $to_acc, $init_id, $trans_time_str, $amount);
+      $stmt->bind_param('ssssd', $amount, $to_acc, $init_id, $trans_time_str, $amount);
 
       $status = $stmt->execute();
-        $stmt->close();
-        ($this->conn)->commit();
-        return $status;
-    }
-    catch(Exception $e){
+      $stmt->close();
+      ($this->conn)->commit();
+      return $status;
+    } catch (Exception $e) {
       ($this->conn)->rollback();
       return false;
     }
   }
 
-  public function get_accounts_list(string $owner_id){
-    
+  public function get_accounts_list(string $owner_id)
+  {
+
     if (!($this->conn instanceof mysqli)) return null;
     ($this->conn)->begin_transaction();
     try {
@@ -191,7 +220,7 @@ class DatabaseConn
       $arr = array();
       if ($acc_no == null) {
         return $arr;
-      } else if ($start_date == null && $end_date = null){
+      } else if ($start_date == null && $end_date = null) {
         $q0 = 'SELECT trans_id, from_acc, to_acc, init_id, trans_time, amount FROM Transactions WHERE owner_id = ? and (from_acc = ? or to_acc = ?)';
         $stmt = $this->conn->prepare($q0);
         $stmt->bind_param('sss', $owner_id, $acc_no, $acc_no);
@@ -234,34 +263,35 @@ class DatabaseConn
     }
   }
 
-  public function create_account(string $owner_id, string $acc_no, string $type, float $balance, string $branch_id, $saving_acc_no, $duration, $customer_type) {
+  public function create_account(string $owner_id, string $acc_no, string $type, float $balance, string $branch_id, $saving_acc_no, $duration, $customer_type)
+  {
     if (!($this->conn instanceof mysqli)) return null;
     ($this->conn)->begin_transaction();
     $common_query = 'INSERT into Accounts (owner_id, acc_no, type, balance, opened_date, branch_id) values (?, ?, ?, ?, ?, ?)';
-    $date_str = date('Y-m-d');
+    $date_str = gmdate('Y-m-d');
     $stmt = $this->conn->prepare($common_query);
     $stmt->bind_param('sssdss', $owner_id, $acc_no, $type, $balance, $date_str, $branch_id);
     $stmt->execute();
+    $result = false;
     try {
-      if ($type === "checking"){
+      if ($type === "checking") {
         $q0 = 'INSERT into checking_accounts (acc_no) values (?)';
         $stmt0 = $this->conn->prepare($q0);
         $stmt0->bind_param('s', $acc_no);
-        return $stmt0->execute();
-      }
-      elseif ($type === "savings"){
+        $result = $stmt0->execute();
+      } elseif ($type === "savings") {
         $q0 = 'INSERT into savings_accounts (acc_no, customer_type, transactions) values (?, ?, 0)';
         $stmt0 = $this->conn->prepare($q0);
         $stmt0->bind_param('ss', $acc_no, $customer_type);
-        return $stmt0->execute();
-      }
-      elseif ($type === "fd"){
+        $result = $stmt0->execute();
+      } elseif ($type === "fd") {
         $q0 = 'INSERT into fixed_deposits (acc_no, savings_acc_no, duration) values (?, ?, ?)';
         $stmt0 = $this->conn->prepare($q0);
         $stmt0->bind_param('ssi', $acc_no, $saving_acc_no, $duration);
-        return $stmt0->execute();
+        $result = $stmt0->execute();
       }
       ($this->conn)->commit();
+      return $result;
     } catch (Exception $e) {
       ($this->conn)->rollback();
       return false;
@@ -280,7 +310,7 @@ class DatabaseConn
   {
     $username = htmlspecialchars($username);
     $pw = htmlspecialchars($pw);
-    $username_pattern = '/^[\x21-\x7E]{5,12}$/';
+    $username_pattern = '/^[a-zA-Z0-9._]{5,12}$/';
     $pw_pattern = '/^[\x21-\x7E]{8,15}$/';
     //$pw_pattern = '/^\S*(?=\S{8,15})(?=\S*[a-z])(?=\S*[A-Z])(?=\S*[\d])(?=\S*[\W])\S*$/';
     if (preg_match($username_pattern, $username) && preg_match($pw_pattern, $pw)) {
