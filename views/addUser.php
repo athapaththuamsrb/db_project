@@ -8,7 +8,7 @@
   <link rel="stylesheet" type="text/css" href="/styles/all.css" />
   <link rel="stylesheet" href="/styles/bootstrap-5.1.3-dist/css/bootstrap.min.css" />
   <script src="/styles/bootstrap-5.1.3-dist/js/bootstrap.min.js"></script>
-  <title>Add user</title>
+  <title>Add User</title>
   <link rel="icon" type="image/x-icon" href="/images/favicon.ico" />
 
   <style>
@@ -78,10 +78,8 @@
 </head>
 
 <body>
-  <nav class="navbar navbar-light bg-warning">
-    <span class="navbar-brand mb-0 h1"><img src="/images/favicon-32x32.png" alt="logo" /></span>
-    <a href="index.php"><button type="button" class="btn btn-success">Dashboard</button></a>
-  </nav>
+  <?php @include('navbar.php'); ?>
+
   <div class="container box fade" style="background-color: #880808; color: white; border: #21081a solid 2px">
     <h1>Add user</h1>
     <br />
@@ -132,7 +130,7 @@
             </div>
             <div class="col-1 item"></div>
             <div class="col-3 item">
-              <input type="text" name="username" id="username" required />
+              <input type="text" name="username" id="username" onkeypress="keyPressFn(event, 'password')" required />
             </div>
           </div>
           <div class="row">
@@ -141,7 +139,7 @@
             </div>
             <div class="col-1 item"></div>
             <div class="col-3 item">
-              <input type="password" name="password" id="password" required />
+              <input type="password" name="password" id="password" onkeypress="keyPressFn(event, 'cnfpassword')" required />
             </div>
           </div>
           <div class="row">
@@ -150,13 +148,13 @@
             </div>
             <div class="col-1 item"></div>
             <div class="col-3 item">
-              <input type="password" name="password" id="password" required />
+              <input type="password" id="cnfpassword" onkeypress="keyPressFn(event, '')" required />
             </div>
           </div>
           <div class="row">
             <div class="col-2"></div>
             <div class="col-4 item">
-              <button type="submit" class="btn btn-info" style="width: 150%">
+              <button id="submitBtn" type="submit" class="btn btn-info" style="width: 150%">
                 Add
               </button>
             </div>
@@ -167,18 +165,11 @@
       <div class="col-2"></div>
     </div>
   </div>
-  <footer class="text-center text-white fixed-bottom row" style="background-color: #21081a">
-    <!-- Grid container -->
-    <div class="container p-3"></div>
-    <!-- Grid container -->
 
-    <!-- Copyright -->
-    <div class="text-center p-2" style="background-color: rgba(0, 0, 0, 0.2)">
-      © 2020 Copyright:
-      <a class="text-white" href="https://mdbootstrap.com/">MDBootstrap.com</a>
-    </div>
-    <!-- Copyright -->
-  </footer>
+  <?php @include('footer.php'); ?>
+  <script src="/scripts/common.js"></script>
+  <script src="/scripts/addUser.js"></script>
+
 </body>
 
 </html>

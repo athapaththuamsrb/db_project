@@ -1,2 +1,2 @@
 <?php
-include("views/index.php");
+@include("views/index.php");
