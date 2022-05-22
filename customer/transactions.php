@@ -3,6 +3,7 @@
 require_once('auth.php');
 $user = (new Authenticator())->checkAuth();
 $type = $user->getType();
+
 if ($type != "customer") {
     echo json_encode(null);
     die();
@@ -20,28 +21,38 @@ from account type
 if savings trans count
 check balance
 */
+include($_SERVER['DOCUMENT_ROOT'] . '/views/customer/transactions.php');
 
+print_r($_SERVER['REQUEST_METHOD']);
 if($_SERVER['REQUEST_METHOD'] === 'POST'){
-    
-    $error = null;
+
+    $error = false;
 
     if($dbconn->check_account($_POST["to_acc"]) === null){
         
         $error = "Invalid Account Number";
     }
-    if($dbconn->check_account($_POST["from_acc"]) === 'savings'){
+
+    else if($dbconn->check_account($_POST["from_acc"]) === 'savings' && $dbconn->check_transaction_count($_POST['from_acc']) >= 5){
         
-        $dbconn->check_transaction_count($_POST['from_acc']);
+        $error = "Transaction Limit Reached";
     }
-    $balance = $dbconn->check_balance($username, $_POST['from_acc']);
-    if($balance < $_POST['amount']){
+
+    else if( $dbconn->check_balance($username, $_POST['from_acc']) < $_POST['amount'] ){
 
         $error = "Insufficient Balance";
     }
 
-}  
+    if($error !== false){
+        print_r($error);
+    }
     
+}
+
+ 
 
 
-include($_SERVER['DOCUMENT_ROOT'] . '/views/customer/transactions.php');
+
+
+
 

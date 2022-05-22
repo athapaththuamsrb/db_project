@@ -204,14 +204,14 @@ class DatabaseConn
 
     if (!($this->conn instanceof mysqli)) return null;
 
-    $q1 = ' SELECT transactions FROM accounts WHERE acc_no = ? ';
+    $q1 = ' SELECT transactions FROM savings_accounts WHERE acc_no = ? ';
     $stmt = $this->conn->prepare($q1); 
     $stmt->bind_param('s', $acc_no);
     $stmt->execute();
     $result = $stmt->get_result();
     $count = $result->fetch_assoc();
 
-    print_r($count);
+    return $count['transactions'];
 
   }
 
