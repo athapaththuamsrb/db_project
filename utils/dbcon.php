@@ -122,44 +122,45 @@ class DatabaseConn
   }
 
 
-  public function transaction(string $from_acc, string $to_acc, string $init_id, Datetime $trans_time, float $amount){
+  public function transaction(string $from_acc, string $to_acc, string $init_id, Datetime $trans_time, float $amount)
+  {
 
     if (!($this->conn instanceof mysqli)) return false;
-    if ($from_acc != null){
+    if ($from_acc != null) {
       $balance = $this->check_balance($init_id, $from_acc);
-      if($balance == null || ($balance < $amount) ){
+      if ($balance == null || ($balance < $amount)) {
         return false;
       }
     }
     ($this->conn)->begin_transaction();
-    try{
+    try {
       if ($from_acc != null) {
         $q1 = 'UPDATE accounts SET balance = balance - ? WHERE acc_no = ?';
         $stmt = $this->conn->prepare($q1);
-        $stmt->bind_param('ds', $amount , $from_acc);
+        $stmt->bind_param('ds', $amount, $from_acc);
       }
       $q2 = 'UPDATE accounts SET balance = balance + ? WHERE acc_no = ?';
       $stmt = $this->conn->prepare($q2);
-      $stmt->bind_param('ds', $amount , $to_acc);
+      $stmt->bind_param('ds', $amount, $to_acc);
 
       $q3 = 'INSERT INTO transactions (from_acc, to_acc, init_id, trans_time, amount) VALUES (?, ?, ?, ?, ?)';
       $stmt = $this->conn->prepare($q3);
       $trans_time_str = $trans_time->format('Y-m-d');
-      $stmt->bind_param('ssssd', $amount , $to_acc, $init_id, $trans_time_str, $amount);
+      $stmt->bind_param('ssssd', $amount, $to_acc, $init_id, $trans_time_str, $amount);
 
       $status = $stmt->execute();
-        $stmt->close();
-        ($this->conn)->commit();
-        return $status;
-    }
-    catch(Exception $e){
+      $stmt->close();
+      ($this->conn)->commit();
+      return $status;
+    } catch (Exception $e) {
       ($this->conn)->rollback();
       return false;
     }
   }
 
-  public function get_accounts_list(string $owner_id){
-    
+  public function get_accounts_list(string $owner_id)
+  {
+
     if (!($this->conn instanceof mysqli)) return null;
 
     ($this->conn)->begin_transaction();
@@ -170,7 +171,7 @@ class DatabaseConn
       $stmt->bind_param('s', $owner_id);
       $stmt->execute();
       $result = $stmt->get_result();
-  
+
       while ($row = $result->fetch_assoc()) {
         $acc_id = $row['acc_no'];
         array_push($arr, $acc_id);
@@ -183,36 +184,36 @@ class DatabaseConn
     }
   }
 
-  public function check_account(String $acc_no){
+  public function check_account(String $acc_no)
+  {
 
     if (!($this->conn instanceof mysqli)) return null;
 
     $q1 = ' SELECT * FROM accounts WHERE acc_no = ? ';
-    $stmt = $this->conn->prepare($q1); 
+    $stmt = $this->conn->prepare($q1);
     $stmt->bind_param('s', $acc_no);
     $stmt->execute();
     $result = $stmt->get_result();
     $account = $result->fetch_assoc();
 
-    if($account == null) return null;
+    if ($account == null) return null;
     return $account['type'];
-
   }
 
 
-  public function check_transaction_count(String $acc_no){
+  public function check_transaction_count(String $acc_no)
+  {
 
     if (!($this->conn instanceof mysqli)) return null;
 
     $q1 = ' SELECT transactions FROM savings_accounts WHERE acc_no = ? ';
-    $stmt = $this->conn->prepare($q1); 
+    $stmt = $this->conn->prepare($q1);
     $stmt->bind_param('s', $acc_no);
     $stmt->execute();
     $result = $stmt->get_result();
     $count = $result->fetch_assoc();
 
     return $count['transactions'];
-
   }
 
   public function view_transaction_history(string $owner_id, string $acc_no, DateTime $start_date, DateTime $end_date)
@@ -223,7 +224,7 @@ class DatabaseConn
       $arr = array();
       if ($acc_no == null) {
         return $arr;
-      } else if ($start_date == null && $end_date = null){
+      } else if ($start_date == null && $end_date = null) {
         $q0 = 'SELECT trans_id, from_acc, to_acc, init_id, trans_time, amount FROM Transaction WHERE owner_id = ? and (from_acc = ? or to_acc = ?)';
         $stmt = $this->conn->prepare($q0);
         $stmt->bind_param('sss', $owner_id, $acc_no, $acc_no);
