@@ -1,0 +1,65 @@
+h1 {
+  text-align: center;
+}
+
+a {
+  margin-right: 2%;
+}
+
+span {
+  margin-left: 2%;
+}
+
+nav {
+  border-bottom: Maroon solid 2px;
+}
+
+.navbar {
+  position: relative;
+  animation-name: nav-header;
+  animation-duration: 1s;
+}
+
+@keyframes nav-header {
+  0% {
+    top: -40px;
+  }
+
+  100% {
+    left: 0px;
+    top: 0px;
+  }
+}
+
+.box {
+  margin-top: 2%;
+  margin-bottom: 2%;
+}
+
+.item {
+  padding: 2%;
+  margin: 1%;
+}
+
+.btn {
+  border: #21081a solid 2px;
+}
+
+.fade {
+  animation: fadeInAnimation ease 1s;
+  animation-iteration-count: 1;
+  animation-fill-mode: forwards;
+}
+
+@keyframes fadeInAnimation {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+select {
+  width: 135%;
+}
