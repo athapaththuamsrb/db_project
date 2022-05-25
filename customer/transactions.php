@@ -12,7 +12,8 @@ $dbconn = DatabaseConn::get_conn();
 $accounts = $dbconn->get_accounts_list($username);
 
 
-if($_SERVER['REQUEST_METHOD'] === 'POST'){
+if($_SERVER['REQUEST_METHOD'] === 'POST'  && isset($_POST['confirm']) ){
+
     
     $to_acc = $_POST['to_acc'];
     $from_acc = $_POST['from_acc'];
@@ -38,10 +39,12 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
     else{
 
         $status = $dbconn->transaction($from_acc, $to_acc, $username, $amount);
+        header("Location: ".$_SERVER['PHP_SELF']);
         
-
     }
 
+    
+    //unset($_POST);
     
     
 

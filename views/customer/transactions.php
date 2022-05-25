@@ -84,12 +84,10 @@
         <a href="/admin/index.php"><button type="button" class="btn btn-success">Dashboard</button></a>
     </nav>
     <?php
-        if($_SERVER['REQUEST_METHOD'] === 'POST'){
+        if($_SERVER['REQUEST_METHOD'] === 'POST' ){
+
             if($error !== false){
                 print_r($error);
-            }
-            elseif($status){
-                print_r('Transaction successful');
             }
         }
     ?>
@@ -137,7 +135,7 @@
                     <div class="row">
                         <div class="col-2"></div>
                         <div class="col-4 item">
-                            <button type="submit" class="btn btn-info" style="width: 150%">
+                            <button type="submit" name="confirm" class="btn btn-info" style="width: 150%">
                                 Confirm
                             </button>
                         </div>
