@@ -83,6 +83,16 @@
         <span class="navbar-brand mb-0 h1"><img src="/images/favicon-32x32.png" alt="logo" /></span>
         <a href="/admin/index.php"><button type="button" class="btn btn-success">Dashboard</button></a>
     </nav>
+    <?php
+        if($_SERVER['REQUEST_METHOD'] === 'POST'){
+            if($error !== false){
+                print_r($error);
+            }
+            elseif($status){
+                print_r('Transaction successful');
+            }
+        }
+    ?>
     <div class="container box fade" style="background-color: #880808; color: white; border: #21081a solid 2px">
         <h1>Tranfer Money</h1>
         <br />
