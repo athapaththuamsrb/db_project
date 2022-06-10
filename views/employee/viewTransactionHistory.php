@@ -29,7 +29,7 @@
                         </div>
                         <div class="col-1 item"></div>
                         <div class="col-3 item">
-                            <input type="text" name="owner_id" id="owner_id" required />
+                            <input type="text" name="owner_id" id="owner_id" onkeypress="keyPressFn(event, 'acc_no')" required />
                         </div>
                     </div>
                     <div class="row">
@@ -38,7 +38,7 @@
                         </div>
                         <div class="col-1 item"></div>
                         <div class="col-3 item">
-                            <input type="text" name="acc_no" id="acc_no" required />
+                            <input type="text" name="acc_no" id="acc_no" onkeypress="keyPressFn(event, 'start_date')" required />
                         </div>
                     </div>
                     <div class="row">
@@ -47,7 +47,7 @@
                         </div>
                         <div class="col-1 item"></div>
                         <div class="col-3 item">
-                            <input type="date" name="start_date" id="start_date" required />
+                            <input type="date" name="start_date" id="start_date" onkeypress="keyPressFn(event, 'end_date')" required />
                         </div>
                     </div>
                     <div class="row">
@@ -56,13 +56,13 @@
                         </div>
                         <div class="col-1 item"></div>
                         <div class="col-3 item">
-                            <input type="date" name="end_date" id="end_date" required />
+                            <input type="date" name="end_date" id="end_date" onkeypress="keyPressFn(event, '')" required />
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-2"></div>
                         <div class="col-4 item">
-                            <button type="submit" class="btn btn-info" style="width: 150%">
+                            <button id="submitBtn" type="submit" class="btn btn-info" style="width: 150%">
                                 View History
                             </button>
                         </div>

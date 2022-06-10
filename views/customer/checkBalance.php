@@ -50,7 +50,7 @@
 
     <?php @include(__DIR__ . '/../footer.php'); ?>
     <script src="/scripts/common.js"></script>
-    <script src="/scripts/employee/checkBalance.js"></script>
+    <script src="/scripts/customer/checkBalance.js"></script>
 
 </body>
 
