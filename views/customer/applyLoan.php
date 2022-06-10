@@ -78,10 +78,9 @@
 </head>
 
 <body>
-  <nav class="navbar navbar-light bg-warning">
-    <span class="navbar-brand mb-0 h1"><img src="/images/favicon-32x32.png" alt="logo" /></span>
-    <a href="/customer/index.php"><button type="button" class="btn btn-success">Dashboard</button></a>
-  </nav>
+  <?php
+  @include(__DIR__ . '/../navbar.php'); ?>
+
   <div class="container box fade" style="background-color: #880808; color: white; border: #21081a solid 2px">
     <h1>Transactions</h1>
     <br />
@@ -121,18 +120,7 @@
       <div class="col-2"></div>
     </div>
   </div>
-  <footer class="text-center text-white fixed-bottom row" style="background-color: #21081a">
-    <!-- Grid container -->
-    <div class="container p-3"></div>
-    <!-- Grid container -->
-
-    <!-- Copyright -->
-    <div class="text-center p-2" style="background-color: rgba(0, 0, 0, 0.2)">
-      © 2020 Copyright:
-      <a class="text-white" href="https://mdbootstrap.com/">MDBootstrap.com</a>
-    </div>
-    <!-- Copyright -->
-  </footer>
+  <?php @include(__DIR__ . '/../footer.php'); ?>
 </body>
 
 </html>

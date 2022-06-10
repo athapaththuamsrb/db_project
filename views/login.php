@@ -177,19 +177,19 @@
                     <br />
                     <br />
                     <div class="form-group">
-                        <label htmlFor="exampleInputEmail1">User Name</label>
-                        <input type="text" name="username" class=" form-control" placeholder="Enter User Name" />
+                        <label htmlFor="exampleInputUsername">User Name</label>
+                        <input id="username" type="text" name="username" class=" form-control" placeholder="Enter User Name" onkeypress="keyPressFn(event, 'password')" />
                     </div>
                     <br />
                     <div class=" form-group">
-                        <label htmlFor="exampleInputPassword1">Password</label>
-                        <input type="password" name="password" class="form-control" placeholder="Enter Password" />
+                        <label htmlFor="exampleInputPassword">Password</label>
+                        <input id="password" type="password" name="password" class="form-control" placeholder="Enter Password" onkeypress="keyPressFn(event, '')" />
                     </div>
                     <br />
                     <div class="row">
                         <div class="col-2"></div>
                         <div class="col-5">
-                            <button type="submit" class="btn btn-info" style="width: 150%; border: #21081a solid 2px">
+                            <button id="submitBtn" type="submit" class="btn btn-info" style="width: 150%; border: #21081a solid 2px">
                                 LOGIN
                             </button>
                         </div>
@@ -220,44 +220,9 @@
 
     </div>
     <br /><br />
-    <footer class="text-center text-white fixed-bottom row" style="background-color: #21081a;">
-        <!-- Grid container -->
-        <div class="container p-3"></div>
-        <!-- Grid container -->
+    <?php @include('footer.php'); ?>
 
-        <!-- Copyright -->
-        <div class="text-center p-2" style="background-color: rgba(0, 0, 0, 0.2);">
-            © 2020 Copyright:
-            <a class="text-white" href="https://mdbootstrap.com/">MDBootstrap.com</a>
-        </div>
-        <!-- Copyright -->
-    </footer>
-
-    <script type="text/javascript">
-        let slideIndex = 0;
-        showSlides();
-
-        function showSlides() {
-            let i;
-            let slides = document.getElementsByClassName("mySlides");
-            let dots = document.getElementsByClassName("dot");
-            for (i = 0; i < slides.length; i++) {
-                slides[i].style.display = "none";
-            }
-            slideIndex++;
-            if (slideIndex > slides.length) {
-                slideIndex = 1;
-            }
-            for (i = 0; i < dots.length; i++) {
-                dots[i].className = dots[i].className.replace(" active", "");
-            }
-            if (slides[slideIndex - 1] && dots[slideIndex - 1]) {
-                slides[slideIndex - 1].style.display = "block";
-                dots[slideIndex - 1].className += " active";
-            }
-            setTimeout(showSlides, 2000); // Change image every 2 seconds
-        }
-    </script>
+    <script src="/scripts/login.js"></script>
 </body>
 
 </html>

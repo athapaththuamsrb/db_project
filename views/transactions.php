@@ -78,28 +78,10 @@
 
 <body>
 
+    <?php @include('navbar.php'); ?>
 
-
-
-
-
-
-
-
-    <label for="amount">AMOUNT</label>
-    <input type="number" min="0.00" step="0.01" required />
-
-    <input type="submit" value="submit">
-
-
-
-    ///////////////////////////
-    <nav class="navbar navbar-light bg-warning">
-        <span class="navbar-brand mb-0 h1"><img src="/images/favicon-32x32.png" alt="logo" /></span>
-        <a href="/admin/index.php"><button type="button" class="btn btn-success">Dashboard</button></a>
-    </nav>
     <div class="container box fade" style="background-color: #880808; color: white; border: #21081a solid 2px">
-        <h1>Add user</h1>
+        <h1>Transaction</h1>
         <br />
         <div class="row">
             <div class="col-3"></div>
@@ -121,7 +103,7 @@
                         <div class="col-1 item"></div>
                         <div class="col-3 item">
                             <select name="from_acc" id="from_acc" required>
-                                <option value="" disabled selected>choose..</option>
+                                <option value="" disabled selected></option>
                                 <option value="#acc_id1">acc1_no</option>
                                 <option value="#acc_id2">acc2_no</option>
                                 <option value=#acc_id3">acc3_no</option>
@@ -143,7 +125,7 @@
                         <div class="col-2"></div>
                         <div class="col-4 item">
                             <button type="submit" class="btn btn-info" style="width: 150%">
-                                Transactions
+                                Confirm
                             </button>
                         </div>
                         <div class="col-1"></div>
@@ -153,21 +135,8 @@
             <div class="col-2"></div>
         </div>
     </div>
-    <footer class="text-center text-white fixed-bottom row" style="background-color: #21081a">
-        <!-- Grid container -->
-        <div class="container p-3"></div>
-        <!-- Grid container -->
 
-        <!-- Copyright -->
-        <div class="text-center p-2" style="background-color: rgba(0, 0, 0, 0.2)">
-            © 2020 Copyright:
-            <a class="text-white" href="https://mdbootstrap.com/">MDBootstrap.com</a>
-        </div>
-        <!-- Copyright -->
-    </footer>
-
-
-
+    <?php @include('footer.php'); ?>
 
 </body>
 

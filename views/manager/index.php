@@ -80,35 +80,22 @@
 </head>
 
 <body>
-  <nav class="navbar navbar-light bg-warning">
-    <span class="navbar-brand mb-0 h1"><img src="/images/favicon-32x32.png" alt="logo" /></span>
-    <a href="/login.php?logout=1"><button type="button" class="btn btn-success">Log out</button></a>
-  </nav>
+  <?php @include(__DIR__ . '/../dashboardNavbar.php'); ?>
+
   <div class="container">
     <h1>Manager Dashboard</h1>
     <br />
-    <!-- <div class="row item">
+    <div class="row item">
       <div class="col-4"></div>
       <div class="col-4">
-        <a href="/checkBalance.php"><button style="height: 10vh; width: 100%; font-size: larger" type="button" class="btn btn-primary fun-item fade">
-            Check Balance
+        <a href="addUser.php"><button style="height: 10vh; width: 100%; font-size: larger" type="button" class="btn btn-primary fun-item fade">
+            Add Employee
           </button></a>
       </div>
       <div class="col-4"></div>
-    </div> -->
-  </div>
-  <footer class="text-center text-white fixed-bottom row" style="background-color: #21081a">
-    <!-- Grid container -->
-    <div class="container p-3"></div>
-    <!-- Grid container -->
-
-    <!-- Copyright -->
-    <div class="text-center p-2" style="background-color: rgba(0, 0, 0, 0.2)">
-      © 2020 Copyright:
-      <a class="text-white" href="https://mdbootstrap.com/">MDBootstrap.com</a>
     </div>
-    <!-- Copyright -->
-  </footer>
+  </div>
+  <?php @include(__DIR__ . '/../footer.php'); ?>
 </body>
 
 </html>

@@ -8,7 +8,7 @@
   <link rel="stylesheet" type="text/css" href="/styles/all.css" />
   <link rel="stylesheet" href="/styles/bootstrap-5.1.3-dist/css/bootstrap.min.css" />
   <script src="/styles/bootstrap-5.1.3-dist/js/bootstrap.min.js"></script>
-  <title>Add user</title>
+  <title>Add Branch</title>
   <link rel="icon" type="image/x-icon" href="/images/favicon.ico" />
 
   <style>
@@ -78,12 +78,10 @@
 </head>
 
 <body>
-  <nav class="navbar navbar-light bg-warning">
-    <span class="navbar-brand mb-0 h1"><img src="/images/favicon-32x32.png" alt="logo" /></span>
-    <a href="/admin/index.php"><button type="button" class="btn btn-success">Dashboard</button></a>
-  </nav>
+  <?php @include(__DIR__ . '/../navbar.php'); ?>
+
   <div class="container box fade" style="background-color: #880808; color: white; border: #21081a solid 2px">
-    <h1>Add user</h1>
+    <h1>Add Branch</h1>
     <br />
     <div class="row">
       <div class="col-3"></div>
@@ -91,50 +89,44 @@
         <form method="post" class="form-row align-items-center">
           <div class="row">
             <div class="col-3 item">
-              <label for="type"> Type</label>
+              <label for="id">Branch ID</label>
             </div>
             <div class="col-1 item"></div>
             <div class="col-3 item">
-              <select name="type" id="type" style="width: 130%" lass="custom-select mr-sm-2" required>
-                <option selected>Choose...</option>
-                <option value="admin">Administrator</option>
-                <option value="manager">Manager</option>
-                <option value="employee">Employee</option>
-                <option value="customer">Customer</option>
-              </select>
+              <input type="text" name="id" id="id" onkeypress="keyPressFn(event, 'name')" required />
             </div>
           </div>
           <div class="row">
             <div class="col-3 item">
-              <label for="username"> Username</label>
+              <label for="name">Branch Name</label>
             </div>
             <div class="col-1 item"></div>
             <div class="col-3 item">
-              <input type="text" name="username" id="username" required />
+              <input type="text" name="name" id="name" onkeypress="keyPressFn(event, 'location')" required />
             </div>
           </div>
           <div class="row">
             <div class="col-3 item">
-              <label for="password">Password</label>
+              <label for="location">Location</label>
             </div>
             <div class="col-1 item"></div>
             <div class="col-3 item">
-              <input type="password" name="password" id="password" required />
+              <input type="text" name="location" id="location" onkeypress="keyPressFn(event, 'manager')" required />
             </div>
           </div>
           <div class="row">
             <div class="col-3 item">
-              <label for="password">Conform password</label>
+              <label for="manager">Manager</label>
             </div>
             <div class="col-1 item"></div>
             <div class="col-3 item">
-              <input type="password" name="password" id="password" required />
+              <input type="text" name="manager" id="manager" onkeypress="keyPressFn(event, '')" required />
             </div>
           </div>
           <div class="row">
             <div class="col-2"></div>
             <div class="col-4 item">
-              <button type="submit" class="btn btn-info" style="width: 150%">
+              <button id="submitBtn" type="submit" class="btn btn-info" style="width: 150%">
                 Add
               </button>
             </div>
@@ -145,18 +137,11 @@
       <div class="col-2"></div>
     </div>
   </div>
-  <footer class="text-center text-white fixed-bottom row" style="background-color: #21081a">
-    <!-- Grid container -->
-    <div class="container p-3"></div>
-    <!-- Grid container -->
 
-    <!-- Copyright -->
-    <div class="text-center p-2" style="background-color: rgba(0, 0, 0, 0.2)">
-      © 2020 Copyright:
-      <a class="text-white" href="https://mdbootstrap.com/">MDBootstrap.com</a>
-    </div>
-    <!-- Copyright -->
-  </footer>
+  <?php @include(__DIR__ . '/../footer.php'); ?>
+  <script src="/scripts/common.js"></script>
+  <script src="/scripts/admin/addBranch.js"></script>
+
 </body>
 
 </html>
