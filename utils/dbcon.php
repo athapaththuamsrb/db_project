@@ -123,11 +123,11 @@ class DatabaseConn
 
   public function check_balance(string $owner_id, string $acc_no)
   {
-    if (!($this->conn instanceof mysqli)) return null;
+    if (!($this->conn instanceof mysqli)) return -1;
     ($this->conn)->begin_transaction();
     try {
       if (!$owner_id || !$acc_no) {
-        return null;
+        return -1;
       } else {
         $q0 = 'SELECT balance FROM Accounts WHERE owner_id = ? and acc_no = ?';
         $stmt = $this->conn->prepare($q0);
@@ -136,7 +136,7 @@ class DatabaseConn
       $stmt->execute();
       $stmt->store_result();
       if ($stmt->num_rows() == 0) {
-        return null;
+        return -1;
       }
       $stmt->bind_result($balance);
       $stmt->fetch();
@@ -145,7 +145,7 @@ class DatabaseConn
       return $balance;
     } catch (Exception $e) {
       ($this->conn)->rollback();
-      return null;
+      return -1;
     }
   }
 
