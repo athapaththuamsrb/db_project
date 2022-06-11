@@ -60,6 +60,69 @@
                   ?>
             </div>
           </div>
+          <?php if ($creator->getType() === 'employee') { ?>
+            <div class="row">
+              <div class="col-3 item">
+                <label for="customer_type"> Customer Type</label>
+              </div>
+              <div class="col-1 item"></div>
+              <div class="col-3 item">
+                <select id="customer_type" style="width: 130%" lass="custom-select mr-sm-2" required>
+                  <option value="individual" selected>Individual</option>
+                  <option value="organization">Organization</option>
+                </select>
+              </div>
+            </div>
+            <div id="individual_div">
+              <div class="row">
+                <div class="col-3 item">
+                  <label for="dob"> Date of Birth</label>
+                </div>
+                <div class="col-1 item"></div>
+                <div class="col-3 item">
+                  <input type="date" id="dob" onkeypress="keyPressFn(event, 'name')" required />
+                </div>
+              </div>
+              <div id="under_18_div" class="row" hidden>
+                <div class="col-3 item">
+                  <label for="guardian_nic"> Guardian NIC</label>
+                </div>
+                <div class="col-1 item"></div>
+                <div class="col-3 item">
+                  <input type="text" id="guardian_nic" onkeypress="keyPressFn(event, 'name')" required />
+                </div>
+              </div>
+              <div id="over_18_div" class="row">
+                <div class="col-3 item">
+                  <label for="nic"> NIC</label>
+                </div>
+                <div class="col-1 item"></div>
+                <div class="col-3 item">
+                  <input type="text" id="nic" onkeypress="keyPressFn(event, 'name')" required />
+                </div>
+              </div>
+            </div>
+            <div id="organization_div" hidden>
+              <div class="row">
+                <div class="col-3 item">
+                  <label for="owner_nic"> Owner NIC</label>
+                </div>
+                <div class="col-1 item"></div>
+                <div class="col-3 item">
+                  <input type="text" id="owner_nic" onkeypress="keyPressFn(event, 'name')" required />
+                </div>
+              </div>
+            </div>
+          <?php } ?>
+          <div class="row">
+            <div class="col-3 item">
+              <label for="name"> Name</label>
+            </div>
+            <div class="col-1 item"></div>
+            <div class="col-3 item">
+              <input type="text" id="name" onkeypress="keyPressFn(event, 'username')" required />
+            </div>
+          </div>
           <div class="row">
             <div class="col-3 item">
               <label for="username"> Username</label>
