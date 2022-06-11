@@ -1,22 +1,22 @@
 <?php
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $data = array();
+    $response = ['success'=>false];
     if (!isset($_POST['owner_id']) || !$_POST['owner_id']) {
-        echo json_encode($data);
+        echo json_encode($response);
         die();
     }
     else {
         $owner_id = $_POST['owner_id'];
     }
     if (!isset($_POST['acc_no']) || !$_POST['acc_no']) {
-        echo json_encode($data);
+        echo json_encode($response);
         die();
     }
     else {
         $acc_no = $_POST['acc_no'];
     }
     if (strlen($acc_no) < 4 || strlen($acc_no) > 12) { // change according to relavent constraints
-        echo json_encode($data);
+        echo json_encode($response);
         die();
     }
     if (!isset($_POST['start_date']) || !$_POST['start_date']) {
@@ -36,7 +36,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($conn) {
         $data = $conn->view_transaction_history($owner_id, $acc_no, $start_date, $end_date);
     }
-    echo json_encode($data);
+    $response['success'] = true;
+    $response['data'] = $data;
+    echo json_encode($response);
     die();
 }
 @include_once($_SERVER['DOCUMENT_ROOT'] . '/views/employee/viewTransactionHistory.php');

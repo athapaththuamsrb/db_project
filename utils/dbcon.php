@@ -243,7 +243,7 @@ class DatabaseConn
     return $count['transactions'];
   }
 
-  public function view_transaction_history(string $owner_id, string $acc_no, DateTime $start_date, DateTime $end_date)
+  public function view_transaction_history(string $owner_id, string $acc_no, $start_date, $end_date)
   {
     if (!($this->conn instanceof mysqli)) return null;
     ($this->conn)->begin_transaction();
