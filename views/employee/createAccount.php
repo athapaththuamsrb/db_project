@@ -100,24 +100,9 @@
             </div>
           </div>
 
-          <div class="row">
-            <div class="col-4 item">
-              <label for="acc_no">Account No : </label>
-            </div>
-            <div class="col-1 item"></div>
-            <div class="col-3 item">
-              <input type="text" name="acc_no" id="acc_no" required />
-            </div>
-          </div>
-
-          <div class="row">
-            <div class="col-4 item">
-              <label for="type">Choose account name : </label>
-            </div>
-            <div class="col-1 item"></div>
-            <div class="col-3 item">
-              <select name="type" id="type" onchange="getType()">
-                <option value="savings" selected>Savings</option>
+        <label for="type">Choose an account type:</label>
+            <select name="type" id="type">
+                <option value="savings">Savings</option>
                 <option value="checking">Checking</option>
                 <option value="fd">Fixed Deposit</option>
               </select>
