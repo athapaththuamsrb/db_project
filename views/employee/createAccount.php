@@ -45,7 +45,7 @@
 
           <div class="row">
             <div class="col-4 item">
-              <label for="type">Choose account name : </label>
+              <label for="type">Choose account type : </label>
             </div>
             <div class="col-1 item"></div>
             <div class="col-3 item">
@@ -115,7 +115,7 @@
           <div class="row">
             <div class="col-2"></div>
             <div class="col-4 item">
-              <button type="submit" class="btn btn-info" style="width: 150%">
+              <button id="submitBtn" type="submit" class="btn btn-info" style="width: 150%">
                 Create Account
               </button>
             </div>
@@ -127,6 +127,8 @@
     </div>
   </div>
   <?php @include(__DIR__ . '/../footer.php'); ?>
+  <script src="/scripts/common.js"></script>
+  <script src="/scripts/employee/createAccount.js"></script>
 </body>
 <script type="text/javascript">
   function getType() {
