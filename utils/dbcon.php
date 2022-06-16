@@ -300,28 +300,32 @@ class DatabaseConn
     }
   }
 
-  public function create_account(string $owner_id, string $acc_no, string $type, float $balance, string $branch_id, $saving_acc_no, $duration, $customer_type)
+  public function create_account(string $owner_id, string $acc_no, string $acc_type, float $balance, string $branch_id, $saving_acc_no, $duration)
   {
     if (!($this->conn instanceof mysqli)) return null;
     ($this->conn)->begin_transaction();
     $common_query = 'INSERT into Accounts (owner_id, acc_no, type, balance, opened_date, branch_id) values (?, ?, ?, ?, ?, ?)';
     $date_str = gmdate('Y-m-d');
     $stmt = $this->conn->prepare($common_query);
-    $stmt->bind_param('sssdss', $owner_id, $acc_no, $type, $balance, $date_str, $branch_id);
+    $stmt->bind_param('sssdss', $owner_id, $acc_no, $acc_type, $balance, $date_str, $branch_id);
     $stmt->execute();
     $result = false;
     try {
-      if ($type === "checking") {
+      if ($acc_type === "checking") {
         $q0 = 'INSERT into checking_accounts (acc_no) values (?)';
         $stmt0 = $this->conn->prepare($q0);
         $stmt0->bind_param('s', $acc_no);
         $result = $stmt0->execute();
-      } elseif ($type === "savings") {
+      } elseif ($acc_type === "savings") {
+        $customer_type = $this->get_savings_acc_type($owner_id);
+        if ($customer_type === ""){
+          return false;
+        }
         $q0 = 'INSERT into savings_accounts (acc_no, customer_type, transactions) values (?, ?, 0)';
         $stmt0 = $this->conn->prepare($q0);
         $stmt0->bind_param('ss', $acc_no, $customer_type);
         $result = $stmt0->execute();
-      } elseif ($type === "fd") {
+      } elseif ($acc_type === "fd") {
         $q0 = 'INSERT into fixed_deposits (acc_no, savings_acc_no, duration) values (?, ?, ?)';
         $stmt0 = $this->conn->prepare($q0);
         $stmt0->bind_param('ssi', $acc_no, $saving_acc_no, $duration);
@@ -332,6 +336,44 @@ class DatabaseConn
     } catch (Exception $e) {
       ($this->conn)->rollback();
       return false;
+    }
+  }
+
+  public function get_savings_acc_type (string $owner_id) {
+    if (!($this->conn instanceof mysqli)) return null;
+    ($this->conn)->begin_transaction();
+    try {
+      $q = 'SELECT DOB FROM users WHERE owner_id=?';
+      $stmt = $this->conn->prepare($q);
+      $stmt->bind_param('s', $owner_id);
+      $stmt->execute();
+      $stmt->store_result();
+      if ($stmt->num_rows() == 0) {
+        return "";
+      }
+      $stmt->bind_result($dob);
+      $stmt->fetch();
+      $stmt->close();
+      ($this->conn)->commit();
+      $today = date("Y-m-d");
+      $diff = date_diff(date_create($dob), date_create($today));
+      $age = (int)$diff->format('%y');
+      if ($age <= 12) {
+        return "child";
+      }
+      else if ($age < 18) {
+        return "teen";
+      }
+      else if ($age < 60) {
+        return "adult";
+      }
+      else {
+        return "senior";
+      }
+      return "";
+    } catch (Exception $e) {
+      ($this->conn)->rollback();
+      return "";
     }
   }
 

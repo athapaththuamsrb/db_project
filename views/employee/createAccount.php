@@ -100,17 +100,7 @@
           </div>
 
           <!-- should be visible only if savings is selected for type -->
-          <div id="saving_visible">
-            <div class="row">
-              <div class="col-4 item">
-                <label for="savings_acc_no">Customer Type: </label>
-              </div>
-              <div class="col-1 item"></div>
-              <div class="col-3 item">
-                <input type="text" name="customer_type" id="customer_type" required />
-              </div>
-            </div>
-          </div>
+          
 
           <div class="row">
             <div class="col-2"></div>

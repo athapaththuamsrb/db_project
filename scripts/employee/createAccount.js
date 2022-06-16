@@ -9,7 +9,6 @@ let balanceInput = document.getElementById('balance');
 let branch_idInput = document.getElementById('branch_id');
 let durationInput = document.getElementById('duration');
 let savings_acc_noInput = document.getElementById('savings_acc_no');
-let customer_typeInput = document.getElementById('customer_type');
 let submitBtn = document.getElementById('submitBtn');
 
 function clear() {
@@ -20,7 +19,6 @@ function clear() {
     branch_idInput.value = '';
     durationInput.value = '';
     savings_acc_noInput.value = '';
-    customer_typeInput.value = '';
 }
 
 submitBtn.onclick = e => {
@@ -32,7 +30,6 @@ submitBtn.onclick = e => {
     let branch_id = branch_idInput.value;
     let duration = durationInput.value;
     let savings_acc_no = savings_acc_noInput.value;
-    let customer_type = customer_typeInput.value;
     
     /*
     if (!/^[0-9]{1,5}$/.test(owner_id)) {
@@ -59,7 +56,7 @@ submitBtn.onclick = e => {
                 showMessage('Sorry try again');
             }
         } catch (e) {
-            showMessage('Error occured');
+            showMessage(e);
         }
     });
     xhrSender.addField('owner_id', owner_id);
@@ -69,6 +66,5 @@ submitBtn.onclick = e => {
     xhrSender.addField('branch_id', branch_id);
     xhrSender.addField('duration', duration);
     xhrSender.addField('savings_acc_no', savings_acc_no);
-    xhrSender.addField('customer_type', customer_type);
     xhrSender.send();
 };
