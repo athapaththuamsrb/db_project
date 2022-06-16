@@ -17,7 +17,7 @@ function addUser(User $creator, array $allowed)
         die();
     }
 
-    if (!(isset($_POST['username']) && isset($_POST['password']) && $_POST['username'] && $_POST['password'])){
+    if (!(isset($_POST['name']) && isset($_POST['username']) && isset($_POST['password']) && $_POST['name'] && $_POST['username'] && $_POST['password'])){
         fail();
     }
     
@@ -33,9 +33,11 @@ function addUser(User $creator, array $allowed)
         fail();
     }
     
+    require_once($_SERVER['DOCUMENT_ROOT'] . '/utils/User.php');
     require_once($_SERVER['DOCUMENT_ROOT'] . '/utils/dbcon.php');
+    $newUser = User::createUser($_POST);
     $dbcon = DatabaseConn::get_conn();
-    if ($dbcon->createUser($_POST['username'], $_POST['password'], $type, $creator->getUsername())){
+    if ($dbcon->createUser($newUser, $_POST['password'], $creator->getUsername())){
         //header('Location: index.php');
         echo json_encode(['success' => true]);
         die();
