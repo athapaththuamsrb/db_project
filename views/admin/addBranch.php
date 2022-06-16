@@ -75,6 +75,10 @@
   </div>
 
   <?php @include(__DIR__ . '/../footer.php'); ?>
+  <?php
+  require_once($_SERVER['DOCUMENT_ROOT'] . '/views/modal.php');
+  addModal('Place Appointment');
+  ?>
   <script src="/scripts/common.js"></script>
   <script src="/scripts/admin/addBranch.js"></script>
 
