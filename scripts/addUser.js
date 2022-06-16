@@ -120,19 +120,19 @@ submitBtn.onclick = e => {
     let guardian_nic = null;
     let owner_nic = null;
     if (!/^[a-zA-Z.\s]{5,100}$/.test(name)) {
-        showMessage("Invalid name");
+        setModal(false, "Invalid name");
         return;
     }
     if (!/^[a-zA-Z0-9._]{5,12}$/.test(username)) {
-        showMessage("Invalid username");
+        setModal(false, "Invalid username");
         return;
     }
     if (!/^[\x21-\x7E]{8,15}$/.test(password)) {
-        showMessage("Invalid password");
+        setModal(false, "Invalid password");
         return;
     }
     if (password !== cnfpassword) {
-        showMessage("Passwords does not match");
+        setModal(false, "Passwords does not match");
         return;
     }
     if (customerTypeInput) {
@@ -143,23 +143,23 @@ submitBtn.onclick = e => {
         owner_nic = ownerNicInput.value;
         if (customer_type === 'individual') {
             if (!dob || !(dob instanceof Date)) {
-                showMessage("Invalid Date of Birth");
+                setModal(false, "Invalid Date of Birth");
                 return;
             }
             if (getAge(dob) >= 18) {
                 if (!nic || !/^[A-Z0-9]{10,14}$/.test(nic)) {
-                    showMessage("Invalid NIC");
+                    setModal(false, "Invalid NIC");
                     return;
                 }
             } else {
                 if (!guardian_nic || !/^[A-Z0-9]{10,14}$/.test(guardian_nic)) {
-                    showMessage("Invalid Guardian NIC");
+                    setModal(false, "Invalid Guardian NIC");
                     return;
                 }
             }
         } else {
             if (!owner_nic || !/^[A-Z0-9]{10,14}$/.test(owner_nic)) {
-                showMessage("Invalid Owner NIC");
+                setModal(false, "Invalid Owner NIC");
                 return;
             }
         }
@@ -169,17 +169,17 @@ submitBtn.onclick = e => {
             let data = JSON.parse(resp);
             if (data.hasOwnProperty('success') && data['success'] === true) {
                 clear();
-                showMessage('User added successfully');
+                setModal(true, 'User added successfully');
                 //setTimeout(e => { window.location = 'index.php'; }, 1000);
                 return;
             }
             if (data.hasOwnProperty('reason') && data['reason'] instanceof String) {
-                showMessage(data['reason']);
+                setModal(false, data['reason']);
             } else {
-                showMessage('Sorry try again');
+                setModal(false, 'Sorry try again');
             }
         } catch (e) {
-            showMessage('Error occured');
+            setModal(false, 'Error occured');
         }
     });
     xhrSender.addField('name', name);
