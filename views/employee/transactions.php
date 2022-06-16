@@ -100,6 +100,26 @@
                 <form method="post" class="form-row align-items-center" >
                     <div class="row">
                         <div class="col-3 item">
+                            <label for="to_acc">USER NAME</label>
+                        </div>
+                        <div class="col-1 item"></div>
+                        <div class="col-3 item">
+                            <input type="text" name="ownername" id="ownername" required>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-3 item">
+                            <label for="from_acc">FROM ACCOUNT</label>
+                        </div>
+                        <div class="col-1 item"></div>
+                        <div class="col-3 item">
+                            <input type="text" name="from_acc" id="from_acc" required>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-3 item">
                             <label for="to_acc">TO ACCOUNT</label>
                         </div>
                         <div class="col-1 item"></div>
@@ -107,21 +127,7 @@
                             <input type="text" name="to_acc" id="to_acc" required>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col-3 item">
-                            <label for="from acc">FROM ACCOUNT</label>
-                        </div>
-                        <div class="col-1 item"></div>
-                        <div class="col-3 item">
-                            <select name="from_acc" id="from_acc" required>
-                                <option value="" disabled selected></option>
-                                <?php foreach($accounts as $x){?>
-                                <option value="<?php echo $x?>"><?php echo $x ?></option>
-                                <?php } ?> 
 
-                            </select>
-                        </div>
-                    </div>
                     <div class="row">
                         <div class="col-3 item">
                             <label for="amount">AMOUNT</label>

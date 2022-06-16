@@ -149,36 +149,51 @@ class DatabaseConn
     }
   }
 
-  public function transaction(string $from_acc, string $to_acc, string $init_id, Datetime $trans_time, float $amount)
+  public function transaction(string $from_acc, string $to_acc, string $init_id, float $amount)
   {
 
     if (!($this->conn instanceof mysqli)) return false;
-    if ($from_acc != null) {
-      $balance = $this->check_balance($init_id, $from_acc);
-      if ($balance == null || ($balance < $amount)) {
-        return false;
-      }
-    }
+    
     ($this->conn)->begin_transaction();
+    ($this->conn)->autocommit(false);
     try {
       if ($from_acc != null) {
         $q1 = 'UPDATE accounts SET balance = balance - ? WHERE acc_no = ?';
-        $stmt = $this->conn->prepare($q1);
-        $stmt->bind_param('ds', $amount, $from_acc);
+        $stmt1 = $this->conn->prepare($q1);
+        $stmt1->bind_param('ds', $amount, $from_acc);
+        if(!($stmt1->execute())){
+          $this->conn->rollback();
+          return false;
+        }
       }
-      $q2 = 'UPDATE accounts SET balance = balance + ? WHERE acc_no = ?';
-      $stmt = $this->conn->prepare($q2);
-      $stmt->bind_param('ds', $amount, $to_acc);
+      if($this->check_account($_POST["from_acc"]) === 'savings'){
+        $q2 = 'UPDATE savings_accounts SET transactions = transactions + 1  WHERE acc_no = ?';
+        $stmt2 = $this->conn->prepare($q2);
+        $stmt2->bind_param('s', $from_acc);
+        if(!($stmt2->execute())){
+          $this->conn->rollback();
+          return false;
+        }
+      }
 
-      $q3 = 'INSERT INTO transactions (from_acc, to_acc, init_id, trans_time, amount) VALUES (?, ?, ?, ?, ?)';
-      $stmt = $this->conn->prepare($q3);
-      $trans_time_str = $trans_time->format('Y-m-d');
-      $stmt->bind_param('ssssd', $amount, $to_acc, $init_id, $trans_time_str, $amount);
+      $q3 = 'UPDATE accounts SET balance = balance + ? WHERE acc_no = ?';
+      $stmt3 = $this->conn->prepare($q3);
+      $stmt3->bind_param('ds', $amount, $to_acc);
+      if(!($stmt3->execute())){
+        $this->conn->rollback();
+        return false;
+      }
 
-      $status = $stmt->execute();
-      $stmt->close();
+      $q4 = 'INSERT INTO transactions (from_acc, to_acc, init_id, trans_time, amount) VALUES (?, ?, ?, ?, ?)';
+      $stmt4 = $this->conn->prepare($q4);
+      $date = date('Y-m-d H:i:s');
+      $stmt4->bind_param('ssssd', $from_acc, $to_acc, $init_id, $date, $amount);
+      if(!($stmt4->execute())){
+        $this->conn->rollback();
+        return false;
+      }
       ($this->conn)->commit();
-      return $status;
+      return true;
     } catch (Exception $e) {
       ($this->conn)->rollback();
       return false;
@@ -216,7 +231,7 @@ class DatabaseConn
 
     if (!($this->conn instanceof mysqli)) return null;
 
-    $q1 = ' SELECT * FROM accounts WHERE acc_no = ? ';
+    $q1 = 'SELECT * FROM accounts WHERE acc_no = ? ';
     $stmt = $this->conn->prepare($q1);
     $stmt->bind_param('s', $acc_no);
     $stmt->execute();
@@ -227,13 +242,44 @@ class DatabaseConn
     return $account['type'];
   }
 
+  public function get_account_ownership(string $acc_no, string $username)
+  {
+
+    $q1 = 'SELECT owner_id FROM accounts WHERE acc_no = ? ';
+    $stmt = $this->conn->prepare($q1);
+    $stmt->bind_param('s', $acc_no);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $account = $result->fetch_assoc();
+
+    if($account['owner_id'] === $username) return true;
+    return false;
+    
+  }
+
+  public function check_username(string $username)
+  {
+    if (!($this->conn instanceof mysqli)) return null;
+
+    $q1 = 'SELECT * FROM accounts WHERE owner_id = ? ';
+    $stmt = $this->conn->prepare($q1);
+    $stmt->bind_param('s', $username);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $name = $result->fetch_assoc();
+
+    if($name == null) return false;
+    return true;
+
+  }
+
 
   public function check_transaction_count(String $acc_no)
   {
 
     if (!($this->conn instanceof mysqli)) return null;
 
-    $q1 = ' SELECT transactions FROM savings_accounts WHERE acc_no = ? ';
+    $q1 = 'SELECT transactions FROM savings_accounts WHERE acc_no = ? ';
     $stmt = $this->conn->prepare($q1);
     $stmt->bind_param('s', $acc_no);
     $stmt->execute();
