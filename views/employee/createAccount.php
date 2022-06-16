@@ -100,7 +100,9 @@
           </div>
 
           <!-- should be visible only if savings is selected for type -->
-          
+          <div id="saving_visible">
+            
+          </div>
 
           <div class="row">
             <div class="col-2"></div>
@@ -124,7 +126,7 @@
   function getType() {
     const typeValue = document.getElementById("type").value;
     if (typeValue === "savings") {
-      document.getElementById("saving_visible").style.display = "block";
+      document.getElementById("saving_visible").style.display = "none";
       document.getElementById("fd_visible").style.display = "none";
     } else if (typeValue === "fd") {
       document.getElementById("saving_visible").style.display = "none";
