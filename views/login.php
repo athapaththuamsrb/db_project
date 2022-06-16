@@ -160,6 +160,16 @@
         .btn {
             border: #21081a solid 2px
         }
+
+        #invalid {
+            text-align: center;
+            left: 185px;
+        }
+
+        #invalid p {
+            background-color: rgb(255, 0, 0, 0.6);
+            border-radius: 10px;
+        }
     </style>
 </head>
 
@@ -176,6 +186,11 @@
                     <h2 style="text-align: center;">Login</h2>
                     <br />
                     <br />
+                    <div id="invalid">
+                        <?php if ($iserror) {
+                            echo "<p>{$error}</p>";
+                        } ?>
+                    </div>
                     <div class="form-group">
                         <label htmlFor="exampleInputUsername">User Name</label>
                         <input id="username" type="text" name="username" class=" form-control" placeholder="Enter User Name" onkeypress="keyPressFn(event, 'password')" />
