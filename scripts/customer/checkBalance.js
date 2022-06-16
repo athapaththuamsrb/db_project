@@ -39,16 +39,16 @@ submitBtn.onclick = e => {
             let data = JSON.parse(resp);
             if (data.hasOwnProperty('success') && data['success'] === true && data.hasOwnProperty('balance')) {
                 clear();
-                showMessage(data['balance']);
+                setModal(true, data['balance']);
                 return;
             }
             if (data.hasOwnProperty('reason') && data['reason'] instanceof String) {
-                showMessage(data['reason']);
+                setModal(false, data['reason']);
             } else {
-                showMessage('Sorry try again');
+                setModal(false, 'Sorry try again');
             }
         } catch (e) {
-            showMessage('Error occured');
+            setModal(false, 'Error occured');
         }
     });
     xhrSender.addField('acc_no', acc_no);

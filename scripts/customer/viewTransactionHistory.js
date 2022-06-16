@@ -50,16 +50,16 @@ submitBtn.onclick = e => {
             if (data.hasOwnProperty('success') && data['success'] === true && data.hasOwnProperty('data')) {
                 clear();
                 let msg = JSON.stringify(data['data']);
-                showMessage(msg); // display this on the page in a proper way rather than an alert
+                setModal(true ,msg); // display this on the page in a proper way rather than an alert
                 return;
             }
             if (data.hasOwnProperty('reason') && data['reason'] instanceof String) {
-                showMessage(data['reason']);
+                setModal(false, data['reason']);
             } else {
-                showMessage('Sorry try again');
+                setModal(false, 'Sorry try again');
             }
         } catch (e) {
-            showMessage('Error occured');
+            setModal(false, 'Error occured');
         }
     });
     xhrSender.addField('acc_no', acc_no);
