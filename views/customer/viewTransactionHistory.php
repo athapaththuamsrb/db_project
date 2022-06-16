@@ -68,7 +68,7 @@
     <?php @include(__DIR__ . '/../footer.php'); ?>
     <?php
     require_once($_SERVER['DOCUMENT_ROOT'] . '/views/modal.php');
-    addModal('Place Appointment');
+    addModal('View Transaction History');
     ?>
     <script src="/scripts/common.js"></script>
     <script src="/scripts/customer/viewTransactionHistory.js"></script>
