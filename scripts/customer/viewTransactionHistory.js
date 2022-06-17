@@ -49,8 +49,18 @@ submitBtn.onclick = e => {
             let data = JSON.parse(resp);
             if (data.hasOwnProperty('success') && data['success'] === true && data.hasOwnProperty('data')) {
                 clear();
-                let msg = JSON.stringify(data['data']);
-                setModal(true ,msg); // display this on the page in a proper way rather than an alert
+                let transactionData = data['data'];
+                if (!transactionData || transactionData.length==0) return;
+                let tblBuilder = new TableBuilder();
+                tblBuilder.addHeadingRow('Transaction ID', 'From', 'To', 'Amount', 'Time');
+                transactionData.forEach(transaction => {
+                    tblBuilder.addRow(transaction['trans_id'], transaction['from_acc'], transaction['to_acc'], transaction['amount'], transaction['trans_time']);
+                });
+                let table = tblBuilder.build();
+                tblDiv.appendChild(table);
+                tblDiv.hidden = false;
+                // let msg = JSON.stringify(data['data']);
+                // showMessage(msg); // display this on the page in a proper way rather than an alert
                 return;
             }
             if (data.hasOwnProperty('reason') && data['reason'] instanceof String) {
