@@ -146,7 +146,7 @@ class DatabaseConn
             $stmt2->bind_param('ss', $username, $ownerNIC);
             $status &= $stmt2->execute();
             $stmt2->close();
-          }else if ($user instanceof Individual) {
+          } else if ($user instanceof Individual) {
             $q2 = 'INSERT INTO individual (username, NIC, DoB) VALUES (?, ?, ?);';
             $stmt2 = $this->conn->prepare($q2);
             $NIC = $user->getNIC();
@@ -172,12 +172,18 @@ class DatabaseConn
     if (!($this->conn instanceof mysqli)) return false;
     ($this->conn)->begin_transaction();
     try {
-      $q1 = 'SELECT username FROM users WHERE username=? AND type="manager"';
+      $q1 = 'SELECT COUNT(username) FROM users WHERE username=? AND type="manager"';
       $stmt1 = $this->conn->prepare($q1);
       $stmt1->bind_param('s', $manager);
       $stmt1->execute();
       $stmt1->store_result();
       if ($stmt1->num_rows() !== 1) {
+        ($this->conn)->rollback();
+        return false;
+      }
+      $stmt1->bind_result($manager_cnt);
+      $stmt1->fetch();
+      if ($manager_cnt !== 1) {
         ($this->conn)->rollback();
         return false;
       }
@@ -227,7 +233,7 @@ class DatabaseConn
   {
 
     if (!($this->conn instanceof mysqli)) return false;
-    
+
     ($this->conn)->begin_transaction();
     ($this->conn)->autocommit(false);
     try {
@@ -235,16 +241,16 @@ class DatabaseConn
         $q1 = 'UPDATE accounts SET balance = balance - ? WHERE acc_no = ?';
         $stmt1 = $this->conn->prepare($q1);
         $stmt1->bind_param('ds', $amount, $from_acc);
-        if(!($stmt1->execute())){
+        if (!($stmt1->execute())) {
           $this->conn->rollback();
           return false;
         }
       }
-      if($this->check_account($_POST["from_acc"]) === 'savings'){
+      if ($this->check_account($_POST["from_acc"]) === 'savings') {
         $q2 = 'UPDATE savings_accounts SET transactions = transactions + 1  WHERE acc_no = ?';
         $stmt2 = $this->conn->prepare($q2);
         $stmt2->bind_param('s', $from_acc);
-        if(!($stmt2->execute())){
+        if (!($stmt2->execute())) {
           $this->conn->rollback();
           return false;
         }
@@ -253,7 +259,7 @@ class DatabaseConn
       $q3 = 'UPDATE accounts SET balance = balance + ? WHERE acc_no = ?';
       $stmt3 = $this->conn->prepare($q3);
       $stmt3->bind_param('ds', $amount, $to_acc);
-      if(!($stmt3->execute())){
+      if (!($stmt3->execute())) {
         $this->conn->rollback();
         return false;
       }
@@ -262,7 +268,7 @@ class DatabaseConn
       $stmt4 = $this->conn->prepare($q4);
       $date = date('Y-m-d H:i:s');
       $stmt4->bind_param('ssssd', $from_acc, $to_acc, $init_id, $date, $amount);
-      if(!($stmt4->execute())){
+      if (!($stmt4->execute())) {
         $this->conn->rollback();
         return false;
       }
@@ -326,9 +332,8 @@ class DatabaseConn
     $result = $stmt->get_result();
     $account = $result->fetch_assoc();
 
-    if($account['owner_id'] === $username) return true;
+    if ($account['owner_id'] === $username) return true;
     return false;
-    
   }
 
   public function check_username(string $username)
@@ -342,9 +347,8 @@ class DatabaseConn
     $result = $stmt->get_result();
     $name = $result->fetch_assoc();
 
-    if($name == null) return false;
+    if ($name == null) return false;
     return true;
-
   }
 
 
@@ -438,7 +442,7 @@ class DatabaseConn
         $result = $stmt0->execute();
       } elseif ($acc_type === "savings") {
         $customer_type = $this->get_savings_acc_type($owner_id);
-        if ($customer_type === ""){
+        if ($customer_type === "") {
           return false;
         }
         $q0 = 'INSERT into savings_accounts (acc_no, customer_type, transactions) values (?, ?, 0)';
@@ -459,7 +463,8 @@ class DatabaseConn
     }
   }
 
-  public function get_savings_acc_type (string $owner_id) {
+  public function get_savings_acc_type(string $owner_id)
+  {
     if (!($this->conn instanceof mysqli)) return null;
     ($this->conn)->begin_transaction();
     try {
@@ -474,7 +479,7 @@ class DatabaseConn
       $stmt0->bind_result($type);
       $stmt0->fetch();
       $stmt0->close();
-      if ($type == "organization"){
+      if ($type == "organization") {
         return "adult";
       }
       $q = 'SELECT DOB FROM individual WHERE username=?';
@@ -494,14 +499,11 @@ class DatabaseConn
       $age = (int)$diff->format('%y');
       if ($age <= 12) {
         return "child";
-      }
-      else if ($age < 18) {
+      } else if ($age < 18) {
         return "teen";
-      }
-      else if ($age < 60) {
+      } else if ($age < 60) {
         return "adult";
-      }
-      else {
+      } else {
         return "senior";
       }
       return "";

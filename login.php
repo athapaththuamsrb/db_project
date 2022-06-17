@@ -45,7 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             die();
         }
     }
-    header('Location: /login.php');
+    header('Location: /login.php?invalid');
     die();
 } else {
     @include($_SERVER['DOCUMENT_ROOT'] . '/views/login.php');

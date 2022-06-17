@@ -10,9 +10,15 @@ let passwdInput = document.getElementById('password');
 let cnfpasswdInput = document.getElementById('cnfpassword');
 let submitBtn = document.getElementById('submitBtn');
 
-function keyPressFn(e, nxt) {
+const nic_pattern = /^[A-Z0-9]{10,14}$/;
+
+function keyPressFn(e, pattern, nxt) {
     if (e.keyCode === 13) {
         e.preventDefault();
+        let value = e.target.value.trim();
+        if (!pattern.test(value)) {
+            return;
+        }
         if (nxt == '') {
             document.getElementById("submitBtn").click();
         } else {
@@ -69,11 +75,12 @@ if (customerTypeInput) {
     customerTypeInput.onchange = () => {
         let cusType = customerTypeInput.value;
         if (cusType === 'individual') {
-            document.getElementById('individual_div').hidden = false;
             document.getElementById('organization_div').hidden = true;
+            document.getElementById('individual_div').hidden = false;
         } else {
             document.getElementById('individual_div').hidden = true;
             document.getElementById('organization_div').hidden = false;
+            ownerNicInput.focus();
         }
     };
 }
@@ -84,17 +91,13 @@ if (dobInput) {
         let dob = getDOB();
         let age = getAge(dob);
         if (age >= 18) {
-            document.getElementById('over_18_div').hidden = false;
             document.getElementById('under_18_div').hidden = true;
+            document.getElementById('over_18_div').hidden = false;
         } else {
             document.getElementById('over_18_div').hidden = true;
             document.getElementById('under_18_div').hidden = false;
         }
     }
-}
-
-function showMessage(msg) {
-    alert(msg); // TODO: modify this to show in a better way
 }
 
 function clear() {
@@ -108,12 +111,20 @@ function clear() {
     if (ownerNicInput) ownerNicInput.value = '';
 }
 
+if (nicInput) nicInput.onkeydown = event => { keyPressFn(event, nic_pattern, 'name'); };
+if (guardianNicInput) guardianNicInput.onkeydown = event => { keyPressFn(event, nic_pattern, 'name'); };
+if (ownerNicInput) ownerNicInput.onkeydown = event => { keyPressFn(event, nic_pattern, 'name'); };
+nameInput.onkeydown = event => { keyPressFn(event, /^[a-zA-Z.\s]{5,100}$/, 'username'); };
+unameInput.onkeydown = event => { keyPressFn(event, username_pattern, 'password'); };
+passwdInput.onkeydown = event => { keyPressFn(event, password_pattern, 'cnfpassword'); };
+cnfpasswdInput.onkeydown = event => { keyPressFn(event, password_pattern, ''); };
+
 submitBtn.onclick = e => {
     e.preventDefault();
-    let name = nameInput.value;
-    let username = unameInput.value;
-    let password = passwdInput.value;
-    let cnfpassword = cnfpasswdInput.value;
+    let name = nameInput.value.trim();
+    let username = unameInput.value.trim();
+    let password = passwdInput.value.trim();
+    let cnfpassword = cnfpasswdInput.value.trim();
     let customer_type = null;
     let dob = null;
     let nic = null;
@@ -123,11 +134,11 @@ submitBtn.onclick = e => {
         setModal(false, "Invalid name");
         return;
     }
-    if (!/^[a-zA-Z0-9._]{5,12}$/.test(username)) {
+    if (!username_pattern.test(username)) {
         setModal(false, "Invalid username");
         return;
     }
-    if (!/^[\x21-\x7E]{8,15}$/.test(password)) {
+    if (!password_pattern.test(password)) {
         setModal(false, "Invalid password");
         return;
     }
@@ -138,27 +149,27 @@ submitBtn.onclick = e => {
     if (customerTypeInput) {
         customer_type = customerTypeInput.value;
         dob = getDOB();
-        nic = nicInput.value;
-        guardian_nic = guardianNicInput.value;
-        owner_nic = ownerNicInput.value;
+        nic = nicInput.value.trim();
+        guardian_nic = guardianNicInput.value.trim();
+        owner_nic = ownerNicInput.value.trim();
         if (customer_type === 'individual') {
             if (!dob || !(dob instanceof Date)) {
                 setModal(false, "Invalid Date of Birth");
                 return;
             }
             if (getAge(dob) >= 18) {
-                if (!nic || !/^[A-Z0-9]{10,14}$/.test(nic)) {
+                if (!nic || !nic_pattern.test(nic)) {
                     setModal(false, "Invalid NIC");
                     return;
                 }
             } else {
-                if (!guardian_nic || !/^[A-Z0-9]{10,14}$/.test(guardian_nic)) {
+                if (!guardian_nic || !nic_pattern.test(guardian_nic)) {
                     setModal(false, "Invalid Guardian NIC");
                     return;
                 }
             }
         } else {
-            if (!owner_nic || !/^[A-Z0-9]{10,14}$/.test(owner_nic)) {
+            if (!owner_nic || !nic_pattern.test(owner_nic)) {
                 setModal(false, "Invalid Owner NIC");
                 return;
             }

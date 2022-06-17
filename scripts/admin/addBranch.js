@@ -1,6 +1,10 @@
-function keyPressFn(e, nxt) {
+function keyPressFn(e, pattern, nxt) {
     if (e.keyCode === 13) {
         e.preventDefault();
+        let value = e.target.value.trim();
+        if (!pattern.test(value)) {
+            return;
+        }
         if (nxt == '') {
             document.getElementById("submitBtn").click();
         } else {
@@ -12,15 +16,16 @@ function keyPressFn(e, nxt) {
     }
 }
 
-function showMessage(msg) {
-    alert(msg); // TODO: modify this to show in a better way
-}
-
 let idInput = document.getElementById('id');
 let nameInput = document.getElementById('name');
 let locInput = document.getElementById('location');
 let managerInput = document.getElementById('manager');
 let submitBtn = document.getElementById('submitBtn');
+
+idInput.onkeydown = event => { keyPressFn(event, /^[0-9]{1,5}$/, 'name'); };
+nameInput.onkeydown = event => { keyPressFn(event, /^[a-zA-Z0-9.\-\x20]{2,30}$/, 'location'); };
+locInput.onkeydown = event => { keyPressFn(event, /^[a-zA-Z0-9.,\/\-\x20]{2,50}$/, 'manager'); };
+managerInput.onkeydown = event => { keyPressFn(event, username_pattern, ''); };
 
 function clear() {
     idInput.value = '';
@@ -36,19 +41,19 @@ submitBtn.onclick = e => {
     let location = locInput.value;
     let manager = managerInput.value;
     if (!/^[0-9]{1,5}$/.test(id)) {
-        showMessage("Invalid branch ID");
+        setModal(false, "Invalid branch ID");
         return;
     }
     if (!/^[a-zA-Z0-9.\-\x20]{2,30}$/.test(name)) {
-        showMessage("Invalid branch name");
+        setModal(false, "Invalid branch name");
         return;
     }
     if (!/^[a-zA-Z0-9.,\/\-\x20]{2,50}$/.test(location)) {
-        showMessage("Invalid location");
+        setModal(false, "Invalid location");
         return;
     }
-    if (!/^[a-zA-Z0-9._]{5,12}$/.test(manager)) {
-        showMessage("Invalid manager id");
+    if (!username_pattern.test(manager)) {
+        setModal(false, "Invalid manager id");
         return;
     }
     let xhrSender = new XHRSender(document.URL, resp => {
@@ -56,16 +61,16 @@ submitBtn.onclick = e => {
             let data = JSON.parse(resp);
             if (data.hasOwnProperty('success') && data['success'] === true) {
                 clear();
-                showMessage('Branch created successfully');
+                setModal(true, 'Branch created successfully');
                 return;
             }
             if (data.hasOwnProperty('reason') && data['reason'] instanceof String) {
-                showMessage(data['reason']);
+                setModal(false, data['reason']);
             } else {
-                showMessage('Sorry try again');
+                setModal(false, 'Sorry try again');
             }
         } catch (e) {
-            showMessage('Error occured');
+            setModal(false, 'Error occured');
         }
     });
     xhrSender.addField('id', id);

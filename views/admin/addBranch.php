@@ -29,7 +29,7 @@
               </div>
               <div class="col-1 item"></div>
               <div class="col-3 item">
-                <input type="text" name="id" id="id" onkeypress="keyPressFn(event, 'name')" required />
+                <input type="text" name="id" id="id" required />
               </div>
             </div>
             <div class="row">
@@ -38,7 +38,7 @@
               </div>
               <div class="col-1 item"></div>
               <div class="col-3 item">
-                <input type="text" name="name" id="name" onkeypress="keyPressFn(event, 'location')" required />
+                <input type="text" name="name" id="name" required />
               </div>
             </div>
             <div class="row">
@@ -47,7 +47,7 @@
               </div>
               <div class="col-1 item"></div>
               <div class="col-3 item">
-                <input type="text" name="location" id="location" onkeypress="keyPressFn(event, 'manager')" required />
+                <input type="text" name="location" id="location" required />
               </div>
             </div>
             <div class="row">
@@ -56,7 +56,7 @@
               </div>
               <div class="col-1 item"></div>
               <div class="col-3 item">
-                <input type="text" name="manager" id="manager" onkeypress="keyPressFn(event, '')" required />
+                <input type="text" name="manager" id="manager" required />
               </div>
             </div>
             <div class="row">
