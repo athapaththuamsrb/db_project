@@ -33,70 +33,85 @@
             </div>
           </div>
 
-          <label for="type">Choose an account type:</label>
-          <select name="type" id="type">
-            <option value="savings">Savings</option>
-            <option value="checking">Checking</option>
-            <option value="fd">Fixed Deposit</option>
-          </select>
-      </div>
-    </div>
+          <div class="row">
+            <div class="col-4 item">
+              <label for="acc_no">Account No : </label>
+            </div>
+            <div class="col-1 item"></div>
+            <div class="col-3 item">
+              <input type="text" name="acc_no" id="acc_no" required />
+            </div>
+          </div>
 
-    <div class="row">
-      <div class="col-4 item">
-        <label for="balance"> Balance : </label>
-      </div>
-      <div class="col-1 item"></div>
-      <div class="col-3 item">
-        <input type="text" name="balance" id="balance" required />
-      </div>
-    </div>
+          <div class="row">
+            <div class="col-4 item">
+              <label for="type">Choose account type : </label>
+            </div>
+            <div class="col-1 item"></div>
+            <div class="col-3 item">
+              <select name="type" id="type" onchange="getType()">
+                <option value="savings" selected>Savings</option>
+                <option value="checking">Checking</option>
+                <option value="fd">Fixed Deposit</option>
+              </select>
+            </div>
+          </div>
 
-    <div class="row">
-      <div class="col-4 item">
-        <label for="branch_id">Branch ID : </label>
-      </div>
-      <div class="col-1 item"></div>
-      <div class="col-3 item">
-        <input type="text" name="branch_id" id="branch_id" required />
-      </div>
-    </div>
+          <div class="row">
+            <div class="col-4 item">
+              <label for="balance"> Balance : </label>
+            </div>
+            <div class="col-1 item"></div>
+            <div class="col-3 item">
+              <input type="text" name="balance" id="balance" required />
+            </div>
+          </div>
 
-    <!-- should be visible only if fd is selected for type -->
-    <div id="fd_visible" style="display: none">
-      <div class="row">
-        <div class="col-4 item">
-          <label for="duration">Duration: </label>
-        </div>
-        <div class="col-1 item"></div>
-        <div class="col-3 item">
-          <input type="text" name="duration" id="duration" required />
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-4 item">
-          <label for="savings_acc_no">Savings Account Number: </label>
-        </div>
-        <div class="col-1 item"></div>
-        <div class="col-3 item">
-          <input type="text" name="savings_acc_no" id="savings_acc_no" required />
-        </div>
-      </div>
-    </div>
+          <div class="row">
+            <div class="col-4 item">
+              <label for="branch_id">Branch ID : </label>
+            </div>
+            <div class="col-1 item"></div>
+            <div class="col-3 item">
+              <input type="text" name="branch_id" id="branch_id" required />
+            </div>
+          </div>
 
-    <div class="row">
+          <!-- should be visible only if fd is selected for type -->
+          <div id="fd_visible" style="display: none">
+            <div class="row">
+              <div class="col-4 item">
+                <label for="duration">Duration: </label>
+              </div>
+              <div class="col-1 item"></div>
+              <div class="col-3 item">
+                <input type="text" name="duration" id="duration" required />
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-4 item">
+                <label for="savings_acc_no">Savings Account Number: </label>
+              </div>
+              <div class="col-1 item"></div>
+              <div class="col-3 item">
+                <input type="text" name="savings_acc_no" id="savings_acc_no" required />
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-2"></div>
+            <div class="col-4 item">
+              <button id="submitBtn" type="submit" class="btn btn-info" style="width: 150%">
+                Create Account
+              </button>
+            </div>
+            <div class="col-1"></div>
+          </div>
+        </form>
+      </div>
       <div class="col-2"></div>
-      <div class="col-4 item">
-        <button id="submitBtn" type="submit" class="btn btn-info" style="width: 150%">
-          Create Account
-        </button>
-      </div>
-      <div class="col-1"></div>
     </div>
-    </form>
-  </div>
-  <div class="col-2"></div>
-  </div>
   </div>
   <?php @include(__DIR__ . '/../footer.php'); ?>
   <?php
