@@ -18,7 +18,11 @@
 
     <div style="height: 120vh;">
         <div class="container box fade" style="background-color: #880808; color: white; border: #21081a solid 2px">
+<<<<<<< HEAD
             <h1>View Transaction History</h1>
+=======
+            <h1>Check Your Account Balance</h1>
+>>>>>>> thevindu
             <br />
             <div class="row">
                 <div class="col-3"></div>

@@ -15,7 +15,7 @@
 
 <body>
   <?php @include('navbar.php'); ?>
-  <div style="height: 110vh;">
+  <div style="height: 140vh;">
     <div class="container box fade" style="background-color: #880808; color: white; border: #21081a solid 2px">
       <h1>Add user</h1>
       <br />
@@ -80,7 +80,7 @@
                   </div>
                   <div class="col-1 item"></div>
                   <div class="col-3 item">
-                    <input type="date" id="dob" onkeypress="keyPressFn(event, 'name')" required />
+                    <input type="date" id="dob" required />
                   </div>
                 </div>
                 <div id="under_18_div" class="row" hidden>
@@ -89,7 +89,7 @@
                   </div>
                   <div class="col-1 item"></div>
                   <div class="col-3 item">
-                    <input type="text" id="guardian_nic" onkeypress="keyPressFn(event, 'name')" required />
+                    <input type="text" id="guardian_nic" required />
                   </div>
                 </div>
                 <div id="over_18_div" class="row">
@@ -98,7 +98,7 @@
                   </div>
                   <div class="col-1 item"></div>
                   <div class="col-3 item">
-                    <input type="text" id="nic" onkeypress="keyPressFn(event, 'name')" required />
+                    <input type="text" id="nic" required />
                   </div>
                 </div>
               </div>
@@ -109,7 +109,7 @@
                   </div>
                   <div class="col-1 item"></div>
                   <div class="col-3 item">
-                    <input type="text" id="owner_nic" onkeypress="keyPressFn(event, 'name')" required />
+                    <input type="text" id="owner_nic" required />
                   </div>
                 </div>
               </div>
@@ -120,7 +120,7 @@
               </div>
               <div class="col-1 item"></div>
               <div class="col-3 item">
-                <input type="text" id="name" onkeypress="keyPressFn(event, 'username')" required />
+                <input type="text" id="name" required />
               </div>
             </div>
             <div class="row">
@@ -129,7 +129,7 @@
               </div>
               <div class="col-1 item"></div>
               <div class="col-3 item">
-                <input type="text" name="username" id="username" onkeypress="keyPressFn(event, 'password')" required />
+                <input type="text" name="username" id="username" required />
               </div>
             </div>
             <div class="row">
@@ -138,7 +138,7 @@
               </div>
               <div class="col-1 item"></div>
               <div class="col-3 item">
-                <input type="password" name="password" id="password" onkeypress="keyPressFn(event, 'cnfpassword')" required />
+                <input type="password" name="password" id="password" required />
               </div>
             </div>
             <div class="row">
@@ -147,7 +147,7 @@
               </div>
               <div class="col-1 item"></div>
               <div class="col-3 item">
-                <input type="password" id="cnfpassword" onkeypress="keyPressFn(event, '')" required />
+                <input type="password" id="cnfpassword" required />
               </div>
             </div>
             <div class="row">

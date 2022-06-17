@@ -58,4 +58,11 @@ class TableBuilder {
     build() {
         return this.table;
     }
+<<<<<<< HEAD
 }
+=======
+}
+
+const username_pattern = /^[a-zA-Z0-9._]{5,12}$/;
+const password_pattern = /^[\x21-\x7E]{8,15}$/;
+>>>>>>> thevindu
