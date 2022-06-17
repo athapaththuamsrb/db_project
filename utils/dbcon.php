@@ -433,33 +433,36 @@ class DatabaseConn
     $stmt = $this->conn->prepare($common_query);
     $stmt->bind_param('sssdss', $owner_id, $acc_no, $acc_type, $balance, $date_str, $branch_id);
     $stmt->execute();
-    $result = false;
+    $response = ['result'=>false, 'created_acc'=>''];
     try {
       if ($acc_type === "checking") {
         $q0 = 'INSERT into checking_accounts (acc_no) values (?)';
         $stmt0 = $this->conn->prepare($q0);
         $stmt0->bind_param('s', $acc_no);
-        $result = $stmt0->execute();
+        $response['result'] = $stmt0->execute();
+        $response['created_acc'] = "Checking";
       } elseif ($acc_type === "savings") {
         $customer_type = $this->get_savings_acc_type($owner_id);
         if ($customer_type === "") {
-          return false;
+          return $response;
         }
         $q0 = 'INSERT into savings_accounts (acc_no, customer_type, transactions) values (?, ?, 0)';
         $stmt0 = $this->conn->prepare($q0);
         $stmt0->bind_param('ss', $acc_no, $customer_type);
-        $result = $stmt0->execute();
+        $response['result'] = $stmt0->execute();
+        $response['created_acc'] = 'Savings - '.$customer_type;
       } elseif ($acc_type === "fd") {
         $q0 = 'INSERT into fixed_deposits (acc_no, savings_acc_no, duration) values (?, ?, ?)';
         $stmt0 = $this->conn->prepare($q0);
         $stmt0->bind_param('ssi', $acc_no, $saving_acc_no, $duration);
-        $result = $stmt0->execute();
+        $response['result'] = $stmt0->execute();
+        $response['created_acc'] = 'Fixed Deposit';
       }
       ($this->conn)->commit();
-      return $result;
+      return $response;
     } catch (Exception $e) {
       ($this->conn)->rollback();
-      return false;
+      return $response;
     }
   }
 

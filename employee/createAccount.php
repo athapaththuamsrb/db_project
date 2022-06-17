@@ -23,8 +23,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     elseif ($_POST['acc_type'] === "savings" || $_POST['acc_type'] === "checking") {
         $result = $conn->create_account($owner_id, $acc_no, $acc_type, $balance, $branch_id, "", "");
     }
-    $response['success'] = $result;
+    $response['success'] = $result['result'];
     $response['reason'] = "error4";
+    $response['created_acc'] = $result['created_acc'];
     echo json_encode($response);
     die();
 }

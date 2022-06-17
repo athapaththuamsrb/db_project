@@ -54,7 +54,9 @@ submitBtn.onclick = (e) => {
       let data = JSON.parse(resp);
       if (data.hasOwnProperty("success") && data["success"] === true) {
         clear();
-        setModal(true, "Account successfully created!");
+        let created_acc = data['created_acc'];
+        let msg = created_acc.concat(" ", "account successfully created!")
+        setModal(true, msg);
         return;
       }
       if (
