@@ -463,7 +463,21 @@ class DatabaseConn
     if (!($this->conn instanceof mysqli)) return null;
     ($this->conn)->begin_transaction();
     try {
-      $q = 'SELECT DOB FROM users WHERE owner_id=?';
+      $q0 = 'SELECT type FROM customer WHERE username=?';
+      $stmt0 = $this->conn->prepare($q0);
+      $stmt0->bind_param('s', $owner_id);
+      $stmt0->execute();
+      $stmt0->store_result();
+      if ($stmt0->num_rows() == 0) {
+        return "";
+      }
+      $stmt0->bind_result($type);
+      $stmt0->fetch();
+      $stmt0->close();
+      if ($type == "organization"){
+        return "adult";
+      }
+      $q = 'SELECT DOB FROM individual WHERE username=?';
       $stmt = $this->conn->prepare($q);
       $stmt->bind_param('s', $owner_id);
       $stmt->execute();

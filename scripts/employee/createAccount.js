@@ -54,18 +54,18 @@ submitBtn.onclick = (e) => {
       let data = JSON.parse(resp);
       if (data.hasOwnProperty("success") && data["success"] === true) {
         clear();
-        showMessage("Account successfully created!");
+        setModal(true, "Account successfully created!");
         return;
       }
       if (
         data.hasOwnProperty("reason") /*&& data['reason'] instanceof String*/
       ) {
-        showMessage(data["reason"]);
+        setModal(false, data["reason"]);
       } else {
-        showMessage("Sorry try again");
+        setModal(false,"Sorry try again");
       }
     } catch (e) {
-      showMessage(e);
+        setModal(false, "Error occured");
     }
   });
   xhrSender.addField("owner_id", owner_id);
