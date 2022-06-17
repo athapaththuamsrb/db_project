@@ -47,6 +47,14 @@ submitBtn.onclick = e => {
     let xhrSender = new XHRSender(document.URL, resp => {
         try {
             let data = JSON.parse(resp);
+            let tblDiv = document.getElementById('table');
+            if (!tblDiv) return;
+            let chld = tblDiv.lastElementChild;
+            while (chld) {
+                tblDiv.removeChild(chld);
+                chld = tblDiv.lastElementChild;
+            }
+            tblDiv.hidden = true;
             if (data.hasOwnProperty('success') && data['success'] === true && data.hasOwnProperty('data')) {
                 clear();
                 let transactionData = data['data'];
@@ -69,7 +77,7 @@ submitBtn.onclick = e => {
                 setModal(false, 'Sorry try again');
             }
         } catch (e) {
-            setModal(false, 'Error occured');
+            setModal(false, 'Error occurred');
         }
     });
     xhrSender.addField('acc_no', acc_no);

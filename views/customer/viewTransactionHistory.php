@@ -75,7 +75,7 @@
     addModal('View Transaction History');
     ?>
     <script src="/scripts/common.js"></script>
-    <script src="/scripts/employee/viewTransactionHistory.js"></script>
+    <script src="/scripts/customer/viewTransactionHistory.js"></script>
 
 </body>
 
