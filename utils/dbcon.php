@@ -49,18 +49,64 @@ class DatabaseConn
     if (!($this->conn instanceof mysqli)) return null;
     if ($this->validate($username, $password)) {
       try {
-        $q = 'SELECT password, type FROM users WHERE username=?';
+        $q = 'SELECT password, type, name FROM users WHERE username=?';
         $stmt = $this->conn->prepare($q);
         $stmt->bind_param('s', $username);
         $stmt->execute();
         $stmt->store_result();
         $rowcount = $stmt->num_rows();
         if ($rowcount == 1) {
-          $stmt->bind_result($pw_hash, $type);
+          $stmt->bind_result($pw_hash, $type, $name);
           $stmt->fetch();
           if (password_verify($password, $pw_hash)) {
             $stmt->close();
-            return new User($username, $type);
+            $details = [];
+            $details['username'] = $username;
+            $details['type'] = $type;
+            $details['name'] = $name;
+            if ($type === 'customer') {
+              $q1 = 'SELECT type FROM customer WHERE username=?';
+              $stmt1 = $this->conn->prepare($q1);
+              $stmt1->bind_param('s', $username);
+              $stmt1->execute();
+              $stmt1->store_result();
+              $rowcount = $stmt1->num_rows();
+              if ($rowcount == 1) {
+                $stmt1->bind_result($customer_type);
+                $stmt1->fetch();
+                $details['customer_type'] = $customer_type;
+                if ($customer_type === 'individual') {
+                  $q2 = 'SELECT NIC, DoB FROM individual WHERE username=?';
+                  $stmt2 = $this->conn->prepare($q2);
+                  $stmt2->bind_param('s', $username);
+                  $stmt2->execute();
+                  $stmt2->store_result();
+                  $rowcount = $stmt2->num_rows();
+                  if ($rowcount == 1) {
+                    $stmt2->bind_result($NIC, $dob);
+                    $stmt2->fetch();
+                    $details['NIC'] = $NIC;
+                    $details['DoB'] = $dob;
+                  }
+                  $stmt2->close();
+                } else if ($customer_type === 'organization') {
+                  $q2 = 'SELECT owner_NIC FROM organization WHERE username=?';
+                  $stmt2 = $this->conn->prepare($q2);
+                  $stmt2->bind_param('s', $username);
+                  $stmt2->execute();
+                  $stmt2->store_result();
+                  $rowcount = $stmt2->num_rows();
+                  if ($rowcount == 1) {
+                    $stmt2->bind_result($ownerNIC);
+                    $stmt2->fetch();
+                    $details['ownerNIC'] = $ownerNIC;
+                  }
+                  $stmt2->close();
+                }
+              }
+              $stmt1->close();
+            }
+            return User::createUser($details);
           }
         }
         $stmt->close();
@@ -71,19 +117,47 @@ class DatabaseConn
     return null;
   }
 
-  public function createUser(string $username, string $password, string $type, string $creator): bool
+  public function createUser(User $user, string $password, string $creator): bool
   {
     if (!($this->conn instanceof mysqli)) return false;
+    $name = $user->getName();
+    $username = $user->getUsername();
+    $type = $user->getType();
     if ($this->validate($username, $password)) {
       ($this->conn)->begin_transaction();
       try {
         $hashed = password_hash($password, PASSWORD_BCRYPT, ['cost' => 12]);
-        $q = 'INSERT INTO users (username, password, type, created_by) VALUES (?, ?, ?, ?);';
+        $q = 'INSERT INTO users (username, password, type, name, created_by) VALUES (?, ?, ?, ?, ?);';
         $stmt = $this->conn->prepare($q);
-        $stmt->bind_param('ssss', $username, $hashed, $type, $creator);
+        $stmt->bind_param('sssss', $username, $hashed, $type, $name, $creator);
         $status = $stmt->execute();
         $stmt->close();
-        ($this->conn)->commit();
+        if ($status && $user instanceof Customer) {
+          $customer_type = $user->getCustomerType();
+          $q1 = 'INSERT INTO customer (username, type) VALUES (?, ?);';
+          $stmt1 = $this->conn->prepare($q1);
+          $stmt1->bind_param('ss', $username, $customer_type);
+          $status &= $stmt1->execute();
+          $stmt1->close();
+          if ($user instanceof Organization) {
+            $q2 = 'INSERT INTO organization (username, owner_NIC) VALUES (?, ?);';
+            $stmt2 = $this->conn->prepare($q2);
+            $ownerNIC = $user->getOwnerNIC();
+            $stmt2->bind_param('ss', $username, $ownerNIC);
+            $status &= $stmt2->execute();
+            $stmt2->close();
+          } else if ($user instanceof Individual) {
+            $q2 = 'INSERT INTO individual (username, NIC, DoB) VALUES (?, ?, ?);';
+            $stmt2 = $this->conn->prepare($q2);
+            $NIC = $user->getNIC();
+            $dobStr = $user->getDoB()->format('D M d Y \G\M\TO');
+            $stmt2->bind_param('sss', $username, $NIC, $dobStr);
+            $status &= $stmt2->execute();
+            $stmt2->close();
+          }
+        }
+        if ($status) ($this->conn)->commit();
+        else ($this->conn)->rollback();
         return $status;
       } catch (Exception $e) {
         ($this->conn)->rollback();
@@ -98,12 +172,18 @@ class DatabaseConn
     if (!($this->conn instanceof mysqli)) return false;
     ($this->conn)->begin_transaction();
     try {
-      $q1 = 'SELECT username FROM users WHERE username=? AND type="manager"';
+      $q1 = 'SELECT COUNT(username) FROM users WHERE username=? AND type="manager"';
       $stmt1 = $this->conn->prepare($q1);
       $stmt1->bind_param('s', $manager);
       $stmt1->execute();
       $stmt1->store_result();
       if ($stmt1->num_rows() !== 1) {
+        ($this->conn)->rollback();
+        return false;
+      }
+      $stmt1->bind_result($manager_cnt);
+      $stmt1->fetch();
+      if ($manager_cnt !== 1) {
         ($this->conn)->rollback();
         return false;
       }
@@ -180,11 +260,11 @@ class DatabaseConn
 
   public function check_balance(string $owner_id, string $acc_no)
   {
-    if (!($this->conn instanceof mysqli)) return null;
+    if (!($this->conn instanceof mysqli)) return -1;
     ($this->conn)->begin_transaction();
     try {
       if (!$owner_id || !$acc_no) {
-        return null;
+        return -1;
       } else {
         $q0 = 'SELECT balance FROM Accounts WHERE owner_id = ? and acc_no = ?';
         $stmt = $this->conn->prepare($q0);
@@ -193,7 +273,7 @@ class DatabaseConn
       $stmt->execute();
       $stmt->store_result();
       if ($stmt->num_rows() == 0) {
-        return null;
+        return -1;
       }
       $stmt->bind_result($balance);
       $stmt->fetch();
@@ -202,39 +282,54 @@ class DatabaseConn
       return $balance;
     } catch (Exception $e) {
       ($this->conn)->rollback();
-      return null;
+      return -1;
     }
   }
 
-  public function transaction(string $from_acc, string $to_acc, string $init_id, Datetime $trans_time, float $amount)
+  public function transaction(string $from_acc, string $to_acc, string $init_id, float $amount)
   {
     if (!($this->conn instanceof mysqli)) return false;
-    if ($from_acc != null) {
-      $balance = $this->check_balance($init_id, $from_acc);
-      if ($balance == null || ($balance < $amount)) {
-        return false;
-      }
-    }
+
     ($this->conn)->begin_transaction();
+    ($this->conn)->autocommit(false);
     try {
       if ($from_acc != null) {
         $q1 = 'UPDATE accounts SET balance = balance - ? WHERE acc_no = ?';
-        $stmt = $this->conn->prepare($q1);
-        $stmt->bind_param('ds', $amount, $from_acc);
+        $stmt1 = $this->conn->prepare($q1);
+        $stmt1->bind_param('ds', $amount, $from_acc);
+        if (!($stmt1->execute())) {
+          $this->conn->rollback();
+          return false;
+        }
       }
-      $q2 = 'UPDATE accounts SET balance = balance + ? WHERE acc_no = ?';
-      $stmt = $this->conn->prepare($q2);
-      $stmt->bind_param('ds', $amount, $to_acc);
+      if ($this->check_account($_POST["from_acc"]) === 'savings') {
+        $q2 = 'UPDATE savings_accounts SET transactions = transactions + 1  WHERE acc_no = ?';
+        $stmt2 = $this->conn->prepare($q2);
+        $stmt2->bind_param('s', $from_acc);
+        if (!($stmt2->execute())) {
+          $this->conn->rollback();
+          return false;
+        }
+      }
 
-      $q3 = 'INSERT INTO transactions (from_acc, to_acc, init_id, trans_time, amount) VALUES (?, ?, ?, ?, ?)';
-      $stmt = $this->conn->prepare($q3);
-      $trans_time_str = $trans_time->format('Y-m-d');
-      $stmt->bind_param('ssssd', $amount, $to_acc, $init_id, $trans_time_str, $amount);
+      $q3 = 'UPDATE accounts SET balance = balance + ? WHERE acc_no = ?';
+      $stmt3 = $this->conn->prepare($q3);
+      $stmt3->bind_param('ds', $amount, $to_acc);
+      if (!($stmt3->execute())) {
+        $this->conn->rollback();
+        return false;
+      }
 
-      $status = $stmt->execute();
-      $stmt->close();
+      $q4 = 'INSERT INTO transactions (from_acc, to_acc, init_id, trans_time, amount) VALUES (?, ?, ?, ?, ?)';
+      $stmt4 = $this->conn->prepare($q4);
+      $date = date('Y-m-d H:i:s');
+      $stmt4->bind_param('ssssd', $from_acc, $to_acc, $init_id, $date, $amount);
+      if (!($stmt4->execute())) {
+        $this->conn->rollback();
+        return false;
+      }
       ($this->conn)->commit();
-      return $status;
+      return true;
     } catch (Exception $e) {
       ($this->conn)->rollback();
       return false;
@@ -272,7 +367,7 @@ class DatabaseConn
 
     if (!($this->conn instanceof mysqli)) return null;
 
-    $q1 = ' SELECT * FROM accounts WHERE acc_no = ? ';
+    $q1 = 'SELECT * FROM accounts WHERE acc_no = ? ';
     $stmt = $this->conn->prepare($q1);
     $stmt->bind_param('s', $acc_no);
     $stmt->execute();
@@ -283,13 +378,42 @@ class DatabaseConn
     return $account['type'];
   }
 
+  public function get_account_ownership(string $acc_no, string $username)
+  {
+
+    $q1 = 'SELECT owner_id FROM accounts WHERE acc_no = ? ';
+    $stmt = $this->conn->prepare($q1);
+    $stmt->bind_param('s', $acc_no);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $account = $result->fetch_assoc();
+
+    if ($account['owner_id'] === $username) return true;
+    return false;
+  }
+
+  public function check_username(string $username)
+  {
+    if (!($this->conn instanceof mysqli)) return null;
+
+    $q1 = 'SELECT * FROM accounts WHERE owner_id = ? ';
+    $stmt = $this->conn->prepare($q1);
+    $stmt->bind_param('s', $username);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $name = $result->fetch_assoc();
+
+    if ($name == null) return false;
+    return true;
+  }
+
 
   public function check_transaction_count(String $acc_no)
   {
 
     if (!($this->conn instanceof mysqli)) return null;
 
-    $q1 = ' SELECT transactions FROM savings_accounts WHERE acc_no = ? ';
+    $q1 = 'SELECT transactions FROM savings_accounts WHERE acc_no = ? ';
     $stmt = $this->conn->prepare($q1);
     $stmt->bind_param('s', $acc_no);
     $stmt->execute();
@@ -299,7 +423,7 @@ class DatabaseConn
     return $count['transactions'];
   }
 
-  public function view_transaction_history(string $owner_id, string $acc_no, DateTime $start_date, DateTime $end_date)
+  public function view_transaction_history(string $owner_id, string $acc_no, $start_date, $end_date)
   {
     if (!($this->conn instanceof mysqli)) return null;
     ($this->conn)->begin_transaction();
@@ -356,38 +480,95 @@ class DatabaseConn
     }
   }
 
-  public function create_account(string $owner_id, string $acc_no, string $type, float $balance, string $branch_id, $saving_acc_no, $duration, $customer_type)
+  public function create_account(string $owner_id, string $acc_no, string $acc_type, float $balance, string $branch_id, $saving_acc_no, $duration)
   {
     if (!($this->conn instanceof mysqli)) return null;
     ($this->conn)->begin_transaction();
     $common_query = 'INSERT into Accounts (owner_id, acc_no, type, balance, opened_date, branch_id) values (?, ?, ?, ?, ?, ?)';
     $date_str = gmdate('Y-m-d');
     $stmt = $this->conn->prepare($common_query);
-    $stmt->bind_param('sssdss', $owner_id, $acc_no, $type, $balance, $date_str, $branch_id);
+    $stmt->bind_param('sssdss', $owner_id, $acc_no, $acc_type, $balance, $date_str, $branch_id);
     $stmt->execute();
-    $result = false;
+    $response = ['result'=>false, 'created_acc'=>''];
     try {
-      if ($type === "checking") {
+      if ($acc_type === "checking") {
         $q0 = 'INSERT into checking_accounts (acc_no) values (?)';
         $stmt0 = $this->conn->prepare($q0);
         $stmt0->bind_param('s', $acc_no);
-        $result = $stmt0->execute();
-      } elseif ($type === "savings") {
+        $response['result'] = $stmt0->execute();
+        $response['created_acc'] = "Checking";
+      } elseif ($acc_type === "savings") {
+        $customer_type = $this->get_savings_acc_type($owner_id);
+        if ($customer_type === "") {
+          return $response;
+        }
         $q0 = 'INSERT into savings_accounts (acc_no, customer_type, transactions) values (?, ?, 0)';
         $stmt0 = $this->conn->prepare($q0);
         $stmt0->bind_param('ss', $acc_no, $customer_type);
-        $result = $stmt0->execute();
-      } elseif ($type === "fd") {
+        $response['result'] = $stmt0->execute();
+        $response['created_acc'] = 'Savings - '.$customer_type;
+      } elseif ($acc_type === "fd") {
         $q0 = 'INSERT into fixed_deposits (acc_no, savings_acc_no, duration) values (?, ?, ?)';
         $stmt0 = $this->conn->prepare($q0);
         $stmt0->bind_param('ssi', $acc_no, $saving_acc_no, $duration);
-        $result = $stmt0->execute();
+        $response['result'] = $stmt0->execute();
+        $response['created_acc'] = 'Fixed Deposit';
       }
       ($this->conn)->commit();
-      return $result;
+      return $response;
     } catch (Exception $e) {
       ($this->conn)->rollback();
-      return false;
+      return $response;
+    }
+  }
+
+  public function get_savings_acc_type(string $owner_id)
+  {
+    if (!($this->conn instanceof mysqli)) return null;
+    ($this->conn)->begin_transaction();
+    try {
+      $q0 = 'SELECT type FROM customer WHERE username=?';
+      $stmt0 = $this->conn->prepare($q0);
+      $stmt0->bind_param('s', $owner_id);
+      $stmt0->execute();
+      $stmt0->store_result();
+      if ($stmt0->num_rows() == 0) {
+        return "";
+      }
+      $stmt0->bind_result($type);
+      $stmt0->fetch();
+      $stmt0->close();
+      if ($type == "organization") {
+        return "adult";
+      }
+      $q = 'SELECT DOB FROM individual WHERE username=?';
+      $stmt = $this->conn->prepare($q);
+      $stmt->bind_param('s', $owner_id);
+      $stmt->execute();
+      $stmt->store_result();
+      if ($stmt->num_rows() == 0) {
+        return "";
+      }
+      $stmt->bind_result($dob);
+      $stmt->fetch();
+      $stmt->close();
+      ($this->conn)->commit();
+      $today = date("Y-m-d");
+      $diff = date_diff(date_create($dob), date_create($today));
+      $age = (int)$diff->format('%y');
+      if ($age <= 12) {
+        return "child";
+      } else if ($age < 18) {
+        return "teen";
+      } else if ($age < 60) {
+        return "adult";
+      } else {
+        return "senior";
+      }
+      return "";
+    } catch (Exception $e) {
+      ($this->conn)->rollback();
+      return "";
     }
   }
 

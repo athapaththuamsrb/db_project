@@ -45,7 +45,7 @@
 
           <div class="row">
             <div class="col-4 item">
-              <label for="type">Choose account name : </label>
+              <label for="type">Choose account type : </label>
             </div>
             <div class="col-1 item"></div>
             <div class="col-3 item">
@@ -99,23 +99,10 @@
             </div>
           </div>
 
-          <!-- should be visible only if savings is selected for type -->
-          <div id="saving_visible">
-            <div class="row">
-              <div class="col-4 item">
-                <label for="savings_acc_no">Customer Type: </label>
-              </div>
-              <div class="col-1 item"></div>
-              <div class="col-3 item">
-                <input type="text" name="customer_type" id="customer_type" required />
-              </div>
-            </div>
-          </div>
-
           <div class="row">
             <div class="col-2"></div>
             <div class="col-4 item">
-              <button type="submit" class="btn btn-info" style="width: 150%">
+              <button id="submitBtn" type="submit" class="btn btn-info" style="width: 150%">
                 Create Account
               </button>
             </div>
@@ -127,21 +114,12 @@
     </div>
   </div>
   <?php @include(__DIR__ . '/../footer.php'); ?>
+  <?php
+  require_once($_SERVER['DOCUMENT_ROOT'] . '/views/modal.php');
+  addModal('Create Account');
+  ?>
+  <script src="/scripts/common.js"></script>
+  <script src="/scripts/employee/createAccount.js"></script>
 </body>
-<script type="text/javascript">
-  function getType() {
-    const typeValue = document.getElementById("type").value;
-    if (typeValue === "savings") {
-      document.getElementById("saving_visible").style.display = "block";
-      document.getElementById("fd_visible").style.display = "none";
-    } else if (typeValue === "fd") {
-      document.getElementById("saving_visible").style.display = "none";
-      document.getElementById("fd_visible").style.display = "block";
-    } else {
-      document.getElementById("saving_visible").style.display = "none";
-      document.getElementById("fd_visible").style.display = "none";
-    }
-  }
-</script>
 
 </html>

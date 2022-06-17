@@ -44,9 +44,9 @@ submitBtn.onclick = e => {
     let xhrSender = new XHRSender(document.URL, resp => {
         try {
             let data = JSON.parse(resp);
-            if (data.hasOwnProperty('success') && data['success'] === true) {
+            if (data.hasOwnProperty('success') && data['success'] === true && data.hasOwnProperty('balance')) {
                 clear();
-                showMessage('');
+                showMessage(data['balance']);
                 return;
             }
             if (data.hasOwnProperty('reason') && data['reason'] instanceof String) {

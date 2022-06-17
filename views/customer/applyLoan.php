@@ -57,6 +57,10 @@
     </div>
   </div>
   <?php @include(__DIR__ . '/../footer.php'); ?>
+  <?php
+  require_once($_SERVER['DOCUMENT_ROOT'] . '/views/modal.php');
+  addModal('Apply Loan');
+  ?>
 </body>
 
 </html>

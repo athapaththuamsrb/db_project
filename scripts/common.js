@@ -25,3 +25,40 @@ class XHRSender {
         xhr.send(reqBody);
     }
 }
+
+class TableBuilder {
+    constructor(table = null) {
+        if (table) {
+            this.table = table;
+        } else {
+            this.table = document.createElement('table');
+        }
+    }
+
+    addHeadingRow(...headings) {
+        let tr = document.createElement('tr');
+        headings.forEach(heading => {
+            let th = document.createElement('th');
+            th.innerText = heading;
+            tr.appendChild(th);
+        });
+        this.table.appendChild(tr)
+    }
+
+    addRow(...data) {
+        let tr = document.createElement('tr');
+        data.forEach(text => {
+            let td = document.createElement('td');
+            td.innerText = text;
+            tr.appendChild(td);
+        });
+        this.table.appendChild(tr)
+    }
+
+    build() {
+        return this.table;
+    }
+}
+
+const username_pattern = /^[a-zA-Z0-9._]{5,12}$/;
+const password_pattern = /^[\x21-\x7E]{8,15}$/;

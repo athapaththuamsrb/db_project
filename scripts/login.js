@@ -1,6 +1,11 @@
-function keyPressFn(e, nxt) {
+function keyPressFn(e, pattern, cur, nxt) {
     if (e.keyCode === 13) {
         e.preventDefault();
+        let value = document.getElementById(cur).value;
+        if (!pattern.test(value)){
+            document.getElementById('invalid').hidden = false;
+            return;
+        }
         if (nxt == '') {
             document.getElementById("submitBtn").click();
         } else {
@@ -11,6 +16,9 @@ function keyPressFn(e, nxt) {
         }
     }
 }
+
+document.getElementById('username').onkeydown = event => { keyPressFn(event, username_pattern, 'username', 'password'); };
+document.getElementById('password').onkeydown = event => { keyPressFn(event, password_pattern, 'password', ''); };
 
 function showSlides() {
     let i;
@@ -35,3 +43,4 @@ function showSlides() {
 
 let slideIndex = 0;
 showSlides();
+document.getElementById('username').focus();

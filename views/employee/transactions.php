@@ -15,15 +15,42 @@
 
 <body>
 
-    <?php @include('navbar.php'); ?>
+    <?php @include(__DIR__ . '/../navbar.php'); ?>
+    <?php
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
+        if ($error !== false) {
+            print_r($error);
+        }
+    }
+    ?>
     <div class="container box fade" style="background-color: #880808; color: white; border: #21081a solid 2px">
-        <h1>Transaction</h1>
+        <h1>Tranfer Money</h1>
         <br />
         <div class="row">
             <div class="col-3"></div>
             <div class="col-7">
                 <form method="post" class="form-row align-items-center">
+                    <div class="row">
+                        <div class="col-3 item">
+                            <label for="to_acc">USER NAME</label>
+                        </div>
+                        <div class="col-1 item"></div>
+                        <div class="col-3 item">
+                            <input type="text" name="ownername" id="ownername" required>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-3 item">
+                            <label for="from_acc">FROM ACCOUNT</label>
+                        </div>
+                        <div class="col-1 item"></div>
+                        <div class="col-3 item">
+                            <input type="text" name="from_acc" id="from_acc" required>
+                        </div>
+                    </div>
+
                     <div class="row">
                         <div class="col-3 item">
                             <label for="to_acc">TO ACCOUNT</label>
@@ -33,38 +60,25 @@
                             <input type="text" name="to_acc" id="to_acc" required>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col-3 item">
-                            <label for="from acc">FROM ACCOUNT</label>
-                        </div>
-                        <div class="col-1 item"></div>
-                        <div class="col-3 item">
-                            <select name="from_acc" id="from_acc" required>
-                                <option value="" disabled selected></option>
-                                <option value="#acc_id1">acc1_no</option>
-                                <option value="#acc_id2">acc2_no</option>
-                                <option value=#acc_id3">acc3_no</option>
 
-                            </select>
-                        </div>
-                    </div>
                     <div class="row">
                         <div class="col-3 item">
                             <label for="amount">AMOUNT</label>
                         </div>
                         <div class="col-1 item"></div>
                         <div class="col-3 item">
-                            <input type="number" min="0.00" step="0.01" required />
+                            <input type="number" name="amount" id="amount" min="0.00" step="0.01" required />
 
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-2"></div>
                         <div class="col-4 item">
-                            <button type="submit" class="btn btn-info" style="width: 150%">
+                            <button type="submit" name="confirm" class="btn btn-info" style="width: 150%">
                                 Confirm
                             </button>
                         </div>
+
                         <div class="col-1"></div>
                     </div>
                 </form>
@@ -72,9 +86,11 @@
             <div class="col-2"></div>
         </div>
     </div>
-
-    <?php @include('footer.php'); ?>
-
+    <?php @include(__DIR__ . '/../footer.php'); ?>
+    <?php
+    require_once($_SERVER['DOCUMENT_ROOT'] . '/views/modal.php');
+    addModal('Transaction');
+    ?>
 </body>
 
 </html>
