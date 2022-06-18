@@ -18,6 +18,8 @@ let durationInput = document.getElementById("duration");
 let savings_acc_noInput = document.getElementById("savings_acc_no");
 let submitBtn = document.getElementById("submitBtn");
 
+acc_typeInput.onchange = getType;
+
 function clear() {
   owner_idInput.value = "";
   acc_noInput.value = "";
