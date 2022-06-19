@@ -18,7 +18,7 @@
   @include(__DIR__ . '/../navbar.php'); ?>
 
   <div class="container box fade" style="background-color: #880808; color: white; border: #21081a solid 2px">
-    <h1>Transactions</h1>
+    <h1>Apply Loan</h1>
     <br />
     <div class="row">
       <div class="col-3"></div>
@@ -39,7 +39,7 @@
             </div>
             <div class="col-1 item"></div>
             <div class="col-3 item">
-              <input type="number" min="0.00" step="0.01" required />
+              <input type="number" name="amount" id="amount" min="0.00" step="0.01" required />
             </div>
           </div>
           <div class="row">
@@ -56,6 +56,7 @@
       <div class="col-2"></div>
     </div>
   </div>
+  <div style="height: 30vh;"></div>
   <?php @include(__DIR__ . '/../footer.php'); ?>
   <?php
   require_once($_SERVER['DOCUMENT_ROOT'] . '/views/modal.php');
