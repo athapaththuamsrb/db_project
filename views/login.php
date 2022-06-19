@@ -187,8 +187,8 @@
                     <br />
                     <div style="height: 5vh;">
                         <p id="invalid" <?php if (!isset($_GET['invalid'])) {
-                                    echo 'hidden';
-                                } ?>>Invalid Login</p>
+                                            echo 'hidden';
+                                        } ?>>Invalid Login</p>
                     </div>
                     <div class="form-group">
                         <label htmlFor="exampleInputUsername">User Name</label>
@@ -233,6 +233,7 @@
         </div>
 
     </div>
+    <div style="height: 10hv;"></div>
     <br /><br />
     <?php @include('footer.php'); ?>
 

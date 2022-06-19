@@ -15,7 +15,7 @@
 
 <body>
   <?php @include(__DIR__ . '/../navbar.php'); ?>
-  <div style="height: 100vh;">
+  <div>
     <div class="container box fade" style="background-color: #880808; color: white; border: #21081a solid 2px">
       <h1>Add Branch</h1>
       <br />
@@ -74,7 +74,7 @@
       </div>
     </div>
   </div>
-
+  <div style="height: 10vh;"></div>
   <?php @include(__DIR__ . '/../footer.php'); ?>
   <?php
   require_once($_SERVER['DOCUMENT_ROOT'] . '/views/modal.php');

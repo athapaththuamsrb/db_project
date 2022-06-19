@@ -65,10 +65,10 @@
                 <div class="col-2"></div>
             </div>
         </div>
-        <div id="table" hidden>
+        <div id="table" class="container" hidden>
         </div>
     </div>
-
+    <div style="height: 30vh;"></div>
     <?php @include(__DIR__ . '/../footer.php'); ?>
     <?php
     require_once($_SERVER['DOCUMENT_ROOT'] . '/views/modal.php');

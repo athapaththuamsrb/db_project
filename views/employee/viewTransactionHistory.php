@@ -16,7 +16,7 @@
 <body>
     <?php @include(__DIR__ . '/../navbar.php'); ?>
 
-    <div style="height: 120vh;">
+    <div>
         <div class="container box fade" style="background-color: #880808; color: white; border: #21081a solid 2px">
             <h1>View Transaction History</h1>
             <br />
@@ -77,7 +77,7 @@
         <div id="table" hidden>
         </div>
     </div>
-
+    <div style="height: 30vh;"></div>
     <?php @include(__DIR__ . '/../footer.php'); ?>
     <?php
     require_once($_SERVER['DOCUMENT_ROOT'] . '/views/modal.php');
