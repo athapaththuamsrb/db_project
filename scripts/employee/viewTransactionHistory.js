@@ -25,8 +25,8 @@ let submitBtn = document.getElementById('submitBtn');
 function clear() {
     owner_idInput.value = '';
     acc_noInput.value = '';
-    start_dateInput = '';
-    end_dateInput = '';
+    start_dateInput.value = '';
+    end_dateInput.value = '';
 }
 
 submitBtn.onclick = e => {
