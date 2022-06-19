@@ -75,8 +75,17 @@
                 <div class="col-2"></div>
             </div>
         </div>
-        <div id="table" class="container" hidden>
+        <div class="container">
+            <div class="row">
+                <div class="col-3"></div>
+                <div class="col-6">
+                    <div id="table" hidden>
+                    </div>
+                </div>
+                <div class="col-3"></div>
+            </div>
         </div>
+
     </div>
     <div style="height: 30vh;"></div>
     <?php @include(__DIR__ . '/../footer.php'); ?>
