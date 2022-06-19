@@ -201,6 +201,63 @@ class DatabaseConn
     return false;
   }
 
+  public function apply_loan(string $fix_acc, float $amount, string $owner_id): bool
+  {
+    if (!($this->conn instanceof mysqli)) return false;
+    if ($fix_acc && $fix_acc && $owner_id) {
+      ($this->conn)->begin_transaction();
+      try {
+        $q0 = 'SELECT balance FROM accounts WHERE owner_id = ? and acc_no = ?';
+        $stmt = $this->conn->prepare($q0);
+        $stmt->bind_param('ss', $owner_id, $fix_acc);
+        $stmt->execute();
+        $stmt->store_result();
+        if ($stmt->num_rows() == 0) {
+          return false;
+        }
+        $stmt->bind_result($balance);
+        $stmt->fetch();
+        $stmt->close();
+        if ($balance * 0.6 < $amount || $amount > 500000) {
+          return false;
+        }
+
+        $q1 = 'SELECT savings_acc_no FROM fixed_deposit WHERE acc_no = ?';
+        $stmt = $this->conn->prepare($q1);
+        $stmt->bind_param('s', $fix_acc);
+        $stmt->execute();
+        $stmt->store_result();
+        if ($stmt->num_rows() == 0) {
+          return false;
+        }
+        $stmt->bind_result($savings_acc_no);
+        $stmt->fetch();
+        $stmt->close();
+
+        $date = date("Y-m-d");
+        $paid = 0;
+        $q2 = 'INSERT INTO loans ( total_amount,paid_amount, date, customer) VALUES (?, ?, ?, ?);';
+        $stmt = $this->conn->prepare($q2);
+        $stmt->bind_param('ddss', $amount, $paid, $date, $owner_id);
+        $status0 = $stmt->execute();
+        $stmt->close();
+
+        if ($status0) { //update saving account balance
+          $q3 = 'UPDATE accounts SET balance = balance + ? WHERE acc_no = ?;';
+          $stmt = $this->conn->prepare($q3);
+          $stmt->bind_param('ds', $amount, $savings_acc_no);
+          $status1 = $stmt->execute();
+        }
+        ($this->conn)->commit();
+        return $status1;
+      } catch (Exception $e) {
+        ($this->conn)->rollback();
+        return false;
+      }
+    }
+    return false;
+  }
+
   public function check_balance(string $owner_id, string $acc_no)
   {
     if (!($this->conn instanceof mysqli)) return -1;
@@ -231,7 +288,6 @@ class DatabaseConn
 
   public function transaction(string $from_acc, string $to_acc, string $init_id, float $amount)
   {
-
     if (!($this->conn instanceof mysqli)) return false;
 
     ($this->conn)->begin_transaction();
