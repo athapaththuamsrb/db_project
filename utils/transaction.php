@@ -9,8 +9,8 @@ function manageTransaction(string $type, string $username){
     $response = ['success'=> false];
     $dbconn = DatabaseConn::get_conn();
 
-    if($_SERVER['REQUEST_METHOD'] === 'POST'  && isset($_POST['confirm']) && $type === 'customer'){
-
+    if( $_SERVER['REQUEST_METHOD'] === 'POST' && $type == "customer" ){
+  
         $to_acc = $_POST['to_acc'];
         $from_acc = $_POST['from_acc'];
         $amount = $_POST['amount'];
@@ -26,17 +26,16 @@ function manageTransaction(string $type, string $username){
         else if( $dbconn->check_balance($username, $from_acc) < $amount ){
             $msg = "Insufficient Balance";
         }
-    
+
         else{
             $status = $dbconn->transaction($from_acc, $to_acc, $username, $amount);
-            ($status) ? $msg= "Transaction Successful" : $msg=  "Transaction Failed";
-             
+            ($status === true) ? $msg= "Transaction Successful" : $msg=  "Transaction Failed";    
         }
         $response['success'] = $status;
         $response['msg'] = $msg;
 
     }
-    elseif($_SERVER['REQUEST_METHOD'] === 'POST'  && isset($_POST['confirm']) && $type === 'employee' ){
+    elseif($_SERVER['REQUEST_METHOD'] === 'POST'   && $type === 'employee' ){
 
         $ownername = $_POST['ownername'];
         $to_acc = $_POST['to_acc'];
@@ -66,7 +65,7 @@ function manageTransaction(string $type, string $username){
     
         else{
             $status = $dbconn->transaction($from_acc, $to_acc, $ownername, $amount);
-            ($status) ? $msg= "Transaction Successful" : $msg=  "Transaction Failed";
+            ($status === true) ? $msg= "Transaction Successful" : $msg=  "Transaction Failed";
 
         }
         $response['success'] = $status;

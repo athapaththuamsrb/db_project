@@ -32,19 +32,25 @@ confirmBtn.onclick = e => {
 
     let xhrSender = new XHRSender(document.URL, resp => {
         try {
+            console.log(resp);
             let data = JSON.parse(resp);
-            console.log(data);
-            if (data.hasOwnProperty('success') && data['success'] === true && data.hasOwnProperty('msg')) {
+            //console.log(data);
+            if (data.hasOwnProperty('success') && data['success'] === true ) {
                 clear();
-                setModal(true, data['msg']);
+                setModal(true,"Transaction Successful");
                 return;
             }
             if (data.hasOwnProperty('success') && data['success'] === false && data.hasOwnProperty('msg')) {
                 setModal(false, data['msg']);
+                return;
             } 
-            else{
-                setModal(false, "Sorry Try Again");
+            if (data.hasOwnProperty('success') && data['success'] === false ) {
+                setModal(false,"Transaction Failed");
+                return;
             }
+            else{
+                setModal(false, "Try Again");
+            } 
         } catch (e) {
             setModal(false,'Error occured');
         }
