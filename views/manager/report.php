@@ -11,12 +11,14 @@
 <body>
     <h1>Generate Report</h1>
     <form method="post">
-        <label for="start-date">Start Date:</label>
-        <input type="date" name="start-date" id="start-date">
-        <label for="end-date">End Date:</label>
-        <input type="date" name="end-date" id="end-date">
-        <button type="submit">Generate Report</button>
+        <button id="submitBtn">Generate Report</button>
     </form>
+    <?php
+    require_once($_SERVER['DOCUMENT_ROOT'] . '/views/modal.php');
+    addModal('Create Account');
+    ?>
+    <script src="/scripts/common.js"></script>
+    <script src="/scripts/manager/report.js"></script>
 </body>
 
 </html>
