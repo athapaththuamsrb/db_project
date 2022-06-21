@@ -258,7 +258,7 @@ class DatabaseConn
         return false;
       }
 
-      $q4 = 'INSERT INTO transactions (from_acc, to_acc, init_id, trans_time, amount) VALUES (?, ?, ?, ?, ?)';
+      $q4 = 'INSERT INTO Transactions (from_acc, to_acc, init_id, trans_time, amount) VALUES (?, ?, ?, ?, ?)';
       $stmt4 = $this->conn->prepare($q4);
       $date = date('Y-m-d H:i:s');
       $stmt4->bind_param('ssssd', $from_acc, $to_acc, $init_id, $date, $amount);
