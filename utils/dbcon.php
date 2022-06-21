@@ -258,6 +258,27 @@ class DatabaseConn
     return false;
   }
 
+  public function getLateLoans($username): ?array
+  {
+    if (!($this->conn instanceof mysqli)) return null;
+    try {
+      $q = 'SELECT id FROM branch WHERE manager_id=?';
+      $stmt = $this->conn->prepare($q);
+      $stmt->bind_param('s', $username);
+      $stmt->execute();
+      $stmt->store_result();
+      $rowcount = $stmt->num_rows();
+      if ($rowcount != 1) return null;
+      $stmt->bind_result($branch_id);
+      $stmt->fetch();
+      $stmt->close();
+      return null;
+    } catch (Exception $e) {
+      return null;
+    }
+    return null;
+  }
+
   public function check_balance(string $owner_id, string $acc_no)
   {
     if (!($this->conn instanceof mysqli)) return -1;
@@ -489,7 +510,7 @@ class DatabaseConn
     $stmt = $this->conn->prepare($common_query);
     $stmt->bind_param('sssdss', $owner_id, $acc_no, $acc_type, $balance, $date_str, $branch_id);
     $stmt->execute();
-    $response = ['result'=>false, 'created_acc'=>''];
+    $response = ['result' => false, 'created_acc' => ''];
     try {
       if ($acc_type === "checking") {
         $q0 = 'INSERT into checking_accounts (acc_no) values (?)';
@@ -506,7 +527,7 @@ class DatabaseConn
         $stmt0 = $this->conn->prepare($q0);
         $stmt0->bind_param('ss', $acc_no, $customer_type);
         $response['result'] = $stmt0->execute();
-        $response['created_acc'] = 'Savings - '.$customer_type;
+        $response['created_acc'] = 'Savings - ' . $customer_type;
       } elseif ($acc_type === "fd") {
         $q0 = 'INSERT into fixed_deposits (acc_no, savings_acc_no, duration) values (?, ?, ?)';
         $stmt0 = $this->conn->prepare($q0);
