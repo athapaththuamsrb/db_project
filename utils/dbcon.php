@@ -241,7 +241,7 @@ class DatabaseConn
         }
       }
       if($this->check_account($_POST["from_acc"]) === 'savings'){
-        $q2 = 'UPDATE savings_Accounts SET transactions = transactions + 1  WHERE acc_no = ?';
+        $q2 = 'UPDATE savings_accounts SET transactions = transactions + 1  WHERE acc_no = ?';
         $stmt2 = $this->conn->prepare($q2);
         $stmt2->bind_param('s', $from_acc);
         if(!($stmt2->execute())){
@@ -353,7 +353,7 @@ class DatabaseConn
 
     if (!($this->conn instanceof mysqli)) return null;
 
-    $q1 = 'SELECT transactions FROM savings_Accounts WHERE acc_no = ? ';
+    $q1 = 'SELECT transactions FROM savings_accounts WHERE acc_no = ? ';
     $stmt = $this->conn->prepare($q1);
     $stmt->bind_param('s', $acc_no);
     $stmt->execute();
