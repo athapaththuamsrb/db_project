@@ -1,6 +1,7 @@
 RewriteEngine on
 RewriteRule ^\..*$ - [L,R=404]
 RewriteRule ^$ /index.php [L,R=301]
+RewriteRule ^.*/auth.php$ - [L,R=404]
 RewriteRule !^(.+\.php)|((images\/)|(scripts\/)|(styles\/)|(webfonts\/)).+$ - [L,R=404]
 RewriteRule ^.*\.html?$ - [L,R=404]
 RewriteRule ^composer.json$ - [L,R=404]
