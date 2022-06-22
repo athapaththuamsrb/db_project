@@ -16,9 +16,15 @@ function manageTransaction(string $type, string $username){
         $amount = $_POST['amount'];
     
         $status = false;
-        if($dbconn->check_account($to_acc) === null){
+
+        if(!preg_match('/^([0-9]+(\.?[0-9]?[0-9]?)?)$/', $amount)){
+            $msg = "Please enter a valid amount";
+        }
+
+        else if( !preg_match('/^[0-9]{12}$/', $to_acc) || $dbconn->check_account($to_acc) === null ){
             $msg = "Invalid Account Number";
         }
+        
         else if($dbconn->check_account($from_acc) === 'savings' && $dbconn->check_transaction_count($from_acc) >= 5){
             $msg = "Transaction Limit Reached";
         }
@@ -43,16 +49,19 @@ function manageTransaction(string $type, string $username){
         $amount = $_POST['amount'];
     
         $status = false;
-        if(!$dbconn->check_username($ownername) ){
+        if(!preg_match('/^([0-9]+(\.?[0-9]?[0-9]?)?)$/', $amount)){
+            $msg = "Please enter a valid amount";
+        }
+        else if(!$dbconn->check_username($ownername) ){
             $msg = "Invalid User Name";
         }
-        else if($dbconn->check_account($from_acc) === null){    
+        else if(!preg_match('/^[0-9]{12}$/', $from_acc) || $dbconn->check_account($from_acc) === null  ){    
             $msg = "Invalid From Account Number";
         }     
         else if(!$dbconn->get_account_ownership($from_acc, $ownername)){
             $msg = "Username and Account Number don't match";
         }
-        else if($dbconn->check_account($to_acc) === null){    
+        else if(!preg_match('/^[0-9]{12}$/', $to_acc) || $dbconn->check_account($to_acc) === null ){    
             $msg = "Invalid To Account Number";
         }
         else if($dbconn->check_account($from_acc) === 'savings' && $dbconn->check_transaction_count($from_acc) >= 5){        
@@ -71,9 +80,6 @@ function manageTransaction(string $type, string $username){
         $response['success'] = $status;
         $response['msg'] = $msg;
         
-        
-        
-    
        
     }
 

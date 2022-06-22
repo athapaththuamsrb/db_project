@@ -30,6 +30,15 @@ confirmBtn.onclick = e => {
     let to_acc_value = to_account.value;
     let amount_value = trans_amount.value;
 
+    if (!/^[0-9]{12}$/.test(to_acc_value)) {
+        setModal(false, "Invalid Account number");
+        return;
+    }
+    if (!/^([0-9]+(\.?[0-9]?[0-9]?)?)$/.test(to_acc_value)) {
+        setModal(false, "Please enter a valid amount");
+        return;
+    }
+
     let xhrSender = new XHRSender(document.URL, resp => {
         try {
             console.log(resp);
@@ -52,6 +61,7 @@ confirmBtn.onclick = e => {
                 setModal(false, "Try Again");
             } 
         } catch (e) {
+            console.log(e);
             setModal(false,'Error occured');
         }
     });
