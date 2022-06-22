@@ -15,7 +15,7 @@
 
 <body>
   <?php @include('navbar.php'); ?>
-  <div style="height: 140vh;">
+  <div>
     <div class="container box fade" style="background-color: #880808; color: white; border: #21081a solid 2px">
       <h1>Add user</h1>
       <br />
@@ -165,7 +165,7 @@
       </div>
     </div>
   </div>
-
+  <div style="height: 30vh;"></div>
   <?php @include('footer.php'); ?>
   <?php
   require_once($_SERVER['DOCUMENT_ROOT'] . '/views/modal.php');

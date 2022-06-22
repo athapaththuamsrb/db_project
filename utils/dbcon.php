@@ -309,6 +309,27 @@ class DatabaseConn
     return false;
   }
 
+  public function getLateLoans($username): ?array
+  {
+    if (!($this->conn instanceof mysqli)) return null;
+    try {
+      $q = 'SELECT id FROM branch WHERE manager_id=?';
+      $stmt = $this->conn->prepare($q);
+      $stmt->bind_param('s', $username);
+      $stmt->execute();
+      $stmt->store_result();
+      $rowcount = $stmt->num_rows();
+      if ($rowcount != 1) return null;
+      $stmt->bind_result($branch_id);
+      $stmt->fetch();
+      $stmt->close();
+      return null;
+    } catch (Exception $e) {
+      return null;
+    }
+    return null;
+  }
+
   public function check_balance(string $owner_id, string $acc_no)
   {
     if (!($this->conn instanceof mysqli)) return -1;

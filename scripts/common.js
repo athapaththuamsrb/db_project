@@ -9,7 +9,7 @@ class XHRSender {
         this.fields[fieldName] = value;
     }
 
-    send() {
+    send(responseType = '', callxhr = false) {
         let encoded = Object.keys(this.fields).map((index) => {
             return encodeURIComponent(index) + '=' + encodeURIComponent(this.fields[index]);
         });
@@ -17,9 +17,14 @@ class XHRSender {
         let xhr = new XMLHttpRequest();
         xhr.open("POST", this.url, true);
         xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        xhr.responseType = responseType;
         xhr.onreadystatechange = () => {
             if (xhr.readyState == XMLHttpRequest.DONE) {
-                this.callback(xhr.response);
+                if (callxhr) {
+                    this.callback(xhr);
+                } else {
+                    this.callback(xhr.response);
+                }
             }
         };
         xhr.send(reqBody);
