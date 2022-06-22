@@ -176,12 +176,11 @@
 <body style="background-color: #be847a;">
     <nav class="navbar navbar-light bg-warning">
         <span class="navbar-brand mb-0 h1"> <img src="/images/favicon-32x32.png" alt="logo" /> </span>
-        <a href="/"><button type="button" class="btn btn-success">Home page</button></a>
     </nav>
 
     <div class="box container" style="height: 80vh;">
-        <div class="row">
-            <div class="col-4 form" style="background-color: #880808; color: white;">
+        <div class="d-flex align-content-stretch justify-content-center flex-wrap">
+            <div class="px-5 m-4 form" style="background-color: #880808; color: white;">
                 <form method="post">
                     <h2 style="text-align: center;">Login</h2>
                     <br />
@@ -211,7 +210,7 @@
                     </div>
                 </form>
             </div>
-            <div class="col-8">
+            <div class="px-5 ">
                 <div class="slideshow-container">
                     <div class="mySlides fade">
                         <div class="numbertext">1 / 2</div>
