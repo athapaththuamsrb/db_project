@@ -14,7 +14,7 @@ function applyLoan(User $creator){
 
     require_once($_SERVER['DOCUMENT_ROOT'] . '/utils/dbcon.php');
     $dbcon = DatabaseConn::get_conn();
-    if ($dbcon->apply_loan($_POST['fix_acc'], $_POST['amount'],  $creator->getUsername())) {
+    if ($dbcon->apply_loan($_POST['fix_acc'], $_POST['amount'], $_POST['duration'], $creator->getUsername())) {
         header('Location: index.php'); 
         die();
     } else {
