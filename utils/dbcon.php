@@ -238,12 +238,25 @@ class DatabaseConn
         $stmt->fetch();
         $stmt->close();
 
+        $q = 'SELECT fixedAccount FROM loans WHERE fixedAccount = ?';
+        $stmt = $this->conn->prepare($q);
+        $stmt->bind_param('s', $fix_acc);
+        $stmt->execute();
+        $stmt->store_result();
+        if ($stmt->num_rows() > 0) {
+          $response['reason'] = 'Only one loan can apply from a fixed deposit!';
+          return $response;
+        }
+        $stmt->bind_result($savings_acc_no);
+        $stmt->fetch();
+        $stmt->close();
+
         $date = date("Y-m-d");
         $paid = 0;
         $installment = (($amount + ($amount * 0.2 / 12) * 24) / $duration); //20% for year
-        $q2 = 'INSERT INTO loans ( total_amount,paid_amount, date, customer,savingsAccount,duration,installment) VALUES (?, ?, ?, ? , ? , ? , ?);';
+        $q2 = 'INSERT INTO loans ( total_amount,paid_amount, date, customer,savingsAccount,fixedAccount,duration,installment) VALUES (?, ?, ?, ?,? , ? , ? , ?);';
         $stmt = $this->conn->prepare($q2);
-        $stmt->bind_param('ddsssdd', $amount, $paid, $date, $owner_id, $savings_acc_no, $duration, $installment);
+        $stmt->bind_param('ddssssdd', $amount, $paid, $date, $owner_id, $savings_acc_no, $fix_acc, $duration, $installment);
         $status0 = $stmt->execute();
         $stmt->close();
 
@@ -251,6 +264,82 @@ class DatabaseConn
           $q3 = 'UPDATE accounts SET balance = balance + ? WHERE acc_no = ?;';
           $stmt = $this->conn->prepare($q3);
           $stmt->bind_param('ds', $amount, $savings_acc_no);
+          $status1 = $stmt->execute();
+        }
+        ($this->conn)->commit();
+        $response['reason'] = 'Loan added successfully!';
+        $response['result'] = true;
+
+        return $response;
+      } catch (Exception $e) {
+        ($this->conn)->rollback();
+        $response['reason'] = 'Error!';
+        return $response;
+      }
+    }
+    $response['reason'] = 'Error!';
+    return $response;
+  }
+
+  public function approveLoan(string $sav_acc, float $amount, float $duration)
+  {
+    if (!($this->conn instanceof mysqli)) return false;
+    if ($sav_acc && $amount) {
+      ($this->conn)->begin_transaction();
+      $response = ['result' => false, 'reason' => ''];
+      try {
+        $q0 = 'SELECT owner_id FROM accounts WHERE acc_no = ?';
+        $stmt = $this->conn->prepare($q0);
+        $stmt->bind_param('s', $sav_acc);
+        $stmt->execute();
+        $stmt->store_result();
+        if ($stmt->num_rows() == 0) {
+          $response['reason'] = 'No account associate with the entered number!';
+          return $response;
+        }
+        $stmt->bind_result($customer);
+        $stmt->fetch();
+        $stmt->close();
+        
+        // $q1 = 'SELECT savings_acc_no FROM fixed_deposits WHERE acc_no = ?';
+        // $stmt = $this->conn->prepare($q1);
+        // $stmt->bind_param('s', $fix_acc);
+        // $stmt->execute();
+        // $stmt->store_result();
+        // if ($stmt->num_rows() == 0) {
+        //   $response['reason'] = 'No fixed account associate with the entered number!';
+        //   return $response;
+        // }
+        // $stmt->bind_result($savings_acc_no);
+        // $stmt->fetch();
+        // $stmt->close();
+
+        // $q = 'SELECT fixedAccount FROM loans WHERE fixedAccount = ?';
+        // $stmt = $this->conn->prepare($q);
+        // $stmt->bind_param('s', $fix_acc);
+        // $stmt->execute();
+        // $stmt->store_result();
+        // if ($stmt->num_rows() > 0) {
+        //   $response['reason'] = 'Only one loan can apply from a fixed deposit!';
+        //   return $response;
+        // }
+        // $stmt->bind_result($savings_acc_no);
+        // $stmt->fetch();
+        // $stmt->close();
+
+        $date = date("Y-m-d");
+        $paid = 0;
+        $installment = (($amount + ($amount * 0.2 / 12) * 24) / $duration); //20% for year
+        $q2 = 'INSERT INTO loans ( total_amount,paid_amount, date, customer,savingsAccount,duration,installment) VALUES ( ?, ?, ?,? , ? , ? , ?);';
+        $stmt = $this->conn->prepare($q2);
+        $stmt->bind_param('ddsssdd', $amount, $paid, $date, $customer, $sav_acc, $duration, $installment);
+        $status0 = $stmt->execute();
+        $stmt->close();
+
+        if ($status0) { //update saving account balance
+          $q3 = 'UPDATE accounts SET balance = balance + ? WHERE acc_no = ?;';
+          $stmt = $this->conn->prepare($q3);
+          $stmt->bind_param('ds', $amount, $sav_acc);
           $status1 = $stmt->execute();
         }
         ($this->conn)->commit();
