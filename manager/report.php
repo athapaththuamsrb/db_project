@@ -122,7 +122,9 @@ if ($_POST['type'] === 'loan') {
     header('Content-Type: application/pdf');
     header("Content-Disposition: attachment;");
     header('Content-Length: ' . filesize($pdfFilePath));
-    ob_clean();
+    if (ob_get_length() > 0) {
+        ob_clean();
+    }
     flush();
     readfile($pdfFilePath);
     unlink($pdfFilePath);
@@ -139,7 +141,9 @@ if ($_POST['type'] === 'loan') {
     header('Content-Type: application/pdf');
     header("Content-Disposition: attachment;");
     header('Content-Length: ' . filesize($pdfFilePath));
-    ob_clean();
+    if (ob_get_length() > 0) {
+        ob_clean();
+    }
     flush();
     readfile($pdfFilePath);
     unlink($pdfFilePath);
