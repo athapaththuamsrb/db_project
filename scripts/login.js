@@ -2,7 +2,7 @@ function keyPressFn(e, pattern, cur, nxt) {
     if (e.keyCode === 13) {
         e.preventDefault();
         let value = document.getElementById(cur).value;
-        if (!pattern.test(value)){
+        if (!pattern.test(value)) {
             document.getElementById('invalid').hidden = false;
             return;
         }
@@ -43,4 +43,6 @@ function showSlides() {
 
 let slideIndex = 0;
 showSlides();
-document.getElementById('username').focus();
+setTimeout(() => {
+    document.getElementById('username').focus();
+}, 1000);

@@ -208,7 +208,7 @@ class DatabaseConn
       ($this->conn)->begin_transaction();
       $response = ['result' => false, 'reason' => ''];
       try {
-        $q0 = 'SELECT balance FROM accounts WHERE owner_id = ? and acc_no = ?';
+        $q0 = 'SELECT balance FROM Accounts WHERE owner_id = ? and acc_no = ?';
         $stmt = $this->conn->prepare($q0);
         $stmt->bind_param('ss', $owner_id, $fix_acc);
         $stmt->execute();
@@ -261,7 +261,7 @@ class DatabaseConn
         $stmt->close();
 
         if ($status0) { //update saving account balance
-          $q3 = 'UPDATE accounts SET balance = balance + ? WHERE acc_no = ?;';
+          $q3 = 'UPDATE Accounts SET balance = balance + ? WHERE acc_no = ?;';
           $stmt = $this->conn->prepare($q3);
           $stmt->bind_param('ds', $amount, $savings_acc_no);
           $status1 = $stmt->execute();
@@ -369,7 +369,7 @@ class DatabaseConn
         $stmt->bind_param('s', $loan_id);
         $stmt->execute();
         $stmt->store_result();
-      
+
         if ($stmt->num_rows() == 0) {
           $response['reason'] = 'No loan associate with the entered ID';
           return $response;
@@ -377,7 +377,7 @@ class DatabaseConn
         $stmt->bind_result($total_amount, $paid_amount);
         $stmt->fetch();
         $stmt->close();
-        if ($total_amount< $paid_amount+ $amount) {
+        if ($total_amount < $paid_amount + $amount) {
           $response['reason'] = 'Exceed the total amount';
           return $response;
         }
@@ -412,7 +412,52 @@ class DatabaseConn
       $stmt->bind_result($branch_id);
       $stmt->fetch();
       $stmt->close();
+
+      $q1 = 'SELECT loans.loanID, loans.customer, loans.should_paid, loans.paid_amount, loans.should_paid-loans.paid_amount difference FROM `loans` JOIN Accounts ON loans.savingsAccount=Accounts.acc_no WHERE Accounts.type="savings" AND Accounts.branch_id=? AND loans.paid_amount < loans.should_paid';
+      $stmt1 = $this->conn->prepare($q1);
+      $stmt1->bind_param('i', $branch_id);
+      $stmt1->execute();
+      $result = $stmt1->get_result();
+      $data = [];
+      while ($row = $result->fetch_assoc()) {
+        $arr = [$row['loanID'], $row['customer'], $row['should_paid'], $row['paid_amount'], $row['difference']];
+        array_push($data, $arr);
+      }
+      ($this->conn)->commit();
+      return [['Loan ID', 'Customer', 'Should paid', 'Paid amount', 'Difference'], $data];
+    } catch (Exception $e) {
       return null;
+    }
+    return null;
+  }
+
+  public function getTransactions($username): ?array
+  {
+    if (!($this->conn instanceof mysqli)) return null;
+    try {
+      $q = 'SELECT id FROM branch WHERE manager_id=?';
+      $stmt = $this->conn->prepare($q);
+      $stmt->bind_param('s', $username);
+      $stmt->execute();
+      $stmt->store_result();
+      $rowcount = $stmt->num_rows();
+      if ($rowcount != 1) return null;
+      $stmt->bind_result($branch_id);
+      $stmt->fetch();
+      $stmt->close();
+
+      $q1 = 'SELECT T.trans_id, T.from_acc, T.to_acc, T.amount, T.trans_time FROM (Transactions T INNER JOIN Accounts FA ON T.from_acc=FA.acc_no) INNER JOIN Accounts TA ON T.to_acc=TA.acc_no WHERE MONTH(T.trans_time)=MONTH(CURRENT_DATE) AND YEAR(T.trans_time)=YEAR(CURRENT_DATE) AND (FA.branch_id=? OR TA.branch_id=?) ORDER BY T.trans_id;';
+      $stmt1 = $this->conn->prepare($q1);
+      $stmt1->bind_param('ii', $branch_id, $branch_id);
+      $stmt1->execute();
+      $result = $stmt1->get_result();
+      $data = [];
+      while ($row = $result->fetch_assoc()) {
+        $arr = [$row['trans_id'], $row['from_acc'], $row['to_acc'], $row['amount'], $row['trans_time']];
+        array_push($data, $arr);
+      }
+      ($this->conn)->commit();
+      return [['ID', 'From', 'To', 'Amount', 'Date'], $data];
     } catch (Exception $e) {
       return null;
     }
