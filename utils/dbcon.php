@@ -238,7 +238,7 @@ class DatabaseConn
         $stmt->fetch();
         $stmt->close();
 
-        $q = 'SELECT fixedAccount FROM loans WHERE fixedAccount = ?';
+        $q = 'SELECT fixedAccount FROM loans WHERE fixedAccount = ? and loanStatus = 0';
         $stmt = $this->conn->prepare($q);
         $stmt->bind_param('s', $fix_acc);
         $stmt->execute();
@@ -247,7 +247,7 @@ class DatabaseConn
           $response['reason'] = 'Only one loan can apply from a fixed deposit!';
           return $response;
         }
-        $stmt->bind_result($savings_acc_no);
+        // $stmt->bind_result($savings_acc_no); TODO:check
         $stmt->fetch();
         $stmt->close();
 
@@ -355,13 +355,21 @@ class DatabaseConn
         if ($total_amount < $paid_amount + $amount) {
           $response['reason'] = 'Exceed the total amount';
           return $response;
+        }else if($total_amount == $paid_amount + $amount){
+          $q3 = 'UPDATE loans SET paid_amount = paid_amount + ? , loanStatus = 1 WHERE loanID = ?;';
+          $stmt = $this->conn->prepare($q3);
+          $stmt->bind_param('ds', $amount, $loan_id);
+          $response['result'] = $stmt->execute();
+          $response['reason'] = 'Installment entered correctly and it covers the full amount of the loan.';
+        }else{
+          $q3 = 'UPDATE loans SET paid_amount = paid_amount + ? WHERE loanID = ?;';
+          $stmt = $this->conn->prepare($q3);
+          $stmt->bind_param('ds', $amount, $loan_id);
+          $response['result'] = $stmt->execute();
+          $response['reason'] = 'Installment entered correctly.';
         }
 
-        $q3 = 'UPDATE loans SET paid_amount = paid_amount + ? WHERE loanID = ?;';
-        $stmt = $this->conn->prepare($q3);
-        $stmt->bind_param('ds', $amount, $loan_id);
-        $response['result'] = $stmt->execute();
-        $response['reason'] = 'Installment entered correctly.';
+        
 
         ($this->conn)->commit();
         return $response;
