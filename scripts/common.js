@@ -19,6 +19,10 @@ class XHRSender {
         xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
         xhr.responseType = responseType;
         xhr.onreadystatechange = () => {
+            if (xhr.responseURL.includes('/login.php') && !this.url.includes('/login.php')){
+                window.location = '/login.php';
+                return;
+            }
             if (xhr.readyState == XMLHttpRequest.DONE) {
                 if (callxhr) {
                     this.callback(xhr);

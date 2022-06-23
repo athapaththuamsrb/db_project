@@ -4,18 +4,19 @@ $user = (new Authenticator())->checkAuth();
 
 require_once $_SERVER['DOCUMENT_ROOT'] . "/vendor/autoload.php";
 
-function makePDF(string $html): ?string
+function makePDF(string $html, string $title): ?string
 {
     try {
         $pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
 
         // set document information
-        $pdf->SetCreator('Multi-Grammar');
-        $pdf->SetAuthor('Multi-Grammar');
-        $pdf->SetTitle('Multi-Grammar PDF');
-        $pdf->SetSubject('Multi-Grammar PDF');
+        $pdf->SetCreator('Seychelles bank');
+        $pdf->SetAuthor('Seychelles bank');
+        $pdf->SetTitle('Late loan report');
+        $pdf->SetSubject('Late loan report');
 
-        $pdf->setPrintHeader(false);
+        $pdf->SetHeaderData('', 20, $title, (new DateTime('today'))->format('Y-m-d'));
+        //$pdf->setPrintHeader(false);
         $pdf->setPrintFooter(false);
 
         // set default monospaced font
@@ -31,7 +32,8 @@ function makePDF(string $html): ?string
         $pdf->setFontSubsetting(true);
 
         // Set font
-        $pdf->SetFont('dejavusans', '', 14, '', true);
+        $pdf->SetFont('dejavusansb', '', 14, '', true);
+        $pdf->SetFont('dejavusans', '', 10, '', true);
 
         // Add a page
         $pdf->AddPage();
@@ -53,6 +55,36 @@ function makePDF(string $html): ?string
     } catch (Exception $e) {
     }
     return null;
+}
+
+function generateTableHTML(array $headings, array $data): string
+{
+    $headrow = implode('</th><th class="head">', $headings);
+    $bodyrows = array_map(function ($rowdata) {
+        $bodyrow = implode('</td><td class="data">', $rowdata);
+        return "<tr><td class=\"data\">$bodyrow</td></tr>";
+    }, $data);
+    $table = "<tr><th class=\"head\">$headrow</th></tr>\n" . implode("\n", $bodyrows);
+    $html = "<html><head><style>
+    table {
+        font-family: Arial, Helvetica, sans-serif;
+        border-collapse: collapse;
+        width: 100%;
+        padding-top: 6px;
+        padding-bottom: 6px;
+      }
+      td {
+        text-align: right;
+        border: 1px solid #777;
+      }
+      th {
+        text-align: center;
+        border: 1px solid #777;
+        background-color: #04aa6d;
+        color: white;
+        font-family:dejavusansb;
+      }</style></head>\n<body>\n<table>\n$table\n</table>\n</body></html>";
+    return $html;
 }
 
 function fail(string $reason)
@@ -79,10 +111,11 @@ if (!$conn) {
 
 if ($_POST['type'] === 'loan') {
     $data = $conn->getLateLoans($user->getUsername());
-    if (!$data) {
+    if ($data == null) {
         fail('Error occured');
     }
-    $pdfFilePath = makePDF('late loan');
+    $html = generateTableHTML($data[0], $data[1]);
+    $pdfFilePath = makePDF($html, 'Late Loan Report');
     if (!$pdfFilePath) {
         fail('PDF creation failed');
     }
@@ -94,7 +127,12 @@ if ($_POST['type'] === 'loan') {
     readfile($pdfFilePath);
     unlink($pdfFilePath);
 } else {
-    $pdfFilePath = makePDF('transaction report');
+    $data = $conn->getTransactions($user->getUsername());
+    if ($data == null) {
+        fail('Error occured');
+    }
+    $html = generateTableHTML($data[0], $data[1]);
+    $pdfFilePath = makePDF($html, 'Transaction Report');
     if (!$pdfFilePath) {
         fail('PDF creation failed');
     }

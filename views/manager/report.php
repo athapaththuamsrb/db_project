@@ -11,7 +11,7 @@
     />
     <link rel="stylesheet" href="/styles/form.css" />
     <script src="/styles/bootstrap-5.1.3-dist/js/bootstrap.min.js"></script>
-    <title>View Transaction History</title>
+    <title>Reports</title>
     <link rel="icon" type="image/x-icon" href="/images/favicon.ico" />
   </head>
 
@@ -26,8 +26,17 @@
         <div class="row">
           <div class="col-3"></div>
           <div class="col-4 item">
-            <button id="submitBtn" class="btn btn-info" style="width: 150%">
-              Generate Report
+            <button id="lateLoanBtn" class="btn btn-info" style="width: 150%">
+              Late Loan Report
+            </button>
+          </div>
+          <div class="col-1"></div>
+        </div>
+        <div class="row">
+          <div class="col-3"></div>
+          <div class="col-4 item">
+            <button id="transactionBtn" class="btn btn-info" style="width: 150%">
+              Transaction Report
             </button>
           </div>
           <div class="col-1"></div>
