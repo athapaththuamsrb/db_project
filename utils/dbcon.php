@@ -332,7 +332,7 @@ class DatabaseConn
     return $response;
   }
 
-  public function enter_Installment(string $loan_id, float $amount)
+  public function enter_Installment(string $loan_id, float $amount ,string $employee)
   {
     if (!($this->conn instanceof mysqli)) return false;
     if ($loan_id && $amount) {
@@ -368,6 +368,12 @@ class DatabaseConn
           $response['result'] = $stmt->execute();
           $response['reason'] = 'Installment entered correctly.';
         }
+        $date = date("Y-m-d");
+        $q4 = 'INSERT INTO loan_payments (loanID,amount,date,employee ) VALUES ( ?, ?, ?,?);';
+        $stmt = $this->conn->prepare($q4);
+        $stmt->bind_param('sdss', $loan_id, $amount, $date, $employee);
+        $status0 = $stmt->execute();
+        $stmt->close();
 
         
 

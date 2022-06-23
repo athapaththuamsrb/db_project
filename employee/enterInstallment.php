@@ -29,7 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     die();
 
   }else{
-    $result = $dbcon->enter_Installment($_POST['loan_id'], $_POST['amount']);
+    $result = $dbcon->enter_Installment($_POST['loan_id'], $_POST['amount'], $user->getUsername());
     $response['success'] = $result['result'];
     $response['reason'] = $result['reason'];
     echo json_encode($response);
