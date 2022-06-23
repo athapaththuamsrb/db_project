@@ -300,32 +300,7 @@ class DatabaseConn
         $stmt->bind_result($customer);
         $stmt->fetch();
         $stmt->close();
-        
-        // $q1 = 'SELECT savings_acc_no FROM fixed_deposits WHERE acc_no = ?';
-        // $stmt = $this->conn->prepare($q1);
-        // $stmt->bind_param('s', $fix_acc);
-        // $stmt->execute();
-        // $stmt->store_result();
-        // if ($stmt->num_rows() == 0) {
-        //   $response['reason'] = 'No fixed account associate with the entered number!';
-        //   return $response;
-        // }
-        // $stmt->bind_result($savings_acc_no);
-        // $stmt->fetch();
-        // $stmt->close();
-
-        // $q = 'SELECT fixedAccount FROM loans WHERE fixedAccount = ?';
-        // $stmt = $this->conn->prepare($q);
-        // $stmt->bind_param('s', $fix_acc);
-        // $stmt->execute();
-        // $stmt->store_result();
-        // if ($stmt->num_rows() > 0) {
-        //   $response['reason'] = 'Only one loan can apply from a fixed deposit!';
-        //   return $response;
-        // }
-        // $stmt->bind_result($savings_acc_no);
-        // $stmt->fetch();
-        // $stmt->close();
+  
 
         $date = date("Y-m-d");
         $paid = 0;
