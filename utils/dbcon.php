@@ -201,7 +201,7 @@ class DatabaseConn
     return false;
   }
 
-  public function apply_loan(string $fix_acc, float $amount, float $duration, string $owner_id)
+  public function apply_loan(string $fix_acc, float $amount, int $duration, string $owner_id)
   {
     if (!($this->conn instanceof mysqli)) return false;
     if ($fix_acc && $amount && $owner_id) {
@@ -243,7 +243,7 @@ class DatabaseConn
         $installment = (($amount + ($amount * 0.2 / 12) * 24) / $duration); //20% for year
         $q2 = 'INSERT INTO loans ( total_amount,paid_amount, date, customer,savingsAccount,duration,installment) VALUES (?, ?, ?, ? , ? , ? , ?);';
         $stmt = $this->conn->prepare($q2);
-        $stmt->bind_param('ddsssdd', $amount, $paid, $date, $owner_id, $savings_acc_no, $duration, $installment);
+        $stmt->bind_param('ddsssid', $amount, $paid, $date, $owner_id, $savings_acc_no, $duration, $installment);
         $status0 = $stmt->execute();
         $stmt->close();
 
