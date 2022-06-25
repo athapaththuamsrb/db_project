@@ -232,7 +232,6 @@
         </div>
 
     </div>
-    <div style="height: 10hv;"></div>
     <br /><br />
     <?php @include('footer.php'); ?>
 

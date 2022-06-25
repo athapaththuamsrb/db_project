@@ -74,7 +74,6 @@
       </div>
     </div>
   </div>
-  <div style="height: 10vh;"></div>
   <?php @include(__DIR__ . '/../footer.php'); ?>
   <?php
   require_once($_SERVER['DOCUMENT_ROOT'] . '/views/modal.php');
