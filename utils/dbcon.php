@@ -432,13 +432,18 @@ class DatabaseConn
       if ($acc_no == null) {
         return $arr;
       }
-      $q = 'SELECT * FROM Accounts WHERE owner_id = ? and acc_no = ?';
+      $q = 'SELECT type FROM Accounts WHERE owner_id = ? and acc_no = ?';
       $ps = $this->conn->prepare($q);
       $ps->bind_param('ss', $owner_id, $acc_no);
       $ps->execute();
       $ps->store_result();
+      $num_rows = $ps->num_rows();
+      $ps->bind_result($type);
       $ps->fetch();
-      if ($ps->num_rows() == 0) {
+      $ps->close();
+      if ($num_rows == 0) {
+        return $arr;
+      } else if ($type == "fd") {
         return $arr;
       } else if (is_null($start_date) && is_null($end_date)) {
         $q0 = 'SELECT trans_id, from_acc, to_acc, init_id, trans_time, amount FROM Transactions WHERE from_acc = ? or to_acc = ?';
@@ -450,13 +455,13 @@ class DatabaseConn
         $stmt = $this->conn->prepare($q0);
         $stmt->bind_param('sss', $acc_no, $acc_no, $start_date_str);
       } else if (is_null($start_date)) {
-        $end_date_str = $end_date->format('Y-m-d H:i:s');
+        $end_date_str = $end_date->format('Y-m-d').' 23:59:59';
         $q0 = 'SELECT trans_id, from_acc, to_acc, init_id, trans_time, amount FROM Transactions WHERE (from_acc = ? or to_acc = ?) and trans_time <= ?';
         $stmt = $this->conn->prepare($q0);
         $stmt->bind_param('sss', $acc_no, $acc_no, $end_date_str);
       } else {
         $start_date_str = $start_date->format('Y-m-d H:i:s');
-        $end_date_str = $end_date->format('Y-m-d H:i:s');
+        $end_date_str = $end_date->format('Y-m-d').' 23:59:59';
         $q0 = 'SELECT trans_id, from_acc, to_acc, init_id, trans_time, amount FROM Transactions WHERE (from_acc = ? or to_acc = ?) and trans_time >= ? and trans_time <= ?';
         $stmt = $this->conn->prepare($q0);
         $stmt->bind_param('ssss', $acc_no, $acc_no, $start_date_str, $end_date_str);
@@ -501,7 +506,7 @@ class DatabaseConn
     $stmt = $this->conn->prepare($common_query);
     $stmt->bind_param('sssdss', $owner_id, $acc_no, $acc_type, $balance, $date_str, $branch_id);
     $stmt->execute();
-    
+
     $response = ['result'=>false, 'created_acc'=>''];
     try {
       if ($acc_type === "checking") {
