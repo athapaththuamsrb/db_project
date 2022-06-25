@@ -38,7 +38,7 @@ confirmBtn.onclick = e => {
         setModal(false, "Invalid Account number");
         return;
     }
-    if (! balance_pattern.test(to_acc_value)) {
+    if (! balance_pattern.test(amount_value)) {
         setModal(false, "Please enter a valid amount");
         return;
     }
