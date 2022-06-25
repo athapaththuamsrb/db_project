@@ -60,14 +60,14 @@ function manageTransaction(string $type, string $username){
         else if(!preg_match('/^[a-zA-Z0-9._]{5,12}$/', $amount) || !$dbconn->check_username($ownername) ){
             $msg = "Invalid User Name";
         }
-        else if($dbconn->check_account($from_acc) === 'fixed' || $dbconn->check_account($to_acc) === 'fixed'){
-            $msg = "Transactions cannot be done on fixed deposits";
-        }
         else if(!preg_match('/^[0-9]{12}$/', $from_acc) || $dbconn->check_account($from_acc) === null  ){    
             $msg = "Invalid From Account Number";
         } 
         else if(!preg_match('/^[0-9]{12}$/', $to_acc) || $dbconn->check_account($to_acc) === null ){    
             $msg = "Invalid To Account Number";
+        }
+        else if($dbconn->check_account($from_acc) === 'fixed' || $dbconn->check_account($to_acc) === 'fixed'){
+            $msg = "Transactions cannot be done on fixed deposits";
         }  
         else if(!$dbconn->get_account_ownership($from_acc, $ownername)){
             $msg = "Username and Account Number don't match";
