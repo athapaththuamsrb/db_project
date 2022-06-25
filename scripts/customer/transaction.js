@@ -30,11 +30,11 @@ confirmBtn.onclick = e => {
     let to_acc_value = to_account.value;
     let amount_value = trans_amount.value;
 
-    if (!/^[0-9]{12}$/.test(to_acc_value)) {
+    if (!acc_no_pattern.test(to_acc_value)) {
         setModal(false, "Invalid Account number");
         return;
     }
-    if (!/^[0-9]+(\.[0-9]{2})?$/.test(to_acc_value)) {
+    if (!balance_pattern.test(to_acc_value)) {
         setModal(false, "Please enter a valid amount");
         return;
     }
