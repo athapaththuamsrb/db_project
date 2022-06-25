@@ -34,7 +34,7 @@ confirmBtn.onclick = e => {
         setModal(false, "Invalid Account number");
         return;
     }
-    if (!/^([0-9]+(\.?[0-9]?[0-9]?)?)$/.test(to_acc_value)) {
+    if (!/^[0-9]+(\.[0-9]{2})?$/.test(to_acc_value)) {
         setModal(false, "Please enter a valid amount");
         return;
     }
