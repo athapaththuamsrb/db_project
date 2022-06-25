@@ -30,16 +30,16 @@ submitBtn.onclick = e => {
     let owner_id = owner_idInput.value;
     let acc_no = acc_noInput.value;
     
-    /*
-    if (!/^[0-9]{1,5}$/.test(owner_id)) {
+    
+    if (!username_pattern.test(owner_id)) {
         showMessage("Invalid owner ID");
         return;
     }
-    if (!/^[a-zA-Z0-9.\-\x20]{2,30}$/.test(acc_no)) {
+    if (!acc_no_pattern.test(acc_no)) {
         showMessage("Invalid account number");
         return;
     }
-    */
+    
     
     let xhrSender = new XHRSender(document.URL, resp => {
         try {
