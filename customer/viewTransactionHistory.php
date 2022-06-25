@@ -5,26 +5,35 @@ $user = (new Authenticator())->checkAuth();
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $response = ['success'=>false];
     if (!isset($_POST['acc_no']) || !$_POST['acc_no']) {
+        $response['reason'] = "Insufficient data";
         echo json_encode($response);
         die();
     }
     $owner_id = $user->getUsername();
     $acc_no = $_POST['acc_no'];
-    if (strlen($acc_no) < 4 || strlen($acc_no) > 12) { // change according to relavent constraints
+    
+    if (!preg_match('/^[a-zA-Z0-9._]{5,12}$/', $owner_id)) {
+        $response['reason'] = "Invalid username";
         echo json_encode($response);
         die();
     }
+    if (!preg_match('/^[a-zA-Z0-9._]{5,12}$/', $acc_no)) { /* change pattern */
+        $response['reason'] = "Invalid account number";
+        echo json_encode($response);
+        die();
+    }
+
     if (!isset($_POST['start_date']) || !$_POST['start_date']) {
         $start_date = null;
     }
     else {
-        $start_date = $_POST['start_date'];
+        $start_date = new DateTime($_POST['start_date']);
     }
     if (!isset($_POST['end_date']) || !$_POST['end_date']) {
         $end_date = null;
     }
     else {
-        $end_date = $_POST['end_date'];
+        $end_date = new DateTime($_POST['end_date']);
     }
     require_once('../utils/dbcon.php');
     $conn = DatabaseConn::get_conn();

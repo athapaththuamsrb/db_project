@@ -654,7 +654,7 @@ class DatabaseConn
         $end_date_str = $end_date->format('Y-m-d H:i:s');
         $q0 = 'SELECT trans_id, from_acc, to_acc, init_id, trans_time, amount FROM Transactions WHERE (from_acc = ? or to_acc = ?) and trans_time >= ? and trans_time <= ?';
         $stmt = $this->conn->prepare($q0);
-        $stmt->bind_param('sss', $acc_no, $acc_no, $start_date_str, $end_date_str);
+        $stmt->bind_param('ssss', $acc_no, $acc_no, $start_date_str, $end_date_str);
       }
       $stmt->execute();
       $result = $stmt->get_result();

@@ -23,8 +23,8 @@ let submitBtn = document.getElementById('submitBtn');
 
 function clear() {
     acc_noInput.value = '';
-    start_dateInput = '';
-    end_dateInput = '';
+    start_dateInput.value = '';
+    end_dateInput.value = '';
 }
 
 submitBtn.onclick = e => {
@@ -33,16 +33,10 @@ submitBtn.onclick = e => {
     let start_date = start_dateInput.value;
     let end_date = end_dateInput.value;
 
-    /*
-    if (!/^[0-9]{1,5}$/.test(owner_id)) {
-        showMessage("Invalid owner ID");
-        return;
-    }
-    if (!/^[a-zA-Z0-9.\-\x20]{2,30}$/.test(acc_no)) {
+    if (!acc_no_pattern.test(acc_no)) {
         showMessage("Invalid account number");
         return;
     }
-    */
     
     let xhrSender = new XHRSender(document.URL, resp => {
         try {

@@ -26,13 +26,11 @@ function clear() {
 submitBtn.onclick = e => {
     e.preventDefault();
     let acc_no = acc_noInput.value;
-    
-    /*
-    if (!/^[a-zA-Z0-9.\-\x20]{2,30}$/.test(acc_no)) {
+   
+    if (!acc_no_pattern.test(acc_no)) {
         showMessage("Invalid account number");
         return;
     }
-    */
     
     let xhrSender = new XHRSender(document.URL, resp => {
         try {
