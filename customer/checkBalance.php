@@ -18,7 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       echo json_encode($response);
       die();
     }
-    if (!preg_match('/^[a-zA-Z0-9._]{5,12}$/', $acc_no)) { /* change pattern */
+    if (!preg_match('/^[0-9]{12}$/', $acc_no)) {
         $response['reason'] = "Invalid account number";
         echo json_encode($response);
         die();

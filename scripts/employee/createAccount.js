@@ -41,28 +41,28 @@ submitBtn.onclick = (e) => {
   let savings_acc_no = savings_acc_noInput.value;
 
   if (!username_pattern.test(owner_id)) {
-    showMessage("Invalid owner ID");
+    setModal(false, "Invalid owner ID");
     return;
   }
   if (!acc_no_pattern.test(acc_no)) {
-      showMessage("Invalid account number");
+    setModal(false, "Invalid account number");
       return;
   }
   if (!balance_pattern.test(balance)) {
-    showMessage("Invalid balance amount");
+    setModal(false, "Invalid balance amount");
     return;
   }
   if (!branch_id_pattern.test(branch_id)) {
-    showMessage("Invalid branch ID");
+    setModal(false, "Invalid branch ID");
     return;
   }
   if (acc_type === "fd"){ 
     if(!acc_no_pattern.test(savings_acc_no)){
-      showMessage("Invalid Savings Account number");
+      setModal(false, "Invalid Savings Account number");
       return;
     }
     if (duration != 6 && duration != 12 && duration != 18){
-      showMessage("Invalid duration");
+      setModal(false, "Invalid duration");
       return;
     }
   }

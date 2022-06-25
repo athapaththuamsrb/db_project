@@ -37,11 +37,11 @@ submitBtn.onclick = e => {
     let end_date = end_dateInput.value;
 
     if (!username_pattern.test(owner_id)) {
-        showMessage("Invalid owner ID");
+        setModal(false, "Invalid owner ID");
         return;
     }
     if (!acc_no_pattern.test(acc_no)) {
-        showMessage("Invalid account number");
+        setModal(false, "Invalid account number");
         return;
     }
 

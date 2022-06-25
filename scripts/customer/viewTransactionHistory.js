@@ -34,7 +34,7 @@ submitBtn.onclick = e => {
     let end_date = end_dateInput.value;
 
     if (!acc_no_pattern.test(acc_no)) {
-        showMessage("Invalid account number");
+        setModal(false, "Invalid account number");
         return;
     }
     

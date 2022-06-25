@@ -28,7 +28,7 @@ submitBtn.onclick = e => {
     let acc_no = acc_noInput.value;
    
     if (!acc_no_pattern.test(acc_no)) {
-        showMessage("Invalid account number");
+        setModal(false, "Invalid account number");
         return;
     }
     
