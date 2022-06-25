@@ -18,7 +18,7 @@
   @include(__DIR__ . '/../navbar.php'); ?>
 
   <div class="container box fade" style="background-color: #880808; color: white; border: #21081a solid 2px">
-    <h1>Apply Loan</h1>
+    <h1>Enter Installment</h1>
     <br />
     <div class="row">
       <div class="col-3"></div>
@@ -26,20 +26,11 @@
         <form method="post" class="form-row align-items-center">
           <div class="row">
             <div class="col-3 item">
-              <label for="fix_acc">Fixed Deposit Account Number : </label>
+              <label for="loan_id">Loan ID : </label>
             </div>
             <div class="col-1 item"></div>
             <div class="col-3 item">
-              <input type="text" name="fix_acc" id="fix_acc" required />
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-3 item">
-              <label for="fix_acc">Duration (Months) : </label>
-            </div>
-            <div class="col-1 item"></div>
-            <div class="col-3 item">
-              <input type="text" name="duration" id="duration" required />
+              <input type="text" name="loan_id" id="loan_id" required />
             </div>
           </div>
           <div class="row">
@@ -54,8 +45,8 @@
           <div class="row">
             <div class="col-2"></div>
             <div class="col-4 item">
-              <button id="submitBtn" type="submit" class="btn btn-info" style="width: 150%">
-                apply Loan
+              <button type="submit" id="submitBtn" class="btn btn-info" style="width: 150%">
+                Enter
               </button>
             </div>
             <div class="col-1"></div>
@@ -65,14 +56,13 @@
       <div class="col-2"></div>
     </div>
   </div>
-  <div style="height: 30vh;"></div>
   <?php @include(__DIR__ . '/../footer.php'); ?>
   <?php
   require_once($_SERVER['DOCUMENT_ROOT'] . '/views/modal.php');
-  addModal('Apply Loan');
+  addModal('Enter Installment');
   ?>
   <script src="/scripts/common.js"></script>
-  <script src="/scripts/customer/applyLoan.js"></script>
+  <script src="/scripts/employee/enterInstallment.js"></script>
 </body>
 
 </html>

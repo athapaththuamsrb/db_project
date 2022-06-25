@@ -60,12 +60,22 @@
     <div class="row item">
       <div class="col-4"></div>
       <div class="col-4">
+        <a href="enterInstallment.php"><button style="height: 10vh; width: 100%; font-size: larger" type="button" class="btn btn-primary fun-item fade">
+            Add Payments
+          </button></a>
+      </div>
+      <div class="col-4"></div>
+    </div>
+    <div class="row item">
+      <div class="col-4"></div>
+      <div class="col-4">
         <a href="createAccount.php"><button style="height: 10vh; width: 100%; font-size: larger" type="button" class="btn btn-primary fun-item fade">
             Create Account
           </button></a>
       </div>
       <div class="col-4"></div>
     </div>
+
   </div>
   <?php @include(__DIR__ . '/../footer.php'); ?>
 </body>

@@ -1,4 +1,7 @@
 <?php
+require_once('auth.php');
+$user = (new Authenticator())->checkAuth();
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $response = ['success'=>false];
   if (!isset($_POST['owner_id']) || !$_POST['owner_id']) {
