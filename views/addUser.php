@@ -167,7 +167,7 @@
   </div>
   <?php @include('footer.php'); ?>
   <?php
-  require_once($_SERVER['DOCUMENT_ROOT'] . '/views/modal.php');
+  include_once($_SERVER['DOCUMENT_ROOT'] . '/views/modal.php');
   addModal('Add User');
   ?>
   <script src="/scripts/common.js"></script>

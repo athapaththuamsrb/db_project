@@ -58,7 +58,7 @@
     </div>
     <?php @include(__DIR__ . '/../footer.php'); ?>
     <?php
-    require_once($_SERVER['DOCUMENT_ROOT'] . '/views/modal.php');
+    include_once($_SERVER['DOCUMENT_ROOT'] . '/views/modal.php');
     addModal('Check Balance');
     ?>
     <script src="/scripts/common.js"></script>
