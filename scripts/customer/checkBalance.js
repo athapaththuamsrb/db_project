@@ -26,29 +26,27 @@ function clear() {
 submitBtn.onclick = e => {
     e.preventDefault();
     let acc_no = acc_noInput.value;
-    
-    /*
-    if (!/^[a-zA-Z0-9.\-\x20]{2,30}$/.test(acc_no)) {
-        showMessage("Invalid account number");
+   
+    if (!acc_no_pattern.test(acc_no)) {
+        setModal(false, "Invalid account number");
         return;
     }
-    */
     
     let xhrSender = new XHRSender(document.URL, resp => {
         try {
             let data = JSON.parse(resp);
             if (data.hasOwnProperty('success') && data['success'] === true && data.hasOwnProperty('balance')) {
                 clear();
-                showMessage(data['balance']);
+                setModal(true, data['balance']);
                 return;
             }
             if (data.hasOwnProperty('reason') && data['reason'] instanceof String) {
-                showMessage(data['reason']);
+                setModal(false, data['reason']);
             } else {
-                showMessage('Sorry try again');
+                setModal(false, 'Sorry try again');
             }
         } catch (e) {
-            showMessage('Error occured');
+            setModal(false, 'Error occured');
         }
     });
     xhrSender.addField('acc_no', acc_no);

@@ -1,5 +1,7 @@
 RewriteEngine on
 RewriteRule ^\..*$ - [L,R=404]
+RewriteRule ^$ /index.php [L,R=301]
+RewriteRule !^(.+\.php)|((images\/)|(scripts\/)|(styles\/)|(webfonts\/)).+$ - [L,R=404]
 RewriteRule ^.*\.html?$ - [L,R=404]
 RewriteRule ^composer.json$ - [L,R=404]
 RewriteRule ^composer.lock$ - [L,R=404]
@@ -11,4 +13,7 @@ RewriteRule ^tmp/.*$ - [L,R=404]
 <IfModule mod_headers.c>
     Header set X-Frame-Options: "DENY"
     Header set X-XSS-Protection: "1; mode=block"
+    Header set Content-Security-Policy "script-src 'self'; connect-src 'self'; frame-src 'none'; form-action 'self'; object-src 'none';"
+    Header set X-Content-Type-Options: "nosniff"
+    Header edit Set-Cookie ^(.*)$ $1;SameSite=Lax
 </IfModule>

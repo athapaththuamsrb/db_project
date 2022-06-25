@@ -18,6 +18,8 @@ let durationInput = document.getElementById("duration");
 let savings_acc_noInput = document.getElementById("savings_acc_no");
 let submitBtn = document.getElementById("submitBtn");
 
+acc_typeInput.onchange = getType;
+
 function clear() {
   owner_idInput.value = "";
   acc_noInput.value = "";
@@ -38,34 +40,53 @@ submitBtn.onclick = (e) => {
   let duration = durationInput.value;
   let savings_acc_no = savings_acc_noInput.value;
 
-  /*
-    if (!/^[0-9]{1,5}$/.test(owner_id)) {
-        showMessage("Invalid owner ID");
-        return;
+  if (!username_pattern.test(owner_id)) {
+    setModal(false, "Invalid owner ID");
+    return;
+  }
+  if (!acc_no_pattern.test(acc_no)) {
+    setModal(false, "Invalid account number");
+      return;
+  }
+  if (!balance_pattern.test(balance)) {
+    setModal(false, "Invalid balance amount");
+    return;
+  }
+  if (!branch_id_pattern.test(branch_id)) {
+    setModal(false, "Invalid branch ID");
+    return;
+  }
+  if (acc_type === "fd"){ 
+    if(!acc_no_pattern.test(savings_acc_no)){
+      setModal(false, "Invalid Savings Account number");
+      return;
     }
-    if (!/^[a-zA-Z0-9.\-\x20]{2,30}$/.test(acc_no)) {
-        showMessage("Invalid account number");
-        return;
+    if (duration != 6 && duration != 12 && duration != 18){
+      setModal(false, "Invalid duration");
+      return;
     }
-    */
+  }
+
 
   let xhrSender = new XHRSender(document.URL, (resp) => {
     try {
       let data = JSON.parse(resp);
       if (data.hasOwnProperty("success") && data["success"] === true) {
         clear();
-        showMessage("Account successfully created!");
+        let created_acc = data['created_acc'];
+        let msg = created_acc.concat(" ", "account successfully created!")
+        setModal(true, msg);
         return;
       }
       if (
         data.hasOwnProperty("reason") /*&& data['reason'] instanceof String*/
       ) {
-        showMessage(data["reason"]);
+        setModal(false, data["reason"]);
       } else {
-        showMessage("Sorry try again");
+        setModal(false,"Sorry try again");
       }
     } catch (e) {
-      showMessage(e);
+        setModal(false, "Error occured");
     }
   });
   xhrSender.addField("owner_id", owner_id);

@@ -166,7 +166,7 @@
             left: 185px;
         }
 
-        #invalid p {
+        #invalid {
             background-color: rgb(255, 0, 0, 0.6);
             border-radius: 10px;
         }
@@ -185,20 +185,19 @@
                 <form method="post">
                     <h2 style="text-align: center;">Login</h2>
                     <br />
-                    <br />
-                    <div id="invalid">
-                        <?php if ($iserror) {
-                            echo "<p>{$error}</p>";
-                        } ?>
+                    <div style="height: 5vh;">
+                        <p id="invalid" <?php if (!isset($_GET['invalid'])) {
+                                            echo 'hidden';
+                                        } ?>>Invalid Login</p>
                     </div>
                     <div class="form-group">
                         <label htmlFor="exampleInputUsername">User Name</label>
-                        <input id="username" type="text" name="username" class=" form-control" placeholder="Enter User Name" onkeypress="keyPressFn(event, 'password')" />
+                        <input id="username" type="text" name="username" class=" form-control" placeholder="Enter User Name" />
                     </div>
                     <br />
                     <div class=" form-group">
                         <label htmlFor="exampleInputPassword">Password</label>
-                        <input id="password" type="password" name="password" class="form-control" placeholder="Enter Password" onkeypress="keyPressFn(event, '')" />
+                        <input id="password" type="password" name="password" class="form-control" placeholder="Enter Password" />
                     </div>
                     <br />
                     <div class="row">
@@ -234,9 +233,11 @@
         </div>
 
     </div>
+    <div style="height: 10hv;"></div>
     <br /><br />
     <?php @include('footer.php'); ?>
 
+    <script src="/scripts/common.js"></script>
     <script src="/scripts/login.js"></script>
 </body>
 
