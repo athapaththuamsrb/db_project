@@ -489,7 +489,7 @@ class DatabaseConn
     ($this->conn)->autocommit(false);
     try {
       if ($from_acc != null) {
-        $q1 = 'UPDATE accounts SET balance = balance - ? WHERE acc_no = ?';
+        $q1 = 'UPDATE Accounts SET balance = balance - ? WHERE acc_no = ?';
         $stmt1 = $this->conn->prepare($q1);
         $stmt1->bind_param('ds', $amount, $from_acc);
         if (!($stmt1->execute())) {
@@ -507,7 +507,7 @@ class DatabaseConn
         }
       }
 
-      $q3 = 'UPDATE accounts SET balance = balance + ? WHERE acc_no = ?';
+      $q3 = 'UPDATE Accounts SET balance = balance + ? WHERE acc_no = ?';
       $stmt3 = $this->conn->prepare($q3);
       $stmt3->bind_param('ds', $amount, $to_acc);
       if (!($stmt3->execute())) {
@@ -515,7 +515,7 @@ class DatabaseConn
         return false;
       }
 
-      $q4 = 'INSERT INTO transactions (from_acc, to_acc, init_id, trans_time, amount) VALUES (?, ?, ?, ?, ?)';
+      $q4 = 'INSERT INTO Transactions (from_acc, to_acc, init_id, trans_time, amount) VALUES (?, ?, ?, ?, ?)';
       $stmt4 = $this->conn->prepare($q4);
       $date = date('Y-m-d H:i:s');
       $stmt4->bind_param('ssssd', $from_acc, $to_acc, $init_id, $date, $amount);
@@ -539,7 +539,7 @@ class DatabaseConn
     ($this->conn)->begin_transaction();
     try {
       $arr = array();
-      $q1 = 'SELECT acc_no FROM accounts WHERE (owner_id = ? and (type = "checking" or type = "savings"))';
+      $q1 = 'SELECT acc_no FROM Accounts WHERE (owner_id = ? and (type = "checking" or type = "savings"))';
       $stmt = $this->conn->prepare($q1);
       $stmt->bind_param('s', $owner_id);
       $stmt->execute();
@@ -562,7 +562,7 @@ class DatabaseConn
 
     if (!($this->conn instanceof mysqli)) return null;
 
-    $q1 = 'SELECT * FROM accounts WHERE acc_no = ? ';
+    $q1 = 'SELECT * FROM Accounts WHERE acc_no = ? ';
     $stmt = $this->conn->prepare($q1);
     $stmt->bind_param('s', $acc_no);
     $stmt->execute();
@@ -576,7 +576,7 @@ class DatabaseConn
   public function get_account_ownership(string $acc_no, string $username)
   {
 
-    $q1 = 'SELECT owner_id FROM accounts WHERE acc_no = ? ';
+    $q1 = 'SELECT owner_id FROM Accounts WHERE acc_no = ? ';
     $stmt = $this->conn->prepare($q1);
     $stmt->bind_param('s', $acc_no);
     $stmt->execute();
@@ -591,7 +591,7 @@ class DatabaseConn
   {
     if (!($this->conn instanceof mysqli)) return null;
 
-    $q1 = 'SELECT * FROM accounts WHERE owner_id = ? ';
+    $q1 = 'SELECT * FROM Accounts WHERE owner_id = ? ';
     $stmt = $this->conn->prepare($q1);
     $stmt->bind_param('s', $username);
     $stmt->execute();
