@@ -1,6 +1,11 @@
-function keyPressFn(e, nxt) {
+function keyPressFn(e, pattern, nxt, modalMessage) {
     if (e.keyCode === 13) {
         e.preventDefault();
+        let value = e.target.value.trim();
+        if (!pattern.test(value)) {
+            setModal(false, modalMessage);
+            return;
+        }
         if (nxt == '') {
             document.getElementById("submitBtn").click();
         } else {
@@ -10,10 +15,6 @@ function keyPressFn(e, nxt) {
             }
         }
     }
-}
-
-function showMessage(msg) {
-    alert(msg); // TODO: modify this to show in a better way
 }
 
 let acc_noInput = document.getElementById('acc_no');
@@ -27,6 +28,10 @@ function clear() {
     end_dateInput.value = '';
 }
 
+acc_noInput.onkeydown = event => { keyPressFn(event, acc_no_pattern, 'start_date', "Invalid account number"); };
+//if (start_dateInput.value) start_dateInput.onkeydown = event => { keyPressFn(event, date_pattern, 'end_date', "Invalid date"); };
+//if (end_dateInput.value) end_dateInput.onkeydown = event => { keyPressFn(event, date_pattern, '', "Invalid date"); };
+
 submitBtn.onclick = e => {
     e.preventDefault();
     let acc_no = acc_noInput.value;
@@ -34,7 +39,7 @@ submitBtn.onclick = e => {
     let end_date = end_dateInput.value;
 
     if (!acc_no_pattern.test(acc_no)) {
-        showMessage("Invalid account number");
+        setModal(false, "Invalid account number");
         return;
     }
     
@@ -61,8 +66,6 @@ submitBtn.onclick = e => {
                 let table = tblBuilder.build();
                 tblDiv.appendChild(table);
                 tblDiv.hidden = false;
-                // let msg = JSON.stringify(data['data']);
-                // showMessage(msg); // display this on the page in a proper way rather than an alert
                 return;
             }
             if (data.hasOwnProperty('reason') && data['reason'] instanceof String) {

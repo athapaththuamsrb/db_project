@@ -19,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         echo json_encode($response);
         die();
     }
-    if (!preg_match('/^[a-zA-Z0-9._]{5,12}$/', $acc_no)) { /* change pattern */
+    if (!preg_match('/^[0-9]{12}$/', $acc_no)) { 
         $response['reason'] = "Invalid account number";
         echo json_encode($response);
         die();
@@ -29,7 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         echo json_encode($response);
         die();
     }
-    if (!preg_match('/^[a-zA-Z0-9._]{5,12}$/', $branch_id)) { /* change pattern */
+    if (!preg_match('/^[0-9]{1,5}$/', $branch_id)) {
         $response['reason'] = "Invalid branch ID";
         echo json_encode($response);
         die();
@@ -42,7 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         else{
             $savings_acc_no = $_POST['savings_acc_no']; $duration = $_POST['duration'];
-            if (!preg_match('/^[a-zA-Z0-9._]{5,12}$/', $savings_acc_no)) { /* change pattern */
+            if (!preg_match('/^[0-9]{12}$/', $savings_acc_no)) { 
                 $response['reason'] = "Invalid savings account number";
                 echo json_encode($response);
                 die();
@@ -59,7 +59,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $result = $conn->create_account($owner_id, $acc_no, $acc_type, $balance, $branch_id, "", "");
     }
     $response['success'] = $result['result'];
-    $response['reason'] = "";
+    if (isset($result['reason'])){
+        $response['reason'] = $result['reason'];
+    }
     $response['created_acc'] = $result['created_acc'];
     echo json_encode($response);
     die();

@@ -85,7 +85,11 @@
               </div>
               <div class="col-1 item"></div>
               <div class="col-3 item">
-                <input type="text" name="duration" id="duration" required />
+                <select name="duration" id="duration">
+                  <option value="6" selected>6 month</option>
+                  <option value="12">1 year</option>
+                  <option value="18">3 year</option>
+                </select>
               </div>
             </div>
             <div class="row">

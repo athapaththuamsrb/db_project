@@ -31,7 +31,7 @@
                             </div>
                             <div class="col-1 item"></div>
                             <div class="col-3 item">
-                                <input type="text" name="acc_no" id="acc_no" onkeypress="keyPressFn(event, 'start_date')" required />
+                                <input type="text" name="acc_no" id="acc_no" required />
                             </div>
                         </div>
                         <div class="row">
@@ -40,7 +40,7 @@
                             </div>
                             <div class="col-1 item"></div>
                             <div class="col-3 item">
-                                <input type="date" name="start_date" id="start_date" onkeypress="keyPressFn(event, 'end_date')" />
+                                <input type="date" name="start_date" id="start_date" />
                             </div>
                         </div>
                         <div class="row">
@@ -49,7 +49,7 @@
                             </div>
                             <div class="col-1 item"></div>
                             <div class="col-3 item">
-                                <input type="date" name="end_date" id="end_date" onkeypress="keyPressFn(event, '')" />
+                                <input type="date" name="end_date" id="end_date" />
                             </div>
                         </div>
                         <div class="row">

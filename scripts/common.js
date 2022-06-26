@@ -71,6 +71,7 @@ class TableBuilder {
 
 const username_pattern = /^[a-zA-Z0-9._]{5,12}$/;
 const password_pattern = /^[\x21-\x7E]{8,15}$/;
-const acc_no_pattern = /^[a-zA-Z0-9._]{5,12}$/; /* change pattern */
+const acc_no_pattern = /^[0-9]{12}$/;
 const balance_pattern = /^([0-9]+(\.?[0-9]?[0-9]?)?)$/;
-const branch_id_pattern = /^[a-zA-Z0-9._]{5,12}$/; /* change pattern */
+const branch_id_pattern = /^[0-9]{1,5}$/; 
+const date_pattern = /^\d{4}-\d{2}-\d{2}$/;

@@ -1,6 +1,11 @@
-function keyPressFn(e, nxt) {
+function keyPressFn(e, pattern, nxt, modalMessage) {
     if (e.keyCode === 13) {
         e.preventDefault();
+        let value = e.target.value.trim();
+        if (!pattern.test(value)) {
+            setModal(false, modalMessage);
+            return;
+        }
         if (nxt == '') {
             document.getElementById("submitBtn").click();
         } else {
@@ -12,10 +17,6 @@ function keyPressFn(e, nxt) {
     }
 }
 
-function showMessage(msg) {
-    alert(msg); // TODO: modify this to show in a better way
-}
-
 let owner_idInput = document.getElementById('owner_id');
 let acc_noInput = document.getElementById('acc_no');
 let submitBtn = document.getElementById('submitBtn');
@@ -25,6 +26,9 @@ function clear() {
     acc_noInput.value = '';
 }
 
+owner_idInput.onkeydown = event => { keyPressFn(event, username_pattern, 'acc_no', "Invalid owner ID"); };
+acc_noInput.onkeydown = event => { keyPressFn(event, acc_no_pattern, '', "Invalid account number"); };
+
 submitBtn.onclick = e => {
     e.preventDefault();
     let owner_id = owner_idInput.value;
@@ -32,11 +36,11 @@ submitBtn.onclick = e => {
     
     
     if (!username_pattern.test(owner_id)) {
-        showMessage("Invalid owner ID");
+        setModal(false, "Invalid owner ID");
         return;
     }
     if (!acc_no_pattern.test(acc_no)) {
-        showMessage("Invalid account number");
+        setModal(false, "Invalid account number");
         return;
     }
     
@@ -46,16 +50,16 @@ submitBtn.onclick = e => {
             let data = JSON.parse(resp);
             if (data.hasOwnProperty('success') && data['success'] === true && data.hasOwnProperty('balance')) {
                 clear();
-                showMessage(data['balance']);
+                setModal(true, data['balance']);
                 return;
             }
             if (data.hasOwnProperty('reason') && data['reason'] instanceof String) {
-                showMessage(data['reason']);
+                setModal(false, data['reason']);
             } else {
-                showMessage('Sorry try again');
+                setModal(false, 'Sorry try again');
             }
         } catch (e) {
-            showMessage('Error occured');
+            setModal(false, 'Error occured');
         }
     });
     xhrSender.addField('owner_id', owner_id);
