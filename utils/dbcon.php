@@ -339,7 +339,7 @@ class DatabaseConn
       ($this->conn)->begin_transaction();
       $response = ['result' => false, 'reason' => ''];
       try {
-        $q0 = 'SELECT total_amount,paid_amount FROM loans WHERE loanID = ?';
+        $q0 = 'SELECT total_amount,paid_amount,installment,duration FROM loans WHERE loanID = ?';
         $stmt = $this->conn->prepare($q0);
         $stmt->bind_param('s', $loan_id);
         $stmt->execute();
@@ -349,13 +349,13 @@ class DatabaseConn
           $response['reason'] = 'No loan associate with the entered ID';
           return $response;
         }
-        $stmt->bind_result($total_amount, $paid_amount);
+        $stmt->bind_result($total_amount, $paid_amount, $installment, $duration);
         $stmt->fetch();
         $stmt->close();
-        if ($total_amount < $paid_amount + $amount) {
+        if ($installment* $duration < $paid_amount + $amount) {
           $response['reason'] = 'Exceed the total amount';
           return $response;
-        } else if ($total_amount == $paid_amount + $amount) {
+        } else if ($installment * $duration == $paid_amount + $amount) {
           $q3 = 'UPDATE loans SET paid_amount = paid_amount + ? , loanStatus = 1 WHERE loanID = ?;';
           $stmt = $this->conn->prepare($q3);
           $stmt->bind_param('ds', $amount, $loan_id);

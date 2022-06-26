@@ -29,6 +29,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     die();
 
   }else{
+    if (!preg_match('/^([0-9]+(\.?[0-9]?[0-9]?)?)$/', $_POST['amount'])) {
+      $response['reason'] = "Invalid balance amount";
+      echo json_encode($response);
+      die();
+    }
     $result = $dbcon->enter_Installment($_POST['loan_id'], $_POST['amount'], $user->getUsername());
     $response['success'] = $result['result'];
     $response['reason'] = $result['reason'];

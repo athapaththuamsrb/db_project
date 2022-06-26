@@ -12,6 +12,10 @@ submitBtn.onclick = (e) => {
   let loan_id = loan_idInput.value;
   let amount = amountInput.value;
 
+if (!balance_pattern.test(amount)) {
+  setModal(false, "Invalid balance amount");
+  return;
+}
 
   let xhrSender = new XHRSender(document.URL, (resp) => {
     // setModal(false, resp);
