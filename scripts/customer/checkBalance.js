@@ -12,9 +12,6 @@ function keyPressFn(e, nxt) {
     }
 }
 
-function showMessage(msg) {
-    alert(msg); // TODO: modify this to show in a better way
-}
 
 let acc_noInput = document.getElementById('acc_no');
 let submitBtn = document.getElementById('submitBtn');

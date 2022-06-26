@@ -1,6 +1,3 @@
-function showMessage(msg) {
-  alert(msg); // TODO: modify this to show in a better way
-}
 function getType() {
   const typeValue = document.getElementById("type").value;
   if (typeValue === "fd") {

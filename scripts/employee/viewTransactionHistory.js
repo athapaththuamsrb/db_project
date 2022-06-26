@@ -12,10 +12,6 @@ function keyPressFn(e, nxt) {
     }
 }
 
-function showMessage(msg) {
-    alert(msg); // TODO: modify this to show in a better way
-}
-
 let owner_idInput = document.getElementById('owner_id');
 let acc_noInput = document.getElementById('acc_no');
 let start_dateInput = document.getElementById('start_date');
@@ -68,8 +64,6 @@ submitBtn.onclick = e => {
                 let table = tblBuilder.build();
                 tblDiv.appendChild(table);
                 tblDiv.hidden = false;
-                // let msg = JSON.stringify(data['data']);
-                // showMessage(msg); // display this on the page in a proper way rather than an alert
                 return;
             }
             if (data.hasOwnProperty('reason') && data['reason'] instanceof String) {

@@ -12,9 +12,6 @@ function keyPressFn(e, nxt) {
     }
 }
 
-function showMessage(msg) {
-    alert(msg); // TODO: modify this to show in a better way
-}
 
 let owner_idInput = document.getElementById('owner_id');
 let acc_noInput = document.getElementById('acc_no');
@@ -46,16 +43,16 @@ submitBtn.onclick = e => {
             let data = JSON.parse(resp);
             if (data.hasOwnProperty('success') && data['success'] === true && data.hasOwnProperty('balance')) {
                 clear();
-                showMessage(data['balance']);
+                setModal(true, data['balance']);
                 return;
             }
             if (data.hasOwnProperty('reason') && data['reason'] instanceof String) {
-                showMessage(data['reason']);
+                setModal(false, data['reason']);
             } else {
-                showMessage('Sorry try again');
+                setModal(false, 'Sorry try again');
             }
         } catch (e) {
-            showMessage('Error occured');
+            setModal(false, 'Error occured');
         }
     });
     xhrSender.addField('owner_id', owner_id);
