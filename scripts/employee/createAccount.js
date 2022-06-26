@@ -43,7 +43,8 @@ function clear() {
   acc_typeInput.value = "savings";
   balanceInput.value = "";
   branch_idInput.value = "";
-  durationInput.value = "";
+  durationInput.value = "6";
+  document.getElementById("fd_visible").style.display = "none";
   savings_acc_noInput.value = "";
 }
 
