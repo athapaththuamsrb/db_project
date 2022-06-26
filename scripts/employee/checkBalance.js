@@ -1,6 +1,11 @@
-function keyPressFn(e, nxt) {
+function keyPressFn(e, pattern, nxt, modalMessage) {
     if (e.keyCode === 13) {
         e.preventDefault();
+        let value = e.target.value.trim();
+        if (!pattern.test(value)) {
+            setModal(false, modalMessage);
+            return;
+        }
         if (nxt == '') {
             document.getElementById("submitBtn").click();
         } else {
@@ -12,7 +17,6 @@ function keyPressFn(e, nxt) {
     }
 }
 
-
 let owner_idInput = document.getElementById('owner_id');
 let acc_noInput = document.getElementById('acc_no');
 let submitBtn = document.getElementById('submitBtn');
@@ -21,6 +25,9 @@ function clear() {
     owner_idInput.value = '';
     acc_noInput.value = '';
 }
+
+owner_idInput.onkeydown = event => { keyPressFn(event, username_pattern, 'acc_no', "Invalid owner ID"); };
+acc_noInput.onkeydown = event => { keyPressFn(event, acc_no_pattern, '', "Invalid account number"); };
 
 submitBtn.onclick = e => {
     e.preventDefault();

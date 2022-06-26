@@ -6,6 +6,32 @@ function getType() {
     document.getElementById("fd_visible").style.display = "none";
   }
 }
+
+function keyPressFn(e, pattern, nxt, modalMessage) {
+  if (e.keyCode === 13) {
+      e.preventDefault();
+      let value = e.target.value.trim();
+      if (nxt == 'savings_acc_no'){
+        if (value != 6 && value != 12 && value != 18){
+          setModal(false, modalMessage);
+          return;
+        }
+      }
+      else if (!pattern.test(value)) {
+          setModal(false, modalMessage);
+          return;
+      }
+      if (nxt == '') {
+          document.getElementById("submitBtn").click();
+      } else {
+          let nextElem = document.getElementById(nxt);
+          if (nextElem) {
+              nextElem.focus();
+          }
+      }
+  }
+}
+
 let owner_idInput = document.getElementById("owner_id");
 let acc_noInput = document.getElementById("acc_no");
 let acc_typeInput = document.getElementById("type");
@@ -26,6 +52,19 @@ function clear() {
   durationInput.value = "";
   savings_acc_noInput.value = "";
 }
+
+owner_idInput.onkeydown = event => { keyPressFn(event, username_pattern, 'acc_no', "Invalid username"); };
+acc_noInput.onkeydown = event => { keyPressFn(event, acc_no_pattern, 'acc_type', "Invalid account number"); };
+balanceInput.onkeydown = event => { keyPressFn(event, balance_pattern, 'branch_id', "Invalid balance"); };
+if (durationInput){
+  next_of_balance = 'duration';
+}
+else {
+  next_of_balance = '';
+}
+branch_idInput.onkeydown = event => { keyPressFn(event, balance_pattern, next_of_balance, "Invalid branch ID"); };
+if (durationInput) durationInput.onkeydown = event => { keyPressFn(event, '', 'savings_acc_no', "Invalid duration"); };
+if (savings_acc_noInput) savings_acc_noInput.onkeydown = event => { keyPressFn(event, acc_no_pattern, '', "Invalid savings account number"); };
 
 submitBtn.onclick = (e) => {
   e.preventDefault();
