@@ -2,8 +2,11 @@ function getType() {
   const typeValue = document.getElementById("type").value;
   if (typeValue === "fd") {
     document.getElementById("fd_visible").style.display = "block";
+    branch_idInput.onkeydown = event => { keyPressFn(event, branch_id_pattern, 'savings_acc_no', "Invalid branch ID"); };
+    savings_acc_noInput.onkeydown = event => { keyPressFn(event, acc_no_pattern, '', "Invalid savings account number"); };
   } else {
     document.getElementById("fd_visible").style.display = "none";
+    branch_idInput.onkeydown = event => { keyPressFn(event, branch_id_pattern, '', "Invalid branch ID"); };
   }
 }
 
@@ -52,13 +55,6 @@ owner_idInput.onkeydown = event => { keyPressFn(event, username_pattern, 'acc_no
 acc_noInput.onkeydown = event => { keyPressFn(event, acc_no_pattern, 'acc_type', "Invalid account number"); };
 balanceInput.onkeydown = event => { keyPressFn(event, balance_pattern, 'branch_id', "Invalid balance"); };
 
-if (document.getElementById("fd_visible").style.display == "block"){
-  branch_idInput.onkeydown = event => { keyPressFn(event, branch_id_pattern, 'savings_acc_no', "Invalid branch ID"); };
-  savings_acc_noInput.onkeydown = event => { keyPressFn(event, acc_no_pattern, '', "Invalid savings account number2"); };
-}
-else {
-  branch_idInput.onkeydown = event => { keyPressFn(event, branch_id_pattern, '', "Invalid branch ID"); };
-}
 
 submitBtn.onclick = (e) => {
   e.preventDefault();
@@ -88,7 +84,7 @@ submitBtn.onclick = (e) => {
   }
   if (acc_type === "fd"){ 
     if(!acc_no_pattern.test(savings_acc_no)){
-      setModal(false, "Invalid savings account number3");
+      setModal(false, "Invalid savings account number");
       return;
     }
     if (duration != 6 && duration != 12 && duration != 18){
