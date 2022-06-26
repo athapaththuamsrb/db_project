@@ -38,7 +38,7 @@ submitBtn.onclick = e => {
     let start_date = start_dateInput.value;
     let end_date = end_dateInput.value;
 
-    if (!username_pattern.test(acc_no)) {
+    if (!acc_no_pattern.test(acc_no)) {
         setModal(false, "Invalid account number");
         return;
     }

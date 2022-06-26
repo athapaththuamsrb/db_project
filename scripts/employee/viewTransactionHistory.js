@@ -46,7 +46,7 @@ submitBtn.onclick = e => {
         setModal(false, "Invalid owner ID");
         return;
     }
-    if (!username_pattern.test(acc_no)) {
+    if (!acc_no_pattern.test(acc_no)) {
         setModal(false, "Invalid account number");
         return;
     }

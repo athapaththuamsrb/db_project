@@ -11,13 +11,7 @@ function keyPressFn(e, pattern, nxt, modalMessage) {
   if (e.keyCode === 13) {
       e.preventDefault();
       let value = e.target.value.trim();
-      if (nxt == 'savings_acc_no'){
-        if (value != 6 && value != 12 && value != 18){
-          setModal(false, modalMessage);
-          return;
-        }
-      }
-      else if (!pattern.test(value)) {
+      if (!pattern.test(value)) {
           setModal(false, modalMessage);
           return;
       }
@@ -63,7 +57,6 @@ else {
   next_of_balance = '';
 }
 branch_idInput.onkeydown = event => { keyPressFn(event, balance_pattern, next_of_balance, "Invalid branch ID"); };
-if (durationInput) durationInput.onkeydown = event => { keyPressFn(event, '', 'savings_acc_no', "Invalid duration"); };
 if (savings_acc_noInput) savings_acc_noInput.onkeydown = event => { keyPressFn(event, acc_no_pattern, '', "Invalid savings account number"); };
 
 submitBtn.onclick = (e) => {
@@ -73,7 +66,7 @@ submitBtn.onclick = (e) => {
   let acc_type = acc_typeInput.options[acc_typeInput.selectedIndex].value;
   let balance = balanceInput.value;
   let branch_id = branch_idInput.value;
-  let duration = durationInput.value;
+  let duration = durationInput.options[durationInput.selectedIndex].value;
   let savings_acc_no = savings_acc_noInput.value;
 
   if (!username_pattern.test(owner_id)) {
