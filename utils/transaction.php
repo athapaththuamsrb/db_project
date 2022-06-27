@@ -35,7 +35,7 @@ function manageTransaction(string $type, string $username){
         else if($dbconn->check_account($from_acc) === 'savings' && $dbconn->check_transaction_count($from_acc) >= 5){
             $msg = "Transaction Limit Reached";
         }
-        else if( $dbconn->check_balance($username, $from_acc) < $amount ){
+        else if( ($dbconn->check_min_balance($username, $from_acc)) < $amount ){
             $msg = "Insufficient Balance";
         }
         else{
@@ -78,7 +78,7 @@ function manageTransaction(string $type, string $username){
         else if($dbconn->check_account($from_acc) === 'savings' && $dbconn->check_transaction_count($from_acc) >= 5){        
             $msg = "Transaction Limit Reached";
         }    
-        else if( $dbconn->check_balance($ownername, $from_acc) < $amount ){
+        else if( $dbconn->check_min_balance($ownername, $from_acc) < $amount ){
            $msg = "Insufficient Balance";
         }    
         else{

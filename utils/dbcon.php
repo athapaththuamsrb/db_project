@@ -481,6 +481,57 @@ class DatabaseConn
     }
   }
 
+  public function check_min_balance(string $owner_id, string $acc_no)
+  {
+    if (!($this->conn instanceof mysqli)) return -1;
+    try {
+      if (!$owner_id || !$acc_no) {
+        return -1;
+      } else {
+        $q0 = 'SELECT type FROM Accounts WHERE owner_id = ? and acc_no = ?';
+        $stmt = $this->conn->prepare($q0);
+        $stmt->bind_param('ss', $owner_id, $acc_no);
+      }
+      $stmt->execute();
+      $result = $stmt->get_result();
+      $type = $result->fetch_assoc();
+      $t = $type['type'];
+      if($t === 'savings'){
+        $q1 = 'SELECT customer_type FROM savings_accounts WHERE  acc_no = ?';
+        $stmt = $this->conn->prepare($q1);
+        $stmt->bind_param('s', $acc_no);
+        $stmt->execute();
+        $result=$stmt->get_result();
+        $c_type = $result->fetch_assoc();
+        $customer = $c_type['customer_type'];
+        if($customer === 'child'){
+          return $this->check_balance($owner_id, $acc_no);
+        }
+        elseif($customer == 'teen'){
+          return ($this->check_balance($owner_id, $acc_no) - 500);
+        }
+        elseif($customer == 'adult'){
+          return  ($this->check_balance($owner_id, $acc_no) - 1000);
+        }
+        elseif($customer == 'senior'){
+          return ($this->check_balance($owner_id, $acc_no) - 1000);
+        }
+        else{
+          return -1;
+        }     
+      }
+      elseif($t === 'checking'){
+         return $this->check_balance($owner_id, $acc_no);
+      }
+      else{
+        return -1;
+      }
+    } catch (Exception $e){
+      return -1;
+    }
+
+  }
+
   public function transaction(string $from_acc, string $to_acc, string $init_id, float $amount)
   {
     if (!($this->conn instanceof mysqli)) return false;
