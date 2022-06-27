@@ -516,25 +516,22 @@ class DatabaseConn
     }
   }
 
+  private function validate($username, $pw): bool
+  {
+    $username_pattern = '/^[a-zA-Z0-9._]{5,12}$/';
+    $pw_pattern = '/^[\x21-\x7E]{8,15}$/';
+    if (preg_match($username_pattern, $username) && preg_match($pw_pattern, $pw)) {
+      return true;
+    }
+    return false;
+  }
+
   public function close_conn()
   {
     if (DatabaseConn::$dbconn != null && $this->conn instanceof mysqli) {
       $this->conn->close();
     }
     $this->__destruct();
-  }
-
-  private function validate($username, $pw): Bool
-  {
-    $username = htmlspecialchars($username);
-    $pw = htmlspecialchars($pw);
-    $username_pattern = '/^[a-zA-Z0-9._]{5,12}$/';
-    $pw_pattern = '/^[\x21-\x7E]{8,15}$/';
-    //$pw_pattern = '/^\S*(?=\S{8,15})(?=\S*[a-z])(?=\S*[A-Z])(?=\S*[\d])(?=\S*[\W])\S*$/';
-    if (preg_match($username_pattern, $username) && preg_match($pw_pattern, $pw)) {
-      return true;
-    }
-    return false;
   }
 
   public function __destruct()
