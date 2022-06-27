@@ -143,7 +143,7 @@
             </div>
             <div class="row">
               <div class="col-3 item">
-                <label for="password">Conform password</label>
+                <label for="cnfpassword">Conform password</label>
               </div>
               <div class="col-1 item"></div>
               <div class="col-3 item">

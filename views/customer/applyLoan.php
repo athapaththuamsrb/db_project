@@ -35,7 +35,7 @@
           </div>
           <div class="row">
             <div class="col-3 item">
-              <label for="fix_acc">Duration (Months) : </label>
+              <label for="duration">Duration (Months) : </label>
             </div>
             <div class="col-1 item"></div>
             <div class="col-3 item">

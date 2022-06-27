@@ -26,7 +26,7 @@
                 <form method="post" class="form-row align-items-center">
                     <div class="row">
                         <div class="col-3 item">
-                            <label for="to_acc">USER NAME</label>
+                            <label for="ownername">USER NAME</label>
                         </div>
                         <div class="col-1 item"></div>
                         <div class="col-3 item">
