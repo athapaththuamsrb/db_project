@@ -29,7 +29,7 @@
                         </div>
                         <div class="col-1 item"></div>
                         <div class="col-3 item">
-                            <input type="text" name="owner_id" id="owner_id" onkeypress="keyPressFn(event, 'acc_no')" required />
+                            <input type="text" name="owner_id" id="owner_id" required />
                         </div>
                     </div>
                     <div class="row">
@@ -38,7 +38,7 @@
                         </div>
                         <div class="col-1 item"></div>
                         <div class="col-3 item">
-                            <input type="text" name="acc_no" id="acc_no" onkeypress="keyPressFn(event, '')" required />
+                            <input type="text" name="acc_no" id="acc_no" required />
                         </div>
                     </div>
 

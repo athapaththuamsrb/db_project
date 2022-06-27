@@ -685,25 +685,17 @@ class DatabaseConn
     if (!($this->conn instanceof mysqli)) return null;
 
     ($this->conn)->begin_transaction();
-
-    $branch_query = "SELECT * FROM branch where id=?";
-    $branch_statement = $this->conn->prepare($branch_query);
-    $branch_statement->bind_param('s', $branch_id);
-    $branch_statement->execute();
-    $branch_statement->store_result();
-    if ($branch_statement->num_rows() == 0) {
-      $response['reason'] = "Invalid branch ID";
-      return $response;
-    }
-
-    $common_query = 'INSERT into Accounts (owner_id, acc_no, type, balance, opened_date, branch_id) values (?, ?, ?, ?, ?, ?)';
-    $date_str = gmdate('Y-m-d');
-    $stmt = $this->conn->prepare($common_query);
-    $stmt->bind_param('sssdss', $owner_id, $acc_no, $acc_type, $balance, $date_str, $branch_id);
-    $stmt->execute();
-    $response = ['result' => false, 'created_acc' => ''];
+    $response = ['result'=>false, 'created_acc'=>'', 'reason'=>''];
+    
     try {
+
+      $common_query = 'INSERT into Accounts (owner_id, acc_no, type, balance, opened_date, branch_id) values (?, ?, ?, ?, ?, ?)';
+      $date_str = gmdate('Y-m-d');
+      $stmt = $this->conn->prepare($common_query);
+      $stmt->bind_param('sssdss', $owner_id, $acc_no, $acc_type, $balance, $date_str, $branch_id);
+
       if ($acc_type === "checking") {
+        $stmt->execute();
         $q0 = 'INSERT into checking_accounts (acc_no) values (?)';
         $stmt0 = $this->conn->prepare($q0);
         $stmt0->bind_param('s', $acc_no);
@@ -714,13 +706,18 @@ class DatabaseConn
         if ($customer_type === "") {
           return $response;
         }
+        if (($customer_type == "teen" && (int)$balance < 500) || ($customer_type == "adult" && (int)$balance < 1000) || ($customer_type == "senior" && (int)$balance < 1000)){
+          $response['reason'] = "Insufficient balance";
+          return $response;
+        }
+        $stmt->execute();
         $q0 = 'INSERT into savings_accounts (acc_no, customer_type, transactions) values (?, ?, 0)';
         $stmt0 = $this->conn->prepare($q0);
         $stmt0->bind_param('ss', $acc_no, $customer_type);
         $response['result'] = $stmt0->execute();
         $response['created_acc'] = 'Savings - ' . $customer_type;
       } elseif ($acc_type === "fd") {
-        $query = "SELECT type from Accounts where owner_id=? and acc_no=?";
+        $query = "SELECT type from Accounts where owner_id=? and acc_no=? and type='savings'";
         $statement = $this->conn->prepare($query);
         $statement->bind_param('ss', $owner_id, $saving_acc_no);
         $statement->execute();
@@ -729,13 +726,7 @@ class DatabaseConn
           $response['reason'] = "No such savings account found under your profile";
           return $response;
         }
-        $statement->bind_result($type);
-        $statement->fetch();
-        $statement->close();
-        if ($type !== "savings"){
-          $response['reason'] = "No such savings account found under your profile";
-          return $response;
-        }
+        $stmt->execute();
         $q0 = 'INSERT into fixed_deposits (acc_no, savings_acc_no, duration) values (?, ?, ?)';
         $stmt0 = $this->conn->prepare($q0);
         $stmt0->bind_param('ssi', $acc_no, $saving_acc_no, $duration);

@@ -1,6 +1,11 @@
-function keyPressFn(e, nxt) {
+function keyPressFn(e, pattern, nxt, modalMessage) {
     if (e.keyCode === 13) {
         e.preventDefault();
+        let value = e.target.value.trim();
+        if (!pattern.test(value)) {
+            setModal(false, modalMessage);
+            return;
+        }
         if (nxt == '') {
             document.getElementById("submitBtn").click();
         } else {
@@ -12,9 +17,6 @@ function keyPressFn(e, nxt) {
     }
 }
 
-function showMessage(msg) {
-    alert(msg); // TODO: modify this to show in a better way
-}
 
 let acc_noInput = document.getElementById('acc_no');
 let submitBtn = document.getElementById('submitBtn');
@@ -22,6 +24,8 @@ let submitBtn = document.getElementById('submitBtn');
 function clear() {
     acc_noInput.value = '';
 }
+
+acc_noInput.onkeydown = event => { keyPressFn(event, acc_no_pattern, '', "Invalid account number"); };
 
 submitBtn.onclick = e => {
     e.preventDefault();
