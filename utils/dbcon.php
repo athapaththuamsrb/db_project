@@ -508,7 +508,7 @@ class DatabaseConn
         $response['created_acc'] = "Checking";
       } elseif ($acc_type === "savings") {
         $customer_type = $this->get_savings_acc_type($owner_id);
-        if ($customer_type === "") {
+        if (is_null($customer_type)) {
           return $response;
         }
         if (($customer_type == "teen" && (int)$balance < 500) || ($customer_type == "adult" && (int)$balance < 1000) || ($customer_type == "senior" && (int)$balance < 1000)){
@@ -558,7 +558,7 @@ class DatabaseConn
       $stmt0->execute();
       $stmt0->store_result();
       if ($stmt0->num_rows() == 0) {
-        return "";
+        return null;
       }
       $stmt0->bind_result($type);
       $stmt0->fetch();
@@ -572,7 +572,7 @@ class DatabaseConn
       $stmt->execute();
       $stmt->store_result();
       if ($stmt->num_rows() == 0) {
-        return "";
+        return null;
       }
       $stmt->bind_result($dob);
       $stmt->fetch();
@@ -590,10 +590,10 @@ class DatabaseConn
       } else {
         return "senior";
       }
-      return "";
+      return null;
     } catch (Exception $e) {
       ($this->conn)->rollback();
-      return "";
+      return null;
     }
   }
 
