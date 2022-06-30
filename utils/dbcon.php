@@ -201,6 +201,258 @@ class DatabaseConn
     return false;
   }
 
+  public function apply_loan(string $fix_acc, float $amount, int $duration, string $owner_id)
+  {
+    if (!($this->conn instanceof mysqli)) return false;
+    if ($fix_acc && $amount && $owner_id) {
+      ($this->conn)->begin_transaction();
+      $response = ['result' => false, 'reason' => ''];
+      try {
+        $q0 = 'SELECT balance FROM Accounts WHERE owner_id = ? and acc_no = ?';
+        $stmt = $this->conn->prepare($q0);
+        $stmt->bind_param('ss', $owner_id, $fix_acc);
+        $stmt->execute();
+        $stmt->store_result();
+        if ($stmt->num_rows() == 0) {
+          $response['reason'] = 'No account associate with the entered number!';
+          return $response;
+        }
+        $stmt->bind_result($balance);
+        $stmt->fetch();
+        $stmt->close();
+        if ($balance * 0.6 < $amount || $amount > 500000) {
+          $response['reason'] = 'Fixed deposit is not enough or amount > 500000';
+          return $response;
+        }
+
+        $q1 = 'SELECT savings_acc_no FROM fixed_deposits WHERE acc_no = ?';
+        $stmt = $this->conn->prepare($q1);
+        $stmt->bind_param('s', $fix_acc);
+        $stmt->execute();
+        $stmt->store_result();
+        if ($stmt->num_rows() == 0) {
+          $response['reason'] = 'No fixed account associate with the entered number!';
+          return $response;
+        }
+        $stmt->bind_result($savings_acc_no);
+        $stmt->fetch();
+        $stmt->close();
+
+        $q = 'SELECT fixedAccount FROM loans WHERE fixedAccount = ? and loanStatus = 0';
+        $stmt = $this->conn->prepare($q);
+        $stmt->bind_param('s', $fix_acc);
+        $stmt->execute();
+        $stmt->store_result();
+        if ($stmt->num_rows() > 0) {
+          $response['reason'] = 'Only one loan can apply from a fixed deposit!';
+          return $response;
+        }
+        // $stmt->bind_result($savings_acc_no); TODO:check
+        $stmt->fetch();
+        $stmt->close();
+
+        $date = date("Y-m-d");
+        $paid = 0;
+        $installment = (($amount + ($amount * 0.2 / 12) * 24) / $duration); //20% for year
+        $q2 = 'INSERT INTO loans ( total_amount,paid_amount, date, customer,savingsAccount,fixedAccount,duration,installment) VALUES (?, ?, ?, ?,? , ? , ? , ?);';
+        $stmt = $this->conn->prepare($q2);
+        $stmt->bind_param('ddssssid', $amount, $paid, $date, $owner_id, $savings_acc_no, $fix_acc, $duration, $installment);
+        $status0 = $stmt->execute();
+        $stmt->close();
+
+        if ($status0) { //update saving account balance
+          $q3 = 'UPDATE Accounts SET balance = balance + ? WHERE acc_no = ?;';
+          $stmt = $this->conn->prepare($q3);
+          $stmt->bind_param('ds', $amount, $savings_acc_no);
+          $status1 = $stmt->execute();
+        }
+        ($this->conn)->commit();
+        $response['reason'] = 'Loan added successfully!';
+        $response['result'] = true;
+
+        return $response;
+      } catch (Exception $e) {
+        ($this->conn)->rollback();
+        $response['reason'] = 'Error!';
+        return $response;
+      }
+    }
+    $response['reason'] = 'Error!';
+    return $response;
+  }
+
+  public function approveLoan(string $sav_acc, float $amount, float $duration)
+  {
+    if (!($this->conn instanceof mysqli)) return false;
+    if ($sav_acc && $amount) {
+      ($this->conn)->begin_transaction();
+      $response = ['result' => false, 'reason' => ''];
+      try {
+        $q0 = 'SELECT owner_id FROM accounts WHERE acc_no = ?';
+        $stmt = $this->conn->prepare($q0);
+        $stmt->bind_param('s', $sav_acc);
+        $stmt->execute();
+        $stmt->store_result();
+        if ($stmt->num_rows() == 0) {
+          $response['reason'] = 'No account associate with the entered number!';
+          return $response;
+        }
+        $stmt->bind_result($customer);
+        $stmt->fetch();
+        $stmt->close();
+
+
+        $date = date("Y-m-d");
+        $paid = 0;
+        $installment = (($amount + ($amount * 0.2 / 12) * 24) / $duration); //20% for year
+        $q2 = 'INSERT INTO loans ( total_amount,paid_amount, date, customer,savingsAccount,duration,installment) VALUES ( ?, ?, ?,? , ? , ? , ?);';
+        $stmt = $this->conn->prepare($q2);
+        $stmt->bind_param('ddsssdd', $amount, $paid, $date, $customer, $sav_acc, $duration, $installment);
+        $status0 = $stmt->execute();
+        $stmt->close();
+
+        if ($status0) { //update saving account balance
+          $q3 = 'UPDATE accounts SET balance = balance + ? WHERE acc_no = ?;';
+          $stmt = $this->conn->prepare($q3);
+          $stmt->bind_param('ds', $amount, $sav_acc);
+          $status1 = $stmt->execute();
+        }
+        ($this->conn)->commit();
+        $response['reason'] = 'Loan added successfully!';
+        $response['result'] = true;
+
+        return $response;
+      } catch (Exception $e) {
+        ($this->conn)->rollback();
+        $response['reason'] = 'Error!';
+        return $response;
+      }
+    }
+    $response['reason'] = 'Error!';
+    return $response;
+  }
+
+  public function enter_Installment(string $loan_id, float $amount, string $employee)
+  {
+    if (!($this->conn instanceof mysqli)) return false;
+    if ($loan_id && $amount) {
+      ($this->conn)->begin_transaction();
+      $response = ['result' => false, 'reason' => ''];
+      try {
+        $q0 = 'SELECT total_amount,paid_amount FROM loans WHERE loanID = ?';
+        $stmt = $this->conn->prepare($q0);
+        $stmt->bind_param('s', $loan_id);
+        $stmt->execute();
+        $stmt->store_result();
+
+        if ($stmt->num_rows() == 0) {
+          $response['reason'] = 'No loan associate with the entered ID';
+          return $response;
+        }
+        $stmt->bind_result($total_amount, $paid_amount);
+        $stmt->fetch();
+        $stmt->close();
+        if ($total_amount < $paid_amount + $amount) {
+          $response['reason'] = 'Exceed the total amount';
+          return $response;
+        } else if ($total_amount == $paid_amount + $amount) {
+          $q3 = 'UPDATE loans SET paid_amount = paid_amount + ? , loanStatus = 1 WHERE loanID = ?;';
+          $stmt = $this->conn->prepare($q3);
+          $stmt->bind_param('ds', $amount, $loan_id);
+          $response['result'] = $stmt->execute();
+          $response['reason'] = 'Installment entered correctly and it covers the full amount of the loan.';
+        } else {
+          $q3 = 'UPDATE loans SET paid_amount = paid_amount + ? WHERE loanID = ?;';
+          $stmt = $this->conn->prepare($q3);
+          $stmt->bind_param('ds', $amount, $loan_id);
+          $response['result'] = $stmt->execute();
+          $response['reason'] = 'Installment entered correctly.';
+        }
+        $date = date("Y-m-d");
+        $q4 = 'INSERT INTO loan_payments (loanID,amount,date,employee ) VALUES ( ?, ?, ?,?);';
+        $stmt = $this->conn->prepare($q4);
+        $stmt->bind_param('sdss', $loan_id, $amount, $date, $employee);
+        $status0 = $stmt->execute();
+        $stmt->close();
+
+
+
+        ($this->conn)->commit();
+        return $response;
+      } catch (Exception $e) {
+        ($this->conn)->rollback();
+        return false;
+      }
+    }
+    return false;
+  }
+
+  public function getLateLoans($username): ?array
+  {
+    if (!($this->conn instanceof mysqli)) return null;
+    try {
+      $q = 'SELECT id FROM branch WHERE manager_id=?';
+      $stmt = $this->conn->prepare($q);
+      $stmt->bind_param('s', $username);
+      $stmt->execute();
+      $stmt->store_result();
+      $rowcount = $stmt->num_rows();
+      if ($rowcount != 1) return null;
+      $stmt->bind_result($branch_id);
+      $stmt->fetch();
+      $stmt->close();
+
+      $q1 = 'SELECT loans.loanID, loans.customer, loans.should_paid, loans.paid_amount, loans.should_paid-loans.paid_amount difference FROM `loans` JOIN Accounts ON loans.savingsAccount=Accounts.acc_no WHERE Accounts.type="savings" AND Accounts.branch_id=? AND loans.paid_amount < loans.should_paid';
+      $stmt1 = $this->conn->prepare($q1);
+      $stmt1->bind_param('i', $branch_id);
+      $stmt1->execute();
+      $result = $stmt1->get_result();
+      $data = [];
+      while ($row = $result->fetch_assoc()) {
+        $arr = [$row['loanID'], $row['customer'], $row['should_paid'], $row['paid_amount'], $row['difference']];
+        array_push($data, $arr);
+      }
+      ($this->conn)->commit();
+      return [['Loan ID', 'Customer', 'Should paid', 'Paid amount', 'Difference'], $data];
+    } catch (Exception $e) {
+      return null;
+    }
+    return null;
+  }
+
+  public function getTransactions($username): ?array
+  {
+    if (!($this->conn instanceof mysqli)) return null;
+    try {
+      $q = 'SELECT id FROM branch WHERE manager_id=?';
+      $stmt = $this->conn->prepare($q);
+      $stmt->bind_param('s', $username);
+      $stmt->execute();
+      $stmt->store_result();
+      $rowcount = $stmt->num_rows();
+      if ($rowcount != 1) return null;
+      $stmt->bind_result($branch_id);
+      $stmt->fetch();
+      $stmt->close();
+
+      $q1 = 'SELECT T.trans_id, T.from_acc, T.to_acc, T.amount, T.trans_time FROM (Transactions T INNER JOIN Accounts FA ON T.from_acc=FA.acc_no) INNER JOIN Accounts TA ON T.to_acc=TA.acc_no WHERE MONTH(T.trans_time)=MONTH(CURRENT_DATE) AND YEAR(T.trans_time)=YEAR(CURRENT_DATE) AND (FA.branch_id=? OR TA.branch_id=?) ORDER BY T.trans_id;';
+      $stmt1 = $this->conn->prepare($q1);
+      $stmt1->bind_param('ii', $branch_id, $branch_id);
+      $stmt1->execute();
+      $result = $stmt1->get_result();
+      $data = [];
+      while ($row = $result->fetch_assoc()) {
+        $arr = [$row['trans_id'], $row['from_acc'], $row['to_acc'], $row['amount'], $row['trans_time']];
+        array_push($data, $arr);
+      }
+      ($this->conn)->commit();
+      return [['ID', 'From', 'To', 'Amount', 'Date'], $data];
+    } catch (Exception $e) {
+      return null;
+    }
+    return null;
+  }
+
   public function check_balance(string $owner_id, string $acc_no)
   {
     if (!($this->conn instanceof mysqli)) return -1;
@@ -231,14 +483,13 @@ class DatabaseConn
 
   public function transaction(string $from_acc, string $to_acc, string $init_id, float $amount)
   {
-
     if (!($this->conn instanceof mysqli)) return false;
 
     ($this->conn)->begin_transaction();
     ($this->conn)->autocommit(false);
     try {
       if ($from_acc != null) {
-        $q1 = 'UPDATE accounts SET balance = balance - ? WHERE acc_no = ?';
+        $q1 = 'UPDATE Accounts SET balance = balance - ? WHERE acc_no = ?';
         $stmt1 = $this->conn->prepare($q1);
         $stmt1->bind_param('ds', $amount, $from_acc);
         if (!($stmt1->execute())) {
@@ -256,7 +507,7 @@ class DatabaseConn
         }
       }
 
-      $q3 = 'UPDATE accounts SET balance = balance + ? WHERE acc_no = ?';
+      $q3 = 'UPDATE Accounts SET balance = balance + ? WHERE acc_no = ?';
       $stmt3 = $this->conn->prepare($q3);
       $stmt3->bind_param('ds', $amount, $to_acc);
       if (!($stmt3->execute())) {
@@ -264,7 +515,7 @@ class DatabaseConn
         return false;
       }
 
-      $q4 = 'INSERT INTO transactions (from_acc, to_acc, init_id, trans_time, amount) VALUES (?, ?, ?, ?, ?)';
+      $q4 = 'INSERT INTO Transactions (from_acc, to_acc, init_id, trans_time, amount) VALUES (?, ?, ?, ?, ?)';
       $stmt4 = $this->conn->prepare($q4);
       $date = date('Y-m-d H:i:s');
       $stmt4->bind_param('ssssd', $from_acc, $to_acc, $init_id, $date, $amount);
@@ -288,7 +539,7 @@ class DatabaseConn
     ($this->conn)->begin_transaction();
     try {
       $arr = array();
-      $q1 = 'SELECT acc_no FROM accounts WHERE (owner_id = ? and (type = "checking" or type = "savings"))';
+      $q1 = 'SELECT acc_no FROM Accounts WHERE (owner_id = ? and (type = "checking" or type = "savings"))';
       $stmt = $this->conn->prepare($q1);
       $stmt->bind_param('s', $owner_id);
       $stmt->execute();
@@ -311,7 +562,7 @@ class DatabaseConn
 
     if (!($this->conn instanceof mysqli)) return null;
 
-    $q1 = 'SELECT * FROM accounts WHERE acc_no = ? ';
+    $q1 = 'SELECT * FROM Accounts WHERE acc_no = ? ';
     $stmt = $this->conn->prepare($q1);
     $stmt->bind_param('s', $acc_no);
     $stmt->execute();
@@ -325,7 +576,7 @@ class DatabaseConn
   public function get_account_ownership(string $acc_no, string $username)
   {
 
-    $q1 = 'SELECT owner_id FROM accounts WHERE acc_no = ? ';
+    $q1 = 'SELECT owner_id FROM Accounts WHERE acc_no = ? ';
     $stmt = $this->conn->prepare($q1);
     $stmt->bind_param('s', $acc_no);
     $stmt->execute();
@@ -340,7 +591,7 @@ class DatabaseConn
   {
     if (!($this->conn instanceof mysqli)) return null;
 
-    $q1 = 'SELECT * FROM accounts WHERE owner_id = ? ';
+    $q1 = 'SELECT * FROM Accounts WHERE owner_id = ? ';
     $stmt = $this->conn->prepare($q1);
     $stmt->bind_param('s', $username);
     $stmt->execute();
@@ -376,13 +627,18 @@ class DatabaseConn
       if ($acc_no == null) {
         return $arr;
       }
-      $q = 'SELECT * FROM Accounts WHERE owner_id = ? and acc_no = ?';
+      $q = 'SELECT type FROM Accounts WHERE owner_id = ? and acc_no = ?';
       $ps = $this->conn->prepare($q);
       $ps->bind_param('ss', $owner_id, $acc_no);
       $ps->execute();
       $ps->store_result();
+      $num_rows = $ps->num_rows();
+      $ps->bind_result($type);
       $ps->fetch();
-      if ($ps->num_rows() == 0) {
+      $ps->close();
+      if ($num_rows == 0) {
+        return $arr;
+      } else if ($type == "fd") {
         return $arr;
       } else if (is_null($start_date) && is_null($end_date)) {
         $q0 = 'SELECT trans_id, from_acc, to_acc, init_id, trans_time, amount FROM Transactions WHERE from_acc = ? or to_acc = ?';
@@ -394,16 +650,16 @@ class DatabaseConn
         $stmt = $this->conn->prepare($q0);
         $stmt->bind_param('sss', $acc_no, $acc_no, $start_date_str);
       } else if (is_null($start_date)) {
-        $end_date_str = $end_date->format('Y-m-d H:i:s');
+        $end_date_str = $end_date->format('Y-m-d') . ' 23:59:59';
         $q0 = 'SELECT trans_id, from_acc, to_acc, init_id, trans_time, amount FROM Transactions WHERE (from_acc = ? or to_acc = ?) and trans_time <= ?';
         $stmt = $this->conn->prepare($q0);
         $stmt->bind_param('sss', $acc_no, $acc_no, $end_date_str);
       } else {
         $start_date_str = $start_date->format('Y-m-d H:i:s');
-        $end_date_str = $end_date->format('Y-m-d H:i:s');
+        $end_date_str = $end_date->format('Y-m-d') . ' 23:59:59';
         $q0 = 'SELECT trans_id, from_acc, to_acc, init_id, trans_time, amount FROM Transactions WHERE (from_acc = ? or to_acc = ?) and trans_time >= ? and trans_time <= ?';
         $stmt = $this->conn->prepare($q0);
-        $stmt->bind_param('sss', $acc_no, $acc_no, $start_date_str, $end_date_str);
+        $stmt->bind_param('ssss', $acc_no, $acc_no, $start_date_str, $end_date_str);
       }
       $stmt->execute();
       $result = $stmt->get_result();
@@ -427,14 +683,18 @@ class DatabaseConn
   public function create_account(string $owner_id, string $acc_no, string $acc_type, float $balance, string $branch_id, $saving_acc_no, $duration)
   {
     if (!($this->conn instanceof mysqli)) return null;
+
     ($this->conn)->begin_transaction();
-    $common_query = 'INSERT into Accounts (owner_id, acc_no, type, balance, opened_date, branch_id) values (?, ?, ?, ?, ?, ?)';
-    $date_str = gmdate('Y-m-d');
-    $stmt = $this->conn->prepare($common_query);
-    $stmt->bind_param('sssdss', $owner_id, $acc_no, $acc_type, $balance, $date_str, $branch_id);
-    $stmt->execute();
-    $response = ['result'=>false, 'created_acc'=>''];
+    $response = ['result' => false, 'created_acc' => ''];
+
     try {
+
+      $common_query = 'INSERT into Accounts (owner_id, acc_no, type, balance, opened_date, branch_id) values (?, ?, ?, ?, ?, ?)';
+      $date_str = gmdate('Y-m-d');
+      $stmt = $this->conn->prepare($common_query);
+      $stmt->bind_param('sssdss', $owner_id, $acc_no, $acc_type, $balance, $date_str, $branch_id);
+      $stmt->execute();
+
       if ($acc_type === "checking") {
         $q0 = 'INSERT into checking_accounts (acc_no) values (?)';
         $stmt0 = $this->conn->prepare($q0);
@@ -450,8 +710,17 @@ class DatabaseConn
         $stmt0 = $this->conn->prepare($q0);
         $stmt0->bind_param('ss', $acc_no, $customer_type);
         $response['result'] = $stmt0->execute();
-        $response['created_acc'] = 'Savings - '.$customer_type;
+        $response['created_acc'] = 'Savings - ' . $customer_type;
       } elseif ($acc_type === "fd") {
+        $query = "SELECT type from Accounts where owner_id=? and acc_no=? and type='savings'";
+        $statement = $this->conn->prepare($query);
+        $statement->bind_param('ss', $owner_id, $saving_acc_no);
+        $statement->execute();
+        $statement->store_result();
+        if ($statement->num_rows() == 0) {
+          $response['reason'] = "No such savings account found under your profile";
+          return $response;
+        }
         $q0 = 'INSERT into fixed_deposits (acc_no, savings_acc_no, duration) values (?, ?, ?)';
         $stmt0 = $this->conn->prepare($q0);
         $stmt0->bind_param('ssi', $acc_no, $saving_acc_no, $duration);
@@ -462,6 +731,7 @@ class DatabaseConn
       return $response;
     } catch (Exception $e) {
       ($this->conn)->rollback();
+      $response['reason'] = "Sorry, error occurred";
       return $response;
     }
   }

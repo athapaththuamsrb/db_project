@@ -1,6 +1,11 @@
-function keyPressFn(e, nxt) {
+function keyPressFn(e, pattern, nxt, modalMessage) {
     if (e.keyCode === 13) {
         e.preventDefault();
+        let value = e.target.value.trim();
+        if (!pattern.test(value)) {
+            setModal(false, modalMessage);
+            return;
+        }
         if (nxt == '') {
             document.getElementById("submitBtn").click();
         } else {
@@ -12,10 +17,6 @@ function keyPressFn(e, nxt) {
     }
 }
 
-function showMessage(msg) {
-    alert(msg); // TODO: modify this to show in a better way
-}
-
 let acc_noInput = document.getElementById('acc_no');
 let start_dateInput = document.getElementById('start_date');
 let end_dateInput = document.getElementById('end_date');
@@ -23,9 +24,13 @@ let submitBtn = document.getElementById('submitBtn');
 
 function clear() {
     acc_noInput.value = '';
-    start_dateInput = '';
-    end_dateInput = '';
+    start_dateInput.value = '';
+    end_dateInput.value = '';
 }
+
+acc_noInput.onkeydown = event => { keyPressFn(event, acc_no_pattern, 'start_date', "Invalid account number"); };
+//if (start_dateInput.value) start_dateInput.onkeydown = event => { keyPressFn(event, date_pattern, 'end_date', "Invalid date"); };
+//if (end_dateInput.value) end_dateInput.onkeydown = event => { keyPressFn(event, date_pattern, '', "Invalid date"); };
 
 submitBtn.onclick = e => {
     e.preventDefault();
@@ -33,16 +38,10 @@ submitBtn.onclick = e => {
     let start_date = start_dateInput.value;
     let end_date = end_dateInput.value;
 
-    /*
-    if (!/^[0-9]{1,5}$/.test(owner_id)) {
-        showMessage("Invalid owner ID");
+    if (!acc_no_pattern.test(acc_no)) {
+        setModal(false, "Invalid account number");
         return;
     }
-    if (!/^[a-zA-Z0-9.\-\x20]{2,30}$/.test(acc_no)) {
-        showMessage("Invalid account number");
-        return;
-    }
-    */
     
     let xhrSender = new XHRSender(document.URL, resp => {
         try {
@@ -67,8 +66,6 @@ submitBtn.onclick = e => {
                 let table = tblBuilder.build();
                 tblDiv.appendChild(table);
                 tblDiv.hidden = false;
-                // let msg = JSON.stringify(data['data']);
-                // showMessage(msg); // display this on the page in a proper way rather than an alert
                 return;
             }
             if (data.hasOwnProperty('reason') && data['reason'] instanceof String) {

@@ -29,7 +29,7 @@
                         </div>
                         <div class="col-1 item"></div>
                         <div class="col-3 item">
-                            <input type="text" name="acc_no" id="acc_no" onkeypress="keyPressFn(event, '')" required />
+                            <input type="text" name="acc_no" id="acc_no" required />
                         </div>
                     </div>
 
@@ -47,10 +47,9 @@
             <div class="col-2"></div>
         </div>
     </div>
-
     <?php @include(__DIR__ . '/../footer.php'); ?>
     <?php
-    require_once($_SERVER['DOCUMENT_ROOT'] . '/views/modal.php');
+    include_once($_SERVER['DOCUMENT_ROOT'] . '/views/modal.php');
     addModal('Check Balance');
     ?>
     <script src="/scripts/common.js"></script>

@@ -1,6 +1,11 @@
-function keyPressFn(e, nxt) {
+function keyPressFn(e, pattern, nxt, modalMessage) {
     if (e.keyCode === 13) {
         e.preventDefault();
+        let value = e.target.value.trim();
+        if (!pattern.test(value)) {
+            setModal(false, modalMessage);
+            return;
+        }
         if (nxt == '') {
             document.getElementById("submitBtn").click();
         } else {
@@ -12,10 +17,6 @@ function keyPressFn(e, nxt) {
     }
 }
 
-function showMessage(msg) {
-    alert(msg); // TODO: modify this to show in a better way
-}
-
 let owner_idInput = document.getElementById('owner_id');
 let acc_noInput = document.getElementById('acc_no');
 let start_dateInput = document.getElementById('start_date');
@@ -25,9 +26,14 @@ let submitBtn = document.getElementById('submitBtn');
 function clear() {
     owner_idInput.value = '';
     acc_noInput.value = '';
-    start_dateInput = '';
-    end_dateInput = '';
+    start_dateInput.value = '';
+    end_dateInput.value = '';
 }
+
+owner_idInput.onkeydown = event => { keyPressFn(event, username_pattern, 'acc_no', "Invalid username"); };
+acc_noInput.onkeydown = event => { keyPressFn(event, acc_no_pattern, 'start_date', "Invalid account number"); };
+//if (start_dateInput.value) start_dateInput.onkeydown = event => { keyPressFn(event, date_pattern, 'end_date', "Invalid date"); };
+//if (end_dateInput.value) end_dateInput.onkeydown = event => { keyPressFn(event, date_pattern, '', "Invalid date"); };
 
 submitBtn.onclick = e => {
     e.preventDefault();
@@ -36,16 +42,14 @@ submitBtn.onclick = e => {
     let start_date = start_dateInput.value;
     let end_date = end_dateInput.value;
 
-    /*
-    if (!/^[0-9]{1,5}$/.test(owner_id)) {
-        showMessage("Invalid owner ID");
+    if (!username_pattern.test(owner_id)) {
+        setModal(false, "Invalid owner ID");
         return;
     }
-    if (!/^[a-zA-Z0-9.\-\x20]{2,30}$/.test(acc_no)) {
-        showMessage("Invalid account number");
+    if (!acc_no_pattern.test(acc_no)) {
+        setModal(false, "Invalid account number");
         return;
     }
-    */
 
     let xhrSender = new XHRSender(document.URL, resp => {
         try {
@@ -70,8 +74,6 @@ submitBtn.onclick = e => {
                 let table = tblBuilder.build();
                 tblDiv.appendChild(table);
                 tblDiv.hidden = false;
-                // let msg = JSON.stringify(data['data']);
-                // showMessage(msg); // display this on the page in a proper way rather than an alert
                 return;
             }
             if (data.hasOwnProperty('reason') && data['reason'] instanceof String) {

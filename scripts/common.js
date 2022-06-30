@@ -9,7 +9,7 @@ class XHRSender {
         this.fields[fieldName] = value;
     }
 
-    send() {
+    send(responseType = '', callxhr = false) {
         let encoded = Object.keys(this.fields).map((index) => {
             return encodeURIComponent(index) + '=' + encodeURIComponent(this.fields[index]);
         });
@@ -17,9 +17,18 @@ class XHRSender {
         let xhr = new XMLHttpRequest();
         xhr.open("POST", this.url, true);
         xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        xhr.responseType = responseType;
         xhr.onreadystatechange = () => {
+            if (xhr.responseURL.includes('/login.php') && !this.url.includes('/login.php')){
+                window.location = '/login.php';
+                return;
+            }
             if (xhr.readyState == XMLHttpRequest.DONE) {
-                this.callback(xhr.response);
+                if (callxhr) {
+                    this.callback(xhr);
+                } else {
+                    this.callback(xhr.response);
+                }
             }
         };
         xhr.send(reqBody);
@@ -62,3 +71,7 @@ class TableBuilder {
 
 const username_pattern = /^[a-zA-Z0-9._]{5,12}$/;
 const password_pattern = /^[\x21-\x7E]{8,15}$/;
+const acc_no_pattern = /^[0-9]{12}$/;
+const balance_pattern = /^([0-9]+(\.?[0-9]?[0-9]?)?)$/;
+const branch_id_pattern = /^[0-9]{1,5}$/; 
+const date_pattern = /^\d{4}-\d{2}-\d{2}$/;

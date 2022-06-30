@@ -16,14 +16,7 @@
 <body>
 
     <?php @include(__DIR__ . '/../navbar.php'); ?>
-    <?php
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-        if ($error !== false) {
-            print_r($error);
-        }
-    }
-    ?>
     <div class="container box fade" style="background-color: #880808; color: white; border: #21081a solid 2px">
         <h1>Tranfer Money</h1>
         <br />
@@ -33,7 +26,7 @@
                 <form method="post" class="form-row align-items-center">
                     <div class="row">
                         <div class="col-3 item">
-                            <label for="to_acc">USER NAME</label>
+                            <label for="ownername">USER NAME</label>
                         </div>
                         <div class="col-1 item"></div>
                         <div class="col-3 item">
@@ -74,7 +67,7 @@
                     <div class="row">
                         <div class="col-2"></div>
                         <div class="col-4 item">
-                            <button type="submit" name="confirm" class="btn btn-info" style="width: 150%">
+                            <button type="submit" name="confirm" id="confirm" class="btn btn-info" style="width: 150%">
                                 Confirm
                             </button>
                         </div>
@@ -88,9 +81,11 @@
     </div>
     <?php @include(__DIR__ . '/../footer.php'); ?>
     <?php
-    require_once($_SERVER['DOCUMENT_ROOT'] . '/views/modal.php');
+    include_once($_SERVER['DOCUMENT_ROOT'] . '/views/modal.php');
     addModal('Transaction');
     ?>
+    <script src="/scripts/common.js"></script>
+    <script src="/scripts/employee/transaction.js"></script>
 </body>
 
 </html>

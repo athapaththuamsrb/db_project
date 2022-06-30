@@ -9,16 +9,16 @@
     <link rel="stylesheet" href="/styles/bootstrap-5.1.3-dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="/styles/form.css" />
     <script src="/styles/bootstrap-5.1.3-dist/js/bootstrap.min.js"></script>
-    <title>Transactions</title>
+    <title>Enter Approved Loan</title>
     <link rel="icon" type="image/x-icon" href="/images/favicon.ico" />
 </head>
 
 <body>
-
-    <?php @include(__DIR__ . '/../navbar.php'); ?>
+    <?php
+    @include(__DIR__ . '/../navbar.php'); ?>
 
     <div class="container box fade" style="background-color: #880808; color: white; border: #21081a solid 2px">
-        <h1>Tranfer Money</h1>
+        <h1>Enter Approved Loan</h1>
         <br />
         <div class="row">
             <div class="col-3"></div>
@@ -26,46 +26,38 @@
                 <form method="post" class="form-row align-items-center">
                     <div class="row">
                         <div class="col-3 item">
-                            <label for="to_acc">TO ACCOUNT</label>
+                            <label for="sav_acc">Savings Account Number : </label>
                         </div>
                         <div class="col-1 item"></div>
                         <div class="col-3 item">
-                            <input type="text" name="to_acc" id="to_acc" required>
+                            <input type="text" name="sav_acc" id="sav_acc" required />
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-3 item">
-                            <label for="from acc">FROM ACCOUNT</label>
+                            <label for="duration">Duration (Months) : </label>
                         </div>
                         <div class="col-1 item"></div>
                         <div class="col-3 item">
-                            <select name="from_acc" id="from_acc" required>
-                                <option value="" disabled selected></option>
-                                <?php foreach ($accounts as $x) { ?>
-                                    <option value="<?php echo $x ?>"><?php echo $x ?></option>
-                                <?php } ?>
-
-                            </select>
+                            <input type="text" name="duration" id="duration" required />
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-3 item">
-                            <label for="amount">AMOUNT</label>
+                            <label for="amount">AMOUNT :</label>
                         </div>
                         <div class="col-1 item"></div>
                         <div class="col-3 item">
                             <input type="number" name="amount" id="amount" min="0.00" step="0.01" required />
-
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-2"></div>
                         <div class="col-4 item">
-                            <button type="submit" name="confirm" id="confirm" class="btn btn-info" style="width: 150%">
-                                Confirm
+                            <button id="submitBtn" type="submit" class="btn btn-info" style="width: 150%">
+                                Enter Loan
                             </button>
                         </div>
-
                         <div class="col-1"></div>
                     </div>
                 </form>
@@ -76,10 +68,10 @@
     <?php @include(__DIR__ . '/../footer.php'); ?>
     <?php
     include_once($_SERVER['DOCUMENT_ROOT'] . '/views/modal.php');
-    addModal('Transaction');
+    addModal('Enter Loan');
     ?>
     <script src="/scripts/common.js"></script>
-    <script src="/scripts/customer/transaction.js"></script>
+    <script src="/scripts/manager/approveLoan.js"></script>
 </body>
 
 </html>

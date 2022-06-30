@@ -1,3 +1,4 @@
+<div style="height: 72px;"></div>
 <footer class="text-center text-white fixed-bottom row" style="background-color: #21081a">
   <!-- Grid container -->
   <div class="container p-3"></div>

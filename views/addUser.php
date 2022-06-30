@@ -15,7 +15,7 @@
 
 <body>
   <?php @include('navbar.php'); ?>
-  <div style="height: 140vh;">
+  <div>
     <div class="container box fade" style="background-color: #880808; color: white; border: #21081a solid 2px">
       <h1>Add user</h1>
       <br />
@@ -143,7 +143,7 @@
             </div>
             <div class="row">
               <div class="col-3 item">
-                <label for="password">Conform password</label>
+                <label for="cnfpassword">Conform password</label>
               </div>
               <div class="col-1 item"></div>
               <div class="col-3 item">
@@ -165,10 +165,9 @@
       </div>
     </div>
   </div>
-
   <?php @include('footer.php'); ?>
   <?php
-  require_once($_SERVER['DOCUMENT_ROOT'] . '/views/modal.php');
+  include_once($_SERVER['DOCUMENT_ROOT'] . '/views/modal.php');
   addModal('Add User');
   ?>
   <script src="/scripts/common.js"></script>

@@ -8,6 +8,7 @@
     <link rel="stylesheet" type="text/css" href="/styles/all.css" />
     <link rel="stylesheet" href="/styles/bootstrap-5.1.3-dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="/styles/form.css" />
+    <link rel="stylesheet" href="/styles/table.css" />
     <script src="/styles/bootstrap-5.1.3-dist/js/bootstrap.min.js"></script>
     <title>View Transaction History</title>
     <link rel="icon" type="image/x-icon" href="/images/favicon.ico" />
@@ -16,7 +17,7 @@
 <body>
     <?php @include(__DIR__ . '/../navbar.php'); ?>
 
-    <div style="height: 120vh;">
+    <div>
         <div class="container box fade" style="background-color: #880808; color: white; border: #21081a solid 2px">
             <h1>View Transaction History</h1>
             <br />
@@ -30,7 +31,7 @@
                             </div>
                             <div class="col-1 item"></div>
                             <div class="col-3 item">
-                                <input type="text" name="acc_no" id="acc_no" onkeypress="keyPressFn(event, 'start_date')" required />
+                                <input type="text" name="acc_no" id="acc_no" required />
                             </div>
                         </div>
                         <div class="row">
@@ -39,7 +40,7 @@
                             </div>
                             <div class="col-1 item"></div>
                             <div class="col-3 item">
-                                <input type="date" name="start_date" id="start_date" onkeypress="keyPressFn(event, 'end_date')" />
+                                <input type="date" name="start_date" id="start_date" />
                             </div>
                         </div>
                         <div class="row">
@@ -48,7 +49,7 @@
                             </div>
                             <div class="col-1 item"></div>
                             <div class="col-3 item">
-                                <input type="date" name="end_date" id="end_date" onkeypress="keyPressFn(event, '')" />
+                                <input type="date" name="end_date" id="end_date" />
                             </div>
                         </div>
                         <div class="row">
@@ -65,13 +66,20 @@
                 <div class="col-2"></div>
             </div>
         </div>
-        <div id="table" hidden>
+        <div class="container">
+            <div class="row">
+                <div class="col-3"></div>
+                <div class="col-6">
+                    <div id="table" hidden>
+                    </div>
+                </div>
+                <div class="col-3"></div>
+            </div>
         </div>
     </div>
-
     <?php @include(__DIR__ . '/../footer.php'); ?>
     <?php
-    require_once($_SERVER['DOCUMENT_ROOT'] . '/views/modal.php');
+    include_once($_SERVER['DOCUMENT_ROOT'] . '/views/modal.php');
     addModal('View Transaction History');
     ?>
     <script src="/scripts/common.js"></script>

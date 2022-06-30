@@ -175,20 +175,19 @@
 
 <body style="background-color: #be847a;">
     <nav class="navbar navbar-light bg-warning">
-        <span class="navbar-brand mb-0 h1"> <img src="/images/favicon-32x32.png" alt="logo" /> </span>
-        <a href="/"><button type="button" class="btn btn-success">Home page</button></a>
+        <span class="navbar-brand mb-0 h1"> <img src="/images/favicon-64x64.png" width="32px" alt="logo" /> </span>
     </nav>
 
     <div class="box container" style="height: 80vh;">
-        <div class="row">
-            <div class="col-4 form" style="background-color: #880808; color: white;">
+        <div class="d-flex align-content-stretch justify-content-center flex-wrap">
+            <div class="px-5 m-4 form" style="background-color: #880808; color: white;">
                 <form method="post">
                     <h2 style="text-align: center;">Login</h2>
                     <br />
                     <div style="height: 5vh;">
                         <p id="invalid" <?php if (!isset($_GET['invalid'])) {
-                                    echo 'hidden';
-                                } ?>>Invalid Login</p>
+                                            echo 'hidden';
+                                        } ?>>Invalid Login</p>
                     </div>
                     <div class="form-group">
                         <label htmlFor="exampleInputUsername">User Name</label>
@@ -211,16 +210,16 @@
                     </div>
                 </form>
             </div>
-            <div class="col-8">
+            <div class="px-5 ">
                 <div class="slideshow-container">
                     <div class="mySlides fade">
                         <div class="numbertext">1 / 2</div>
-                        <img src="/images/slide-1.jpg" alt="slide-1" style=" width: 100%; height: 450px" />
+                        <img src="/images/slide-1.webp" alt="slide-1" style=" width: 100%; height: 450px" />
                     </div>
 
                     <div class="mySlides fade">
                         <div class="numbertext">2 / 2</div>
-                        <img src="/images/slide-2.jpg" alt="slide-2" style=" width: 100%; height: 450px;" />
+                        <img src="/images/slide-2.webp" alt="slide-2" style=" width: 100%; height: 450px;" />
                     </div>
                 </div>
                 <br />

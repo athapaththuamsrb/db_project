@@ -1,14 +1,34 @@
-function showMessage(msg) {
-  alert(msg); // TODO: modify this to show in a better way
-}
 function getType() {
   const typeValue = document.getElementById("type").value;
   if (typeValue === "fd") {
     document.getElementById("fd_visible").style.display = "block";
+    branch_idInput.onkeydown = event => { keyPressFn(event, branch_id_pattern, 'savings_acc_no', "Invalid branch ID"); };
+    savings_acc_noInput.onkeydown = event => { keyPressFn(event, acc_no_pattern, '', "Invalid savings account number"); };
   } else {
     document.getElementById("fd_visible").style.display = "none";
+    branch_idInput.onkeydown = event => { keyPressFn(event, branch_id_pattern, '', "Invalid branch ID"); };
   }
 }
+
+function keyPressFn(e, pattern, nxt, modalMessage) {
+  if (e.keyCode === 13) {
+      e.preventDefault();
+      let value = e.target.value.trim();
+      if (!pattern.test(value)) {
+          setModal(false, modalMessage);
+          return;
+      }
+      if (nxt == '') {
+          document.getElementById("submitBtn").click();
+      } else {
+          let nextElem = document.getElementById(nxt);
+          if (nextElem) {
+              nextElem.focus();
+          }
+      }
+  }
+}
+
 let owner_idInput = document.getElementById("owner_id");
 let acc_noInput = document.getElementById("acc_no");
 let acc_typeInput = document.getElementById("type");
@@ -26,9 +46,15 @@ function clear() {
   acc_typeInput.value = "savings";
   balanceInput.value = "";
   branch_idInput.value = "";
-  durationInput.value = "";
+  durationInput.value = "6";
+  document.getElementById("fd_visible").style.display = "none";
   savings_acc_noInput.value = "";
 }
+
+owner_idInput.onkeydown = event => { keyPressFn(event, username_pattern, 'acc_no', "Invalid username"); };
+acc_noInput.onkeydown = event => { keyPressFn(event, acc_no_pattern, 'acc_type', "Invalid account number"); };
+balanceInput.onkeydown = event => { keyPressFn(event, balance_pattern, 'branch_id', "Invalid balance"); };
+
 
 submitBtn.onclick = (e) => {
   e.preventDefault();
@@ -37,19 +63,36 @@ submitBtn.onclick = (e) => {
   let acc_type = acc_typeInput.options[acc_typeInput.selectedIndex].value;
   let balance = balanceInput.value;
   let branch_id = branch_idInput.value;
-  let duration = durationInput.value;
+  let duration = durationInput.options[durationInput.selectedIndex].value;
   let savings_acc_no = savings_acc_noInput.value;
 
-  /*
-    if (!/^[0-9]{1,5}$/.test(owner_id)) {
-        showMessage("Invalid owner ID");
-        return;
+  if (!username_pattern.test(owner_id)) {
+    setModal(false, "Invalid owner ID");
+    return;
+  }
+  if (!acc_no_pattern.test(acc_no)) {
+    setModal(false, "Invalid account number");
+      return;
+  }
+  if (!balance_pattern.test(balance)) {
+    setModal(false, "Invalid balance amount");
+    return;
+  }
+  if (!branch_id_pattern.test(branch_id)) {
+    setModal(false, "Invalid branch ID");
+    return;
+  }
+  if (acc_type === "fd"){ 
+    if(!acc_no_pattern.test(savings_acc_no)){
+      setModal(false, "Invalid savings account number");
+      return;
     }
-    if (!/^[a-zA-Z0-9.\-\x20]{2,30}$/.test(acc_no)) {
-        showMessage("Invalid account number");
-        return;
+    if (duration != 6 && duration != 12 && duration != 18){
+      setModal(false, "Invalid duration");
+      return;
     }
-    */
+  }
+
 
   let xhrSender = new XHRSender(document.URL, (resp) => {
     try {
