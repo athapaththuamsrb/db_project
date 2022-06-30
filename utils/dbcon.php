@@ -481,6 +481,56 @@ class DatabaseConn
     }
   }
 
+  public function check_min_balance(string $owner_id, string $acc_no)
+  {
+    if (!($this->conn instanceof mysqli)) return -1;
+    try {
+      if (!$owner_id || !$acc_no) {
+        return -1;
+      } 
+      $q0 = 'SELECT type FROM Accounts WHERE owner_id = ? and acc_no = ?';
+      $stmt = $this->conn->prepare($q0);
+      $stmt->bind_param('ss', $owner_id, $acc_no);  
+      $stmt->execute();
+      $result = $stmt->get_result();
+      $type = $result->fetch_assoc();
+      $t = $type['type'];
+      if($t === 'savings'){
+        $q1 = 'SELECT customer_type FROM savings_accounts WHERE  acc_no = ?';
+        $stmt = $this->conn->prepare($q1);
+        $stmt->bind_param('s', $acc_no);
+        $stmt->execute();
+        $result=$stmt->get_result();
+        $c_type = $result->fetch_assoc();
+        $customer = $c_type['customer_type'];
+        if($customer === 'child'){
+          return $this->check_balance($owner_id, $acc_no);
+        }
+        elseif($customer == 'teen'){
+          return ($this->check_balance($owner_id, $acc_no) - 500);
+        }
+        elseif($customer == 'adult'){
+          return  ($this->check_balance($owner_id, $acc_no) - 1000);
+        }
+        elseif($customer == 'senior'){
+          return ($this->check_balance($owner_id, $acc_no) - 1000);
+        }
+        else{
+          return -1;
+        }     
+      }
+      elseif($t === 'checking'){
+         return $this->check_balance($owner_id, $acc_no);
+      }
+      else{
+        return -1;
+      }
+    } catch (Exception $e){
+      return -1;
+    }
+
+  }
+
   public function transaction(string $from_acc, string $to_acc, string $init_id, float $amount)
   {
     if (!($this->conn instanceof mysqli)) return false;
@@ -561,45 +611,60 @@ class DatabaseConn
   {
 
     if (!($this->conn instanceof mysqli)) return null;
+    try{
+      $q1 = 'SELECT * FROM Accounts WHERE acc_no = ? ';
+      $stmt = $this->conn->prepare($q1);
+      $stmt->bind_param('s', $acc_no);
+      $stmt->execute();
+      $result = $stmt->get_result();
+      $account = $result->fetch_assoc();
 
-    $q1 = 'SELECT * FROM Accounts WHERE acc_no = ? ';
-    $stmt = $this->conn->prepare($q1);
-    $stmt->bind_param('s', $acc_no);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $account = $result->fetch_assoc();
+      if ($account == null) return null;
+      return $account['type'];
+    } 
+    catch(Exception $e){
+      return null;
+    }
 
-    if ($account == null) return null;
-    return $account['type'];
+    
   }
 
   public function get_account_ownership(string $acc_no, string $username)
   {
+    try {
+      $q1 = 'SELECT owner_id FROM Accounts WHERE acc_no = ? ';
+      $stmt = $this->conn->prepare($q1);
+      $stmt->bind_param('s', $acc_no);
+      $stmt->execute();
+      $result = $stmt->get_result();
+      $account = $result->fetch_assoc();
 
-    $q1 = 'SELECT owner_id FROM Accounts WHERE acc_no = ? ';
-    $stmt = $this->conn->prepare($q1);
-    $stmt->bind_param('s', $acc_no);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $account = $result->fetch_assoc();
-
-    if ($account['owner_id'] === $username) return true;
-    return false;
+      if ($account['owner_id'] === $username) return true;
+      return false;
+    } 
+    catch (Throwable $th) {
+      return false;
+    }
+    
   }
 
   public function check_username(string $username)
   {
     if (!($this->conn instanceof mysqli)) return null;
-
-    $q1 = 'SELECT * FROM Accounts WHERE owner_id = ? ';
-    $stmt = $this->conn->prepare($q1);
-    $stmt->bind_param('s', $username);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $name = $result->fetch_assoc();
-
-    if ($name == null) return false;
-    return true;
+    try {
+      $q1 = 'SELECT * FROM Accounts WHERE owner_id = ? ';
+      $stmt = $this->conn->prepare($q1);
+      $stmt->bind_param('s', $username);
+      $stmt->execute();
+      $result = $stmt->get_result();
+      $name = $result->fetch_assoc();
+  
+      if ($name == null) return false;
+      return true;
+    } catch (Throwable $th) {
+      return false;
+    }
+   
   }
 
 
@@ -608,14 +673,20 @@ class DatabaseConn
 
     if (!($this->conn instanceof mysqli)) return null;
 
-    $q1 = 'SELECT transactions FROM savings_accounts WHERE acc_no = ? ';
-    $stmt = $this->conn->prepare($q1);
-    $stmt->bind_param('s', $acc_no);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $count = $result->fetch_assoc();
+    try {
+      $q1 = 'SELECT transactions FROM savings_accounts WHERE acc_no = ? ';
+      $stmt = $this->conn->prepare($q1);
+      $stmt->bind_param('s', $acc_no);
+      $stmt->execute();
+      $result = $stmt->get_result();
+      $count = $result->fetch_assoc();
+      return $count['transactions'];
+    } 
+    catch (Throwable $th) {
+      return 6;
+    }
 
-    return $count['transactions'];
+    
   }
 
   public function view_transaction_history(string $owner_id, string $acc_no, $start_date, $end_date)

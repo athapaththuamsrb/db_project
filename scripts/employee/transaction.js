@@ -33,16 +33,17 @@ confirmBtn.onclick = e => {
     let amount_value = trans_amount.value;
     let owner_name_value = owner_name.value;
 
-    if (!/^[0-9]{12}$/.test(to_acc_value)) {
+    
+    if (!acc_no_pattern.test(from_acc_value) || !acc_no_pattern.test(to_acc_value)) {
         setModal(false, "Invalid Account number");
         return;
     }
-    if (!/^[0-9]{12}$/.test(from_acc_value)) {
-        setModal(false, "Invalid Account number");
-        return;
-    }
-    if (!/^([0-9]+(\.?[0-9]?[0-9]?)?)$/.test(to_acc_value)) {
+    if (! balance_pattern.test(amount_value)) {
         setModal(false, "Please enter a valid amount");
+        return;
+    }
+    if (!username_pattern.test(owner_name_value)) {
+        setModal(false, "Please enter a valid username");
         return;
     }
 
