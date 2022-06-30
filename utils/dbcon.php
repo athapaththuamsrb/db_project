@@ -487,11 +487,10 @@ class DatabaseConn
     try {
       if (!$owner_id || !$acc_no) {
         return -1;
-      } else {
-        $q0 = 'SELECT type FROM Accounts WHERE owner_id = ? and acc_no = ?';
-        $stmt = $this->conn->prepare($q0);
-        $stmt->bind_param('ss', $owner_id, $acc_no);
-      }
+      } 
+      $q0 = 'SELECT type FROM Accounts WHERE owner_id = ? and acc_no = ?';
+      $stmt = $this->conn->prepare($q0);
+      $stmt->bind_param('ss', $owner_id, $acc_no);  
       $stmt->execute();
       $result = $stmt->get_result();
       $type = $result->fetch_assoc();
@@ -612,45 +611,60 @@ class DatabaseConn
   {
 
     if (!($this->conn instanceof mysqli)) return null;
+    try{
+      $q1 = 'SELECT * FROM Accounts WHERE acc_no = ? ';
+      $stmt = $this->conn->prepare($q1);
+      $stmt->bind_param('s', $acc_no);
+      $stmt->execute();
+      $result = $stmt->get_result();
+      $account = $result->fetch_assoc();
 
-    $q1 = 'SELECT * FROM Accounts WHERE acc_no = ? ';
-    $stmt = $this->conn->prepare($q1);
-    $stmt->bind_param('s', $acc_no);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $account = $result->fetch_assoc();
+      if ($account == null) return null;
+      return $account['type'];
+    } 
+    catch(Exception $e){
+      return null;
+    }
 
-    if ($account == null) return null;
-    return $account['type'];
+    
   }
 
   public function get_account_ownership(string $acc_no, string $username)
   {
+    try {
+      $q1 = 'SELECT owner_id FROM Accounts WHERE acc_no = ? ';
+      $stmt = $this->conn->prepare($q1);
+      $stmt->bind_param('s', $acc_no);
+      $stmt->execute();
+      $result = $stmt->get_result();
+      $account = $result->fetch_assoc();
 
-    $q1 = 'SELECT owner_id FROM Accounts WHERE acc_no = ? ';
-    $stmt = $this->conn->prepare($q1);
-    $stmt->bind_param('s', $acc_no);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $account = $result->fetch_assoc();
-
-    if ($account['owner_id'] === $username) return true;
-    return false;
+      if ($account['owner_id'] === $username) return true;
+      return false;
+    } 
+    catch (Throwable $th) {
+      return false;
+    }
+    
   }
 
   public function check_username(string $username)
   {
     if (!($this->conn instanceof mysqli)) return null;
-
-    $q1 = 'SELECT * FROM Accounts WHERE owner_id = ? ';
-    $stmt = $this->conn->prepare($q1);
-    $stmt->bind_param('s', $username);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $name = $result->fetch_assoc();
-
-    if ($name == null) return false;
-    return true;
+    try {
+      $q1 = 'SELECT * FROM Accounts WHERE owner_id = ? ';
+      $stmt = $this->conn->prepare($q1);
+      $stmt->bind_param('s', $username);
+      $stmt->execute();
+      $result = $stmt->get_result();
+      $name = $result->fetch_assoc();
+  
+      if ($name == null) return false;
+      return true;
+    } catch (Throwable $th) {
+      return false;
+    }
+   
   }
 
 
@@ -659,14 +673,20 @@ class DatabaseConn
 
     if (!($this->conn instanceof mysqli)) return null;
 
-    $q1 = 'SELECT transactions FROM savings_accounts WHERE acc_no = ? ';
-    $stmt = $this->conn->prepare($q1);
-    $stmt->bind_param('s', $acc_no);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $count = $result->fetch_assoc();
+    try {
+      $q1 = 'SELECT transactions FROM savings_accounts WHERE acc_no = ? ';
+      $stmt = $this->conn->prepare($q1);
+      $stmt->bind_param('s', $acc_no);
+      $stmt->execute();
+      $result = $stmt->get_result();
+      $count = $result->fetch_assoc();
+      return $count['transactions'];
+    } 
+    catch (Throwable $th) {
+      return 6;
+    }
 
-    return $count['transactions'];
+    
   }
 
   public function view_transaction_history(string $owner_id, string $acc_no, $start_date, $end_date)
