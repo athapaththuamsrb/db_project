@@ -225,18 +225,6 @@ class DatabaseConn
           return $response;
         }
 
-        // $q1 = 'SELECT savings_acc_no FROM fixed_deposits WHERE acc_no = ?';
-        // $stmt = $this->conn->prepare($q1);
-        // $stmt->bind_param('s', $fix_acc);
-        // $stmt->execute();
-        // $stmt->store_result();
-        // if ($stmt->num_rows() == 0) {
-        //   $response['reason'] = 'No fixed account associate with the entered number!';
-        //   return $response;
-        // }
-        // $stmt->bind_result($savings_acc_no);
-        // $stmt->fetch();
-        // $stmt->close();
 
         $q = 'SELECT fixedAccount FROM loans WHERE fixedAccount = ? and loanStatus = 1';
         $stmt = $this->conn->prepare($q);
@@ -247,7 +235,6 @@ class DatabaseConn
           $response['reason'] = 'Only one loan can apply from a fixed deposit!';
           return $response;
         }
-        // $stmt->bind_result($savings_acc_no); TODO:check
         $stmt->fetch();
         $stmt->close();
 
@@ -397,7 +384,6 @@ class DatabaseConn
     return false;
   }
 
-  ////////////////////////////////////////////////////////////////
   public function getPendingApprovalLoans(): ?array
   {
     if (!($this->conn instanceof mysqli)) return null;
@@ -472,7 +458,6 @@ class DatabaseConn
     $response['reason'] = 'Error!';
     return $response;
   }
-  ////////////////////////////////////////////////////////////////
 
   public function getLateLoans($username): ?array
   {

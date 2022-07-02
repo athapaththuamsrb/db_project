@@ -23,20 +23,17 @@ if (!loan_id_pattern.test(loan_id)) {
 }
 
   let xhrSender = new XHRSender(document.URL, (resp) => {
-    // setModal(false, resp);
 
     try {
       let data = JSON.parse(resp);
 
       if (data.hasOwnProperty("success") && data["success"] === true) {
         clear();
-        // let created_acc = data["created_acc"];
-        // let msg = created_acc.concat(" ", "account successfully created!");
         setModal(true, data["reason"]);
         return;
       }
       if (
-        data.hasOwnProperty("reason") /*&& data['reason'] instanceof String*/
+        data.hasOwnProperty("reason") 
       ) {
         setModal(false, data["reason"]);
       } else {
