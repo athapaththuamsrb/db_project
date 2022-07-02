@@ -24,7 +24,11 @@ submitBtn.onclick = (e) => {
     return;
   }
   if (!balance_pattern.test(amount)) {
-    setModal(false, "Invalid amount amount");
+    setModal(false, "Invalid amount");
+    return;
+  }
+  if (!duration_pattern.test(duration)) {
+    setModal(false, "Invalid duration");
     return;
   }
   if (duration > 120) {

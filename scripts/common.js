@@ -75,3 +75,5 @@ const acc_no_pattern = /^[0-9]{12}$/;
 const balance_pattern = /^([0-9]+(\.?[0-9]?[0-9]?)?)$/;
 const branch_id_pattern = /^[0-9]{1,5}$/; 
 const date_pattern = /^\d{4}-\d{2}-\d{2}$/;
+const loan_id_pattern = /^[0-9]{1,14}$/;
+const duration_pattern = /^[0-9]{1,3}$/;

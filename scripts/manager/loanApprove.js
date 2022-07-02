@@ -2,10 +2,10 @@ let buttonList = document.querySelectorAll(".button");
 buttonList.forEach(function (i) {
   i.addEventListener("click", function (e) {
     let loanID = e.target.value;
-// if (!balance_pattern.test(amount)) {
-//   setModal(false, "Invalid balance amount");
-//   return;
-// }
+if (!loan_id_pattern.test(loanID)) {
+  setModal(false, "Invalid loan ID");
+  return;
+}
     let xhrSender = new XHRSender(document.URL, (resp) => {
       try {
         let data = JSON.parse(resp);

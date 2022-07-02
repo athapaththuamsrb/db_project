@@ -34,6 +34,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       echo json_encode($response);
       die();
     }
+    if (!preg_match('/^[0-9]{1,14}$/', $_POST['loan_id'])) {
+      $response['reason'] = "Invalid loan ID";
+      echo json_encode($response);
+      die();
+    }
     $result = $dbcon->enter_Installment($_POST['loan_id'], $_POST['amount'], $user->getUsername());
     $response['success'] = $result['result'];
     $response['reason'] = $result['reason'];

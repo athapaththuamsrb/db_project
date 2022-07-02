@@ -18,7 +18,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             die();
         }
         if (!preg_match('/^([0-9]+(\.?[0-9]?[0-9]?)?)$/', $_POST['amount'])) {
-            $response['reason'] = "Invalid balance amount";
+            $response['reason'] = "Invalid amount";
+            echo json_encode($response);
+            die();
+        }
+        if (!preg_match('/^[0-9]{1,3}$/', $_POST['duration'])) {
+            $response['reason'] = "Invalid duration";
             echo json_encode($response);
             die();
         }

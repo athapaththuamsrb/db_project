@@ -11,6 +11,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         echo json_encode($response);
         die();
     } else {
+        if (!preg_match('/^[0-9]{1,14}$/', $_POST['loanID'])) {
+            $response['reason'] = "Invalid loan ID";
+            echo json_encode($response);
+            die();
+        }
         $result = $dbcon->loanApprove($_POST['loanID']);
         $response['success'] = $result['result'];
         $response['reason'] = $result['reason'];

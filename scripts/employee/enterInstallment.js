@@ -17,6 +17,11 @@ if (!balance_pattern.test(amount)) {
   return;
 }
 
+if (!loan_id_pattern.test(loan_id)) {
+  setModal(false, "Invalid loan ID");
+  return;
+}
+
   let xhrSender = new XHRSender(document.URL, (resp) => {
     // setModal(false, resp);
 
