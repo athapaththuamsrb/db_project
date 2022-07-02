@@ -27,7 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             echo json_encode($response);
             die();
         }
-        $result = $dbcon->approveLoan($_POST['sav_acc'], $_POST['amount'], $_POST['duration']);
+        $result = $dbcon->requestLoan($_POST['sav_acc'], $_POST['amount'], $_POST['duration']);
         $response['success'] = $result['result'];
         $response['reason'] = $result['reason'];
         echo json_encode($response);
@@ -35,4 +35,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-@include_once($_SERVER['DOCUMENT_ROOT'] . '/views/employee/approveLoan.php');
+@include_once($_SERVER['DOCUMENT_ROOT'] . '/views/employee/requestLoan.php');

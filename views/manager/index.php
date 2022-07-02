@@ -28,7 +28,15 @@
       </div>
       <div class="col-4"></div>
     </div>
-    
+    <div class="row item">
+      <div class="col-4"></div>
+      <div class="col-4">
+        <a href="loanApprove.php"><button style="height: 10vh; width: 100%; font-size: larger" type="button" class="btn btn-primary fun-item fade">
+            Approve Loan
+          </button></a>
+      </div>
+      <div class="col-4"></div>
+    </div>
     <div class="row item">
       <div class="col-4"></div>
       <div class="col-4">

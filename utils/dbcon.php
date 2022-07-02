@@ -282,7 +282,7 @@ class DatabaseConn
     return $response;
   }
 
-  public function approveLoan(string $sav_acc, float $amount, float $duration)
+  public function requestLoan(string $sav_acc, float $amount, float $duration)
   {
     if (!($this->conn instanceof mysqli)) return false;
     if ($sav_acc && $amount) {
@@ -396,6 +396,64 @@ class DatabaseConn
     }
     return false;
   }
+
+  ////////////////////////////////////////////////////////////////
+  public function getPendingApprovalLoans(): ?array
+  {
+    if (!($this->conn instanceof mysqli)) return null;
+    try {
+     
+      $q1 = 'SELECT * FROM loans WHERE loanStatus = 0';
+      $stmt1 = $this->conn->prepare($q1);
+      $stmt1->execute();
+      $result = $stmt1->get_result();
+      $data = [];
+      while ($row = $result->fetch_assoc()) {
+        $arr = [$row['loanID'], $row['total_amount'], $row['date'], $row['customer'], $row['savingsAccount'], $row['duration']
+        ];
+        array_push($data, $arr);
+      }
+      ($this->conn)->commit();
+      return $data;
+    } catch (Exception $e) {
+      return null;
+    }
+    return null;
+  }
+
+  public function loanApprove(string $loanID)
+  {
+    if (!($this->conn instanceof mysqli)) return false;
+    if ($loanID) {
+      ($this->conn)->begin_transaction();
+      $response = ['result' => false, 'reason' => ''];
+      try {
+        $q0 = 'UPDATE loans SET loanStatus = 1 WHERE loanID = ?;';
+        $stmt = $this->conn->prepare($q0);
+        $stmt->bind_param('s', $loanID);
+        $status = $stmt->execute();
+      
+        if(!$status){
+          $response['reason'] = 'Something Went Wrong!';
+          return $response;
+
+        }
+        
+        ($this->conn)->commit();
+        $response['reason'] = 'Loan approved!';
+        $response['result'] = true;
+
+        return $response;
+      } catch (Exception $e) {
+        ($this->conn)->rollback();
+        $response['reason'] = 'Error!';
+        return $response;
+      }
+    }
+    $response['reason'] = 'Error!';
+    return $response;
+  }
+  ////////////////////////////////////////////////////////////////
 
   public function getLateLoans($username): ?array
   {

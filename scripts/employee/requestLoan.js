@@ -14,13 +14,17 @@ submitBtn.onclick = (e) => {
   let sav_acc = sav_accInput.value;
   let duration = durationInput.value;
   let amount = amountInput.value;
-
+  console.log(amount);
+  if (!sav_acc || !duration || !amount) {
+    setModal(false, "Form should be filled correctly");
+    return;
+  }
   if (!acc_no_pattern.test(sav_acc)) {
     setModal(false, "Invalid account number");
     return;
   }
   if (!balance_pattern.test(amount)) {
-    setModal(false, "Invalid balance amount");
+    setModal(false, "Invalid amount amount");
     return;
   }
   if (duration > 120) {
