@@ -362,10 +362,10 @@ class DatabaseConn
           $response['reason'] = 'Loan is not approved yet!';
           return $response;
         }
-        if (number_format($installment * $duration, 2) < $paid_amount + $amount) {
+        if (round($installment * $duration, 2) < $paid_amount + $amount) {
           $response['reason'] = 'Exceed the total amount';
           return $response;
-        } else if (number_format($installment * $duration, 2) == $paid_amount + $amount) {
+        } else if (round($installment * $duration, 2) == $paid_amount + $amount) {
           $q3 = 'UPDATE loans SET paid_amount = paid_amount + ? , loanStatus = 2 WHERE loanID = ?;';
           $stmt = $this->conn->prepare($q3);
           $stmt->bind_param('ds', $amount, $loan_id);
