@@ -175,7 +175,7 @@
 
 <body style="background-color: #be847a;">
     <nav class="navbar navbar-light bg-warning">
-        <span class="navbar-brand mb-0 h1"> <img src="/images/favicon-32x32.png" alt="logo" /> </span>
+        <span class="navbar-brand mb-0 h1"> <img src="/images/favicon-64x64.png" width="32px" alt="logo" /> </span>
     </nav>
 
     <div class="box container" style="height: 80vh;">
@@ -214,12 +214,12 @@
                 <div class="slideshow-container">
                     <div class="mySlides fade">
                         <div class="numbertext">1 / 2</div>
-                        <img src="/images/slide-1.jpg" alt="slide-1" style=" width: 100%; height: 450px" />
+                        <img src="/images/slide-1.webp" alt="slide-1" style=" width: 100%; height: 450px" />
                     </div>
 
                     <div class="mySlides fade">
                         <div class="numbertext">2 / 2</div>
-                        <img src="/images/slide-2.jpg" alt="slide-2" style=" width: 100%; height: 450px;" />
+                        <img src="/images/slide-2.webp" alt="slide-2" style=" width: 100%; height: 450px;" />
                     </div>
                 </div>
                 <br />
@@ -232,7 +232,6 @@
         </div>
 
     </div>
-    <div style="height: 10hv;"></div>
     <br /><br />
     <?php @include('footer.php'); ?>
 

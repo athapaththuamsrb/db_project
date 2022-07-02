@@ -35,7 +35,7 @@
           </div>
           <div class="row">
             <div class="col-3 item">
-              <label for="fix_acc">Duration (Months) : </label>
+              <label for="duration">Duration (Months) : </label>
             </div>
             <div class="col-1 item"></div>
             <div class="col-3 item">
@@ -65,10 +65,9 @@
       <div class="col-2"></div>
     </div>
   </div>
-  <div style="height: 30vh;"></div>
   <?php @include(__DIR__ . '/../footer.php'); ?>
   <?php
-  require_once($_SERVER['DOCUMENT_ROOT'] . '/views/modal.php');
+  include_once($_SERVER['DOCUMENT_ROOT'] . '/views/modal.php');
   addModal('Apply Loan');
   ?>
   <script src="/scripts/common.js"></script>

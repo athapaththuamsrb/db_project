@@ -26,7 +26,7 @@
                 <form method="post" class="form-row align-items-center">
                     <div class="row">
                         <div class="col-3 item">
-                            <label for="to_acc">USER NAME</label>
+                            <label for="ownername">USER NAME</label>
                         </div>
                         <div class="col-1 item"></div>
                         <div class="col-3 item">
@@ -79,10 +79,9 @@
             <div class="col-2"></div>
         </div>
     </div>
-    <div style="height: 30vh;"></div>
     <?php @include(__DIR__ . '/../footer.php'); ?>
     <?php
-    require_once($_SERVER['DOCUMENT_ROOT'] . '/views/modal.php');
+    include_once($_SERVER['DOCUMENT_ROOT'] . '/views/modal.php');
     addModal('Transaction');
     ?>
     <script src="/scripts/common.js"></script>

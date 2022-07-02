@@ -59,6 +59,7 @@ function makePDF(string $html, string $title): ?string
 
 function generateTableHTML(array $headings, array $data): string
 {
+    if (empty($data)) return '<html><body><h2>No Data</h2></body></head>';
     $headrow = implode('</th><th class="head">', $headings);
     $bodyrows = array_map(function ($rowdata) {
         $bodyrow = implode('</td><td class="data">', $rowdata);

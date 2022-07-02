@@ -15,6 +15,19 @@ submitBtn.onclick = (e) => {
   let duration = durationInput.value;
   let amount = amountInput.value;
 
+  if (!acc_no_pattern.test(sav_acc)) {
+    setModal(false, "Invalid account number");
+    return;
+  }
+  if (!balance_pattern.test(amount)) {
+    setModal(false, "Invalid balance amount");
+    return;
+  }
+  if (duration > 120) {
+    setModal(false, "You cannot apply loan for more than 10 years");
+    return;
+  }
+
   let xhrSender = new XHRSender(document.URL, (resp) => {
     try {
       let data = JSON.parse(resp);

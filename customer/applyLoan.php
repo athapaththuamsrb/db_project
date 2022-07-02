@@ -11,7 +11,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $response['reason'] = "Form should be filled correctly";
     echo json_encode($response);
     die();
+  } else if ($_POST['amount'] < 0) {
+    $response['reason'] = "Amount cannot be negative!";
+    echo json_encode($response);
+    die();
   } else {
+    if (!preg_match('/^[0-9]{12}$/', $_POST['fix_acc'])) {
+      $response['reason'] = "Invalid account number";
+      echo json_encode($response);
+      die();
+    }
+    if (!preg_match('/^([0-9]+(\.?[0-9]?[0-9]?)?)$/', $_POST['amount'])) {
+      $response['reason'] = "Invalid balance amount";
+      echo json_encode($response);
+      die();
+    }
+    if ($_POST['duration']>120) {
+      $response['reason'] = "You cannot apply loan for more than 10 years";
+      echo json_encode($response);
+      die();
+    }
     $result = $dbcon->apply_loan($_POST['fix_acc'], $_POST['amount'], $_POST['duration'], $user->getUsername());
     $response['success'] = $result['result'];
     $response['reason'] = $result['reason'];

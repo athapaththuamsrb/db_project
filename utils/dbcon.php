@@ -300,7 +300,7 @@ class DatabaseConn
         $stmt->bind_result($customer);
         $stmt->fetch();
         $stmt->close();
-  
+
 
         $date = date("Y-m-d");
         $paid = 0;
@@ -332,14 +332,14 @@ class DatabaseConn
     return $response;
   }
 
-  public function enter_Installment(string $loan_id, float $amount ,string $employee)
+  public function enter_Installment(string $loan_id, float $amount, string $employee)
   {
     if (!($this->conn instanceof mysqli)) return false;
     if ($loan_id && $amount) {
       ($this->conn)->begin_transaction();
       $response = ['result' => false, 'reason' => ''];
       try {
-        $q0 = 'SELECT total_amount,paid_amount FROM loans WHERE loanID = ?';
+        $q0 = 'SELECT total_amount,paid_amount,installment,duration FROM loans WHERE loanID = ?';
         $stmt = $this->conn->prepare($q0);
         $stmt->bind_param('s', $loan_id);
         $stmt->execute();
@@ -349,19 +349,19 @@ class DatabaseConn
           $response['reason'] = 'No loan associate with the entered ID';
           return $response;
         }
-        $stmt->bind_result($total_amount, $paid_amount);
+        $stmt->bind_result($total_amount, $paid_amount, $installment, $duration);
         $stmt->fetch();
         $stmt->close();
-        if ($total_amount < $paid_amount + $amount) {
+        if ($installment * $duration < $paid_amount + $amount) {
           $response['reason'] = 'Exceed the total amount';
           return $response;
-        }else if($total_amount == $paid_amount + $amount){
+        } else if ($installment * $duration == $paid_amount + $amount) {
           $q3 = 'UPDATE loans SET paid_amount = paid_amount + ? , loanStatus = 1 WHERE loanID = ?;';
           $stmt = $this->conn->prepare($q3);
           $stmt->bind_param('ds', $amount, $loan_id);
           $response['result'] = $stmt->execute();
           $response['reason'] = 'Installment entered correctly and it covers the full amount of the loan.';
-        }else{
+        } else {
           $q3 = 'UPDATE loans SET paid_amount = paid_amount + ? WHERE loanID = ?;';
           $stmt = $this->conn->prepare($q3);
           $stmt->bind_param('ds', $amount, $loan_id);
@@ -375,7 +375,7 @@ class DatabaseConn
         $status0 = $stmt->execute();
         $stmt->close();
 
-        
+
 
         ($this->conn)->commit();
         return $response;
@@ -722,13 +722,13 @@ class DatabaseConn
         $stmt = $this->conn->prepare($q0);
         $stmt->bind_param('sss', $acc_no, $acc_no, $start_date_str);
       } else if (is_null($start_date)) {
-        $end_date_str = $end_date->format('Y-m-d').' 23:59:59';
+        $end_date_str = $end_date->format('Y-m-d') . ' 23:59:59';
         $q0 = 'SELECT trans_id, from_acc, to_acc, init_id, trans_time, amount FROM Transactions WHERE (from_acc = ? or to_acc = ?) and trans_time <= ?';
         $stmt = $this->conn->prepare($q0);
         $stmt->bind_param('sss', $acc_no, $acc_no, $end_date_str);
       } else {
         $start_date_str = $start_date->format('Y-m-d H:i:s');
-        $end_date_str = $end_date->format('Y-m-d').' 23:59:59';
+        $end_date_str = $end_date->format('Y-m-d') . ' 23:59:59';
         $q0 = 'SELECT trans_id, from_acc, to_acc, init_id, trans_time, amount FROM Transactions WHERE (from_acc = ? or to_acc = ?) and trans_time >= ? and trans_time <= ?';
         $stmt = $this->conn->prepare($q0);
         $stmt->bind_param('ssss', $acc_no, $acc_no, $start_date_str, $end_date_str);
@@ -757,8 +757,8 @@ class DatabaseConn
     if (!($this->conn instanceof mysqli)) return null;
 
     ($this->conn)->begin_transaction();
-    $response = ['result'=>false, 'created_acc'=>'', 'reason'=>''];
-    
+    $response = ['result' => false, 'created_acc' => '', 'reason' => ''];
+
     try {
 
       $common_query = 'INSERT into Accounts (owner_id, acc_no, type, balance, opened_date, branch_id) values (?, ?, ?, ?, ?, ?)';
@@ -775,10 +775,10 @@ class DatabaseConn
         $response['created_acc'] = "Checking";
       } elseif ($acc_type === "savings") {
         $customer_type = $this->get_savings_acc_type($owner_id);
-        if ($customer_type === "") {
+        if (is_null($customer_type)) {
           return $response;
         }
-        if (($customer_type == "teen" && (int)$balance < 500) || ($customer_type == "adult" && (int)$balance < 1000) || ($customer_type == "senior" && (int)$balance < 1000)){
+        if (($customer_type == "teen" && (int)$balance < 500) || ($customer_type == "adult" && (int)$balance < 1000) || ($customer_type == "senior" && (int)$balance < 1000)) {
           $response['reason'] = "Insufficient balance";
           return $response;
         }
@@ -825,7 +825,7 @@ class DatabaseConn
       $stmt0->execute();
       $stmt0->store_result();
       if ($stmt0->num_rows() == 0) {
-        return "";
+        return null;
       }
       $stmt0->bind_result($type);
       $stmt0->fetch();
@@ -839,7 +839,7 @@ class DatabaseConn
       $stmt->execute();
       $stmt->store_result();
       if ($stmt->num_rows() == 0) {
-        return "";
+        return null;
       }
       $stmt->bind_result($dob);
       $stmt->fetch();
@@ -857,11 +857,21 @@ class DatabaseConn
       } else {
         return "senior";
       }
-      return "";
+      return null;
     } catch (Exception $e) {
       ($this->conn)->rollback();
-      return "";
+      return null;
     }
+  }
+
+  private function validate($username, $pw): bool
+  {
+    $username_pattern = '/^[a-zA-Z0-9._]{5,12}$/';
+    $pw_pattern = '/^[\x21-\x7E]{8,15}$/';
+    if (preg_match($username_pattern, $username) && preg_match($pw_pattern, $pw)) {
+      return true;
+    }
+    return false;
   }
 
   public function close_conn()
@@ -870,19 +880,6 @@ class DatabaseConn
       $this->conn->close();
     }
     $this->__destruct();
-  }
-
-  private function validate($username, $pw): Bool
-  {
-    $username = htmlspecialchars($username);
-    $pw = htmlspecialchars($pw);
-    $username_pattern = '/^[a-zA-Z0-9._]{5,12}$/';
-    $pw_pattern = '/^[\x21-\x7E]{8,15}$/';
-    //$pw_pattern = '/^\S*(?=\S{8,15})(?=\S*[a-z])(?=\S*[A-Z])(?=\S*[\d])(?=\S*[\W])\S*$/';
-    if (preg_match($username_pattern, $username) && preg_match($pw_pattern, $pw)) {
-      return true;
-    }
-    return false;
   }
 
   public function __destruct()
