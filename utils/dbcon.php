@@ -253,7 +253,7 @@ class DatabaseConn
 
         $date = date("Y-m-d");
         $paid = 0;
-        $loanStatus=1;
+        $loanStatus = 1;
         $installment = (($amount + ($amount * 0.2 / 12) * 24) / $duration); //20% for year
         $q2 = 'INSERT INTO loans ( total_amount,paid_amount, date, customer,savingsAccount,fixedAccount,duration,installment,loanStatus) VALUES (?,?, ?, ?, ?,? , ? , ? , ?);';
         $stmt = $this->conn->prepare($q2);
@@ -298,7 +298,7 @@ class DatabaseConn
           $response['reason'] = 'No account associate with the entered number!';
           return $response;
         }
-        $stmt->bind_result($customer,$type);
+        $stmt->bind_result($customer, $type);
         $stmt->fetch();
         $stmt->close();
         if ($type != "savings") {
@@ -402,14 +402,15 @@ class DatabaseConn
   {
     if (!($this->conn instanceof mysqli)) return null;
     try {
-     
+
       $q1 = 'SELECT * FROM loans WHERE loanStatus = 0';
       $stmt1 = $this->conn->prepare($q1);
       $stmt1->execute();
       $result = $stmt1->get_result();
       $data = [];
       while ($row = $result->fetch_assoc()) {
-        $arr = [$row['loanID'], $row['total_amount'], $row['date'], $row['customer'], $row['savingsAccount'], $row['duration']
+        $arr = [
+          $row['loanID'], $row['total_amount'], $row['date'], $row['customer'], $row['savingsAccount'], $row['duration']
         ];
         array_push($data, $arr);
       }
@@ -428,17 +429,35 @@ class DatabaseConn
       ($this->conn)->begin_transaction();
       $response = ['result' => false, 'reason' => ''];
       try {
+
+        $q = 'SELECT loanStatus FROM loans WHERE loanID = ?;';
+        $stmt = $this->conn->prepare($q);
+        $stmt->bind_param('s', $loanID);
+        $stmt->execute();
+        $stmt->store_result();
+        if ($stmt->num_rows() == 0) {
+          $response['reason'] = 'No loan associated with this loan ID';
+          return $response;
+        }
+        $stmt->bind_result($loanStatus);
+        $stmt->fetch();
+        $stmt->close();
+
+        if ($loanStatus != 0) {
+          $response['reason'] = 'This loan is already approved!';
+          return $response;
+        }
+
         $q0 = 'UPDATE loans SET loanStatus = 1 WHERE loanID = ?;';
         $stmt = $this->conn->prepare($q0);
         $stmt->bind_param('s', $loanID);
         $status = $stmt->execute();
-      
-        if(!$status){
+
+        if (!$status) {
           $response['reason'] = 'Something Went Wrong!';
           return $response;
-
         }
-        
+
         ($this->conn)->commit();
         $response['reason'] = 'Loan approved!';
         $response['result'] = true;
