@@ -208,16 +208,16 @@ class DatabaseConn
       ($this->conn)->begin_transaction();
       $response = ['result' => false, 'reason' => ''];
       try {
-        $q0 = 'SELECT balance FROM Accounts WHERE owner_id = ? and acc_no = ?';
+        $q0 = 'SELECT balance,savings_acc_no FROM Accounts NATURAL JOIN fixed_deposits WHERE owner_id = ? and acc_no = ?';
         $stmt = $this->conn->prepare($q0);
         $stmt->bind_param('ss', $owner_id, $fix_acc);
         $stmt->execute();
         $stmt->store_result();
         if ($stmt->num_rows() == 0) {
-          $response['reason'] = 'No account associate with the entered number!';
+          $response['reason'] = 'No fixed deposit account associate with the entered number!';
           return $response;
         }
-        $stmt->bind_result($balance);
+        $stmt->bind_result($balance, $savings_acc_no);
         $stmt->fetch();
         $stmt->close();
         if ($balance * 0.6 < $amount || $amount > 500000) {
@@ -225,20 +225,20 @@ class DatabaseConn
           return $response;
         }
 
-        $q1 = 'SELECT savings_acc_no FROM fixed_deposits WHERE acc_no = ?';
-        $stmt = $this->conn->prepare($q1);
-        $stmt->bind_param('s', $fix_acc);
-        $stmt->execute();
-        $stmt->store_result();
-        if ($stmt->num_rows() == 0) {
-          $response['reason'] = 'No fixed account associate with the entered number!';
-          return $response;
-        }
-        $stmt->bind_result($savings_acc_no);
-        $stmt->fetch();
-        $stmt->close();
+        // $q1 = 'SELECT savings_acc_no FROM fixed_deposits WHERE acc_no = ?';
+        // $stmt = $this->conn->prepare($q1);
+        // $stmt->bind_param('s', $fix_acc);
+        // $stmt->execute();
+        // $stmt->store_result();
+        // if ($stmt->num_rows() == 0) {
+        //   $response['reason'] = 'No fixed account associate with the entered number!';
+        //   return $response;
+        // }
+        // $stmt->bind_result($savings_acc_no);
+        // $stmt->fetch();
+        // $stmt->close();
 
-        $q = 'SELECT fixedAccount FROM loans WHERE fixedAccount = ? and loanStatus = 0';
+        $q = 'SELECT fixedAccount FROM loans WHERE fixedAccount = ? and loanStatus = 1';
         $stmt = $this->conn->prepare($q);
         $stmt->bind_param('s', $fix_acc);
         $stmt->execute();
@@ -253,10 +253,11 @@ class DatabaseConn
 
         $date = date("Y-m-d");
         $paid = 0;
+        $loanStatus=1;
         $installment = (($amount + ($amount * 0.2 / 12) * 24) / $duration); //20% for year
-        $q2 = 'INSERT INTO loans ( total_amount,paid_amount, date, customer,savingsAccount,fixedAccount,duration,installment) VALUES (?, ?, ?, ?,? , ? , ? , ?);';
+        $q2 = 'INSERT INTO loans ( total_amount,paid_amount, date, customer,savingsAccount,fixedAccount,duration,installment,loanStatus) VALUES (?,?, ?, ?, ?,? , ? , ? , ?);';
         $stmt = $this->conn->prepare($q2);
-        $stmt->bind_param('ddssssid', $amount, $paid, $date, $owner_id, $savings_acc_no, $fix_acc, $duration, $installment);
+        $stmt->bind_param('ddssssidi', $amount, $paid, $date, $owner_id, $savings_acc_no, $fix_acc, $duration, $installment, $loanStatus);
         $status0 = $stmt->execute();
         $stmt->close();
 
@@ -288,7 +289,7 @@ class DatabaseConn
       ($this->conn)->begin_transaction();
       $response = ['result' => false, 'reason' => ''];
       try {
-        $q0 = 'SELECT owner_id FROM accounts WHERE acc_no = ?';
+        $q0 = 'SELECT owner_id,type FROM Accounts WHERE acc_no = ?';
         $stmt = $this->conn->prepare($q0);
         $stmt->bind_param('s', $sav_acc);
         $stmt->execute();
@@ -297,22 +298,27 @@ class DatabaseConn
           $response['reason'] = 'No account associate with the entered number!';
           return $response;
         }
-        $stmt->bind_result($customer);
+        $stmt->bind_result($customer,$type);
         $stmt->fetch();
         $stmt->close();
+        if ($type != "savings") {
+          $response['reason'] = 'Account is not associated with a savings account!';
+          return $response;
+        }
 
 
         $date = date("Y-m-d");
         $paid = 0;
+        $loanStatus = 0;
         $installment = (($amount + ($amount * 0.2 / 12) * 24) / $duration); //20% for year
-        $q2 = 'INSERT INTO loans ( total_amount,paid_amount, date, customer,savingsAccount,duration,installment) VALUES ( ?, ?, ?,? , ? , ? , ?);';
+        $q2 = 'INSERT INTO loans ( total_amount,paid_amount, date, customer,savingsAccount,duration,installment,loanStatus) VALUES (?, ?, ?, ?,? , ? , ? , ?);';
         $stmt = $this->conn->prepare($q2);
-        $stmt->bind_param('ddsssdd', $amount, $paid, $date, $customer, $sav_acc, $duration, $installment);
+        $stmt->bind_param('ddsssddi', $amount, $paid, $date, $customer, $sav_acc, $duration, $installment, $loanStatus);
         $status0 = $stmt->execute();
         $stmt->close();
 
         if ($status0) { //update saving account balance
-          $q3 = 'UPDATE accounts SET balance = balance + ? WHERE acc_no = ?;';
+          $q3 = 'UPDATE Accounts SET balance = balance + ? WHERE acc_no = ?;';
           $stmt = $this->conn->prepare($q3);
           $stmt->bind_param('ds', $amount, $sav_acc);
           $status1 = $stmt->execute();
@@ -339,7 +345,7 @@ class DatabaseConn
       ($this->conn)->begin_transaction();
       $response = ['result' => false, 'reason' => ''];
       try {
-        $q0 = 'SELECT total_amount,paid_amount,installment,duration FROM loans WHERE loanID = ?';
+        $q0 = 'SELECT total_amount,paid_amount,installment,duration,loanStatus FROM loans WHERE loanID = ?';
         $stmt = $this->conn->prepare($q0);
         $stmt->bind_param('s', $loan_id);
         $stmt->execute();
@@ -349,14 +355,18 @@ class DatabaseConn
           $response['reason'] = 'No loan associate with the entered ID';
           return $response;
         }
-        $stmt->bind_result($total_amount, $paid_amount, $installment, $duration);
+        $stmt->bind_result($total_amount, $paid_amount, $installment, $duration, $loanStatus);
         $stmt->fetch();
         $stmt->close();
-        if ($installment* $duration < $paid_amount + $amount) {
+        if ($loanStatus == 0) {
+          $response['reason'] = 'Loan is not approved yet!';
+          return $response;
+        }
+        if (number_format($installment * $duration, 2) < $paid_amount + $amount) {
           $response['reason'] = 'Exceed the total amount';
           return $response;
-        } else if ($installment * $duration == $paid_amount + $amount) {
-          $q3 = 'UPDATE loans SET paid_amount = paid_amount + ? , loanStatus = 1 WHERE loanID = ?;';
+        } else if (number_format($installment * $duration, 2) == $paid_amount + $amount) {
+          $q3 = 'UPDATE loans SET paid_amount = paid_amount + ? , loanStatus = 2 WHERE loanID = ?;';
           $stmt = $this->conn->prepare($q3);
           $stmt->bind_param('ds', $amount, $loan_id);
           $response['result'] = $stmt->execute();
@@ -366,7 +376,7 @@ class DatabaseConn
           $stmt = $this->conn->prepare($q3);
           $stmt->bind_param('ds', $amount, $loan_id);
           $response['result'] = $stmt->execute();
-          $response['reason'] = 'Installment entered correctly.';
+          $response['reason'] = "Installment entered correctly!";
         }
         $date = date("Y-m-d");
         $q4 = 'INSERT INTO loan_payments (loanID,amount,date,employee ) VALUES ( ?, ?, ?,?);';

@@ -71,7 +71,7 @@
     addModal('Enter Loan');
     ?>
     <script src="/scripts/common.js"></script>
-    <script src="/scripts/manager/approveLoan.js"></script>
+    <script src="/scripts/employee/approveLoan.js"></script>
 </body>
 
 </html>

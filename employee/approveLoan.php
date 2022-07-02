@@ -35,4 +35,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-@include_once($_SERVER['DOCUMENT_ROOT'] . '/views/manager/approveLoan.php');
+@include_once($_SERVER['DOCUMENT_ROOT'] . '/views/employee/approveLoan.php');
