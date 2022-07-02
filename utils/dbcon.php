@@ -435,18 +435,18 @@ class DatabaseConn
       $stmt->fetch();
       $stmt->close();
 
-      $q1 = 'SELECT T.trans_id, T.from_acc, T.to_acc, T.amount, T.trans_time FROM (Transactions T INNER JOIN Accounts FA ON T.from_acc=FA.acc_no) INNER JOIN Accounts TA ON T.to_acc=TA.acc_no WHERE MONTH(T.trans_time)=MONTH(CURRENT_DATE) AND YEAR(T.trans_time)=YEAR(CURRENT_DATE) AND (FA.branch_id=? OR TA.branch_id=?) ORDER BY T.trans_id;';
+      $q1 = 'SELECT T.trans_id, T.from_acc, T.to_acc, T.amount, T.trans_type, T.trans_time FROM (Transactions T INNER JOIN Accounts FA ON T.from_acc=FA.acc_no) INNER JOIN Accounts TA ON T.to_acc=TA.acc_no WHERE MONTH(T.trans_time)=MONTH(CURRENT_DATE) AND YEAR(T.trans_time)=YEAR(CURRENT_DATE) AND (FA.branch_id=? OR TA.branch_id=?) ORDER BY T.trans_id;';
       $stmt1 = $this->conn->prepare($q1);
       $stmt1->bind_param('ii', $branch_id, $branch_id);
       $stmt1->execute();
       $result = $stmt1->get_result();
       $data = [];
       while ($row = $result->fetch_assoc()) {
-        $arr = [$row['trans_id'], $row['from_acc'], $row['to_acc'], $row['amount'], $row['trans_time']];
+        $arr = [$row['trans_id'], $row['from_acc'], $row['to_acc'], $row['amount'], $row['trans_type'], $row['trans_time']];
         array_push($data, $arr);
       }
       ($this->conn)->commit();
-      return [['ID', 'From', 'To', 'Amount', 'Date'], $data];
+      return [['ID', 'From', 'To', 'Amount', 'Type', 'Date'], $data];
     } catch (Exception $e) {
       return null;
     }
@@ -487,48 +487,41 @@ class DatabaseConn
     try {
       if (!$owner_id || !$acc_no) {
         return -1;
-      } 
+      }
       $q0 = 'SELECT type FROM Accounts WHERE owner_id = ? and acc_no = ?';
       $stmt = $this->conn->prepare($q0);
-      $stmt->bind_param('ss', $owner_id, $acc_no);  
+      $stmt->bind_param('ss', $owner_id, $acc_no);
       $stmt->execute();
       $result = $stmt->get_result();
       $type = $result->fetch_assoc();
       $t = $type['type'];
-      if($t === 'savings'){
+      if ($t === 'savings') {
         $q1 = 'SELECT customer_type FROM savings_accounts WHERE  acc_no = ?';
         $stmt = $this->conn->prepare($q1);
         $stmt->bind_param('s', $acc_no);
         $stmt->execute();
-        $result=$stmt->get_result();
+        $result = $stmt->get_result();
         $c_type = $result->fetch_assoc();
         $customer = $c_type['customer_type'];
-        if($customer === 'child'){
+        if ($customer === 'child') {
           return $this->check_balance($owner_id, $acc_no);
-        }
-        elseif($customer == 'teen'){
+        } elseif ($customer == 'teen') {
           return ($this->check_balance($owner_id, $acc_no) - 500);
-        }
-        elseif($customer == 'adult'){
-          return  ($this->check_balance($owner_id, $acc_no) - 1000);
-        }
-        elseif($customer == 'senior'){
+        } elseif ($customer == 'adult') {
           return ($this->check_balance($owner_id, $acc_no) - 1000);
-        }
-        else{
+        } elseif ($customer == 'senior') {
+          return ($this->check_balance($owner_id, $acc_no) - 1000);
+        } else {
           return -1;
-        }     
-      }
-      elseif($t === 'checking'){
-         return $this->check_balance($owner_id, $acc_no);
-      }
-      else{
+        }
+      } elseif ($t === 'checking') {
+        return $this->check_balance($owner_id, $acc_no);
+      } else {
         return -1;
       }
-    } catch (Exception $e){
+    } catch (Exception $e) {
       return -1;
     }
-
   }
 
   public function transaction(string $from_acc, string $to_acc, string $init_id, float $amount)
@@ -612,7 +605,7 @@ class DatabaseConn
   {
 
     if (!($this->conn instanceof mysqli)) return null;
-    try{
+    try {
       $q1 = 'SELECT * FROM Accounts WHERE acc_no = ? ';
       $stmt = $this->conn->prepare($q1);
       $stmt->bind_param('s', $acc_no);
@@ -622,12 +615,9 @@ class DatabaseConn
 
       if ($account == null) return null;
       return $account['type'];
-    } 
-    catch(Exception $e){
+    } catch (Exception $e) {
       return null;
     }
-
-    
   }
 
   public function get_account_ownership(string $acc_no, string $username)
@@ -642,11 +632,9 @@ class DatabaseConn
 
       if ($account['owner_id'] === $username) return true;
       return false;
-    } 
-    catch (Throwable $th) {
+    } catch (Throwable $th) {
       return false;
     }
-    
   }
 
   public function check_username(string $username)
@@ -659,13 +647,12 @@ class DatabaseConn
       $stmt->execute();
       $result = $stmt->get_result();
       $name = $result->fetch_assoc();
-  
+
       if ($name == null) return false;
       return true;
     } catch (Throwable $th) {
       return false;
     }
-   
   }
 
 
@@ -682,12 +669,9 @@ class DatabaseConn
       $result = $stmt->get_result();
       $count = $result->fetch_assoc();
       return $count['transactions'];
-    } 
-    catch (Throwable $th) {
+    } catch (Throwable $th) {
       return 6;
     }
-
-    
   }
 
   public function view_transaction_history(string $owner_id, string $acc_no, $start_date, $end_date)

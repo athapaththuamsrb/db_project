@@ -73,6 +73,7 @@ function generateTableHTML(array $headings, array $data): string
         width: 100%;
         padding-top: 6px;
         padding-bottom: 6px;
+        cellpadding: 2px;
       }
       td {
         text-align: right;
