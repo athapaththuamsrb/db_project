@@ -304,14 +304,8 @@ class DatabaseConn
         $status0 = $stmt->execute();
         $stmt->close();
 
-        if ($status0) { //update saving account balance
-          $q3 = 'UPDATE Accounts SET balance = balance + ? WHERE acc_no = ?;';
-          $stmt = $this->conn->prepare($q3);
-          $stmt->bind_param('ds', $amount, $sav_acc);
-          $status1 = $stmt->execute();
-        }
         ($this->conn)->commit();
-        $response['reason'] = 'Loan added successfully!';
+        $response['reason'] = 'Loan requested successfully!';
         $response['result'] = true;
 
         return $response;
@@ -416,7 +410,7 @@ class DatabaseConn
       $response = ['result' => false, 'reason' => ''];
       try {
 
-        $q = 'SELECT loanStatus FROM loans WHERE loanID = ?;';
+        $q = 'SELECT loanStatus,total_amount,savingsAccount FROM loans WHERE loanID = ?;';
         $stmt = $this->conn->prepare($q);
         $stmt->bind_param('s', $loanID);
         $stmt->execute();
@@ -425,7 +419,7 @@ class DatabaseConn
           $response['reason'] = 'No loan associated with this loan ID';
           return $response;
         }
-        $stmt->bind_result($loanStatus);
+        $stmt->bind_result($loanStatus, $total_amount, $savingsAccount);
         $stmt->fetch();
         $stmt->close();
 
@@ -439,9 +433,16 @@ class DatabaseConn
         $stmt->bind_param('s', $loanID);
         $status = $stmt->execute();
 
+
+
         if (!$status) {
           $response['reason'] = 'Something Went Wrong!';
           return $response;
+        }else{
+            $q3 = 'UPDATE Accounts SET balance = balance + ? WHERE acc_no = ?;';
+            $stmt = $this->conn->prepare($q3);
+            $stmt->bind_param('ds', $total_amount, $savingsAccount);
+            $status1 = $stmt->execute();
         }
 
         ($this->conn)->commit();
