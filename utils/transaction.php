@@ -82,7 +82,7 @@ function manageTransaction(string $type, string $username){
            $msg = "Insufficient Balance";
         }    
         else{
-            $status = $dbconn->transaction($from_acc, $to_acc, $ownername, $amount);
+            $status = $dbconn->transaction($from_acc, $to_acc, $username, $amount);
             ($status === true) ? $msg= "Transaction Successful" : $msg=  "Transaction Failed";
 
         }
