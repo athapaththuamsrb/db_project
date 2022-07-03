@@ -257,8 +257,6 @@ class DatabaseConn
           $response['reason'] = 'Something Went Wrong!';
           return $response;
         }
-        ($this->conn)->commit();
-
         if (!$status1) {
           $response['reason'] = 'Something Went Wrong!';
           return $response;
@@ -266,6 +264,8 @@ class DatabaseConn
           $response['reason'] = 'Loan added successfully!';
           $response['result'] = true;
         }
+        ($this->conn)->commit();
+
         
 
         return $response;
@@ -476,7 +476,6 @@ class DatabaseConn
             $status1 = $stmt->execute();
         }
 
-        ($this->conn)->commit();
         if (!$status1) {
           $response['reason'] = 'Something Went Wrong!';
           return $response;
@@ -484,6 +483,7 @@ class DatabaseConn
           $response['reason'] = 'Loan approved!';
           $response['result'] = true;
         }
+        ($this->conn)->commit();
         
 
         return $response;
