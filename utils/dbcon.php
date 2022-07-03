@@ -253,10 +253,20 @@ class DatabaseConn
           $stmt = $this->conn->prepare($q3);
           $stmt->bind_param('ds', $amount, $savings_acc_no);
           $status1 = $stmt->execute();
+        }else{
+          $response['reason'] = 'Something Went Wrong!';
+          return $response;
         }
         ($this->conn)->commit();
-        $response['reason'] = 'Loan added successfully!';
-        $response['result'] = true;
+
+        if (!$status1) {
+          $response['reason'] = 'Something Went Wrong!';
+          return $response;
+        } else {
+          $response['reason'] = 'Loan added successfully!';
+          $response['result'] = true;
+        }
+        
 
         return $response;
       } catch (Exception $e) {
@@ -304,9 +314,16 @@ class DatabaseConn
         $status0 = $stmt->execute();
         $stmt->close();
 
+        if (!$status0) {
+          $response['reason'] = 'Something Went Wrong!';
+          return $response;
+        } else {
+          $response['reason'] = 'Loan requested successfully!';
+          $response['result'] = true;
+        }
+
         ($this->conn)->commit();
-        $response['reason'] = 'Loan requested successfully!';
-        $response['result'] = true;
+        
 
         return $response;
       } catch (Exception $e) {
@@ -356,15 +373,29 @@ class DatabaseConn
           $q3 = 'UPDATE loans SET paid_amount = paid_amount + ? WHERE loanID = ?;';
           $stmt = $this->conn->prepare($q3);
           $stmt->bind_param('ds', $amount, $loan_id);
-          $response['result'] = $stmt->execute();
+          $status = $stmt->execute();
+          
+        }
+        if(!$status){
+          $response['reason'] = 'Something Went Wrong!';
+          return $response;
+        }else{
+
+          $date = date("Y-m-d");
+          $q4 = 'INSERT INTO loan_payments (loanID,amount,date,employee ) VALUES ( ?, ?, ?,?);';
+          $stmt = $this->conn->prepare($q4);
+          $stmt->bind_param('sdss', $loan_id, $amount, $date, $employee);
+          $status0 = $stmt->execute();
+          $stmt->close();
+        }
+
+        if(!$status0){
+          $response['reason'] = 'Something Went Wrong!';
+          return $response;
+        }else{
+          $response['result'] = true;
           $response['reason'] = "Installment entered correctly!";
         }
-        $date = date("Y-m-d");
-        $q4 = 'INSERT INTO loan_payments (loanID,amount,date,employee ) VALUES ( ?, ?, ?,?);';
-        $stmt = $this->conn->prepare($q4);
-        $stmt->bind_param('sdss', $loan_id, $amount, $date, $employee);
-        $status0 = $stmt->execute();
-        $stmt->close();
 
 
 
@@ -446,8 +477,14 @@ class DatabaseConn
         }
 
         ($this->conn)->commit();
-        $response['reason'] = 'Loan approved!';
-        $response['result'] = true;
+        if (!$status1) {
+          $response['reason'] = 'Something Went Wrong!';
+          return $response;
+        } else {
+          $response['reason'] = 'Loan approved!';
+          $response['result'] = true;
+        }
+        
 
         return $response;
       } catch (Exception $e) {
