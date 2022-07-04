@@ -545,18 +545,18 @@ class DatabaseConn
       $stmt->fetch();
       $stmt->close();
 
-      $q1 = 'SELECT T.trans_id, T.from_acc, T.to_acc, T.amount, T.trans_time FROM (Transactions T INNER JOIN Accounts FA ON T.from_acc=FA.acc_no) INNER JOIN Accounts TA ON T.to_acc=TA.acc_no WHERE MONTH(T.trans_time)=MONTH(CURRENT_DATE) AND YEAR(T.trans_time)=YEAR(CURRENT_DATE) AND (FA.branch_id=? OR TA.branch_id=?) ORDER BY T.trans_id;';
+      $q1 = 'SELECT T.trans_id, T.from_acc, T.to_acc, T.amount, T.trans_type, T.trans_time FROM (Transactions T INNER JOIN Accounts FA ON T.from_acc=FA.acc_no) INNER JOIN Accounts TA ON T.to_acc=TA.acc_no WHERE MONTH(T.trans_time)=MONTH(CURRENT_DATE) AND YEAR(T.trans_time)=YEAR(CURRENT_DATE) AND (FA.branch_id=? OR TA.branch_id=?) ORDER BY T.trans_id;';
       $stmt1 = $this->conn->prepare($q1);
       $stmt1->bind_param('ii', $branch_id, $branch_id);
       $stmt1->execute();
       $result = $stmt1->get_result();
       $data = [];
       while ($row = $result->fetch_assoc()) {
-        $arr = [$row['trans_id'], $row['from_acc'], $row['to_acc'], $row['amount'], $row['trans_time']];
+        $arr = [$row['trans_id'], $row['from_acc'], $row['to_acc'], $row['amount'], $row['trans_type'], $row['trans_time']];
         array_push($data, $arr);
       }
       ($this->conn)->commit();
-      return [['ID', 'From', 'To', 'Amount', 'Date'], $data];
+      return [['ID', 'From', 'To', 'Amount', 'Type', 'Date'], $data];
     } catch (Exception $e) {
       return null;
     }
@@ -587,6 +587,49 @@ class DatabaseConn
       return $balance;
     } catch (Exception $e) {
       ($this->conn)->rollback();
+      return -1;
+    }
+  }
+
+  public function check_min_balance(string $owner_id, string $acc_no)
+  {
+    if (!($this->conn instanceof mysqli)) return -1;
+    try {
+      if (!$owner_id || !$acc_no) {
+        return -1;
+      }
+      $q0 = 'SELECT type FROM Accounts WHERE owner_id = ? and acc_no = ?';
+      $stmt = $this->conn->prepare($q0);
+      $stmt->bind_param('ss', $owner_id, $acc_no);
+      $stmt->execute();
+      $result = $stmt->get_result();
+      $type = $result->fetch_assoc();
+      $t = $type['type'];
+      if ($t === 'savings') {
+        $q1 = 'SELECT customer_type FROM savings_accounts WHERE  acc_no = ?';
+        $stmt = $this->conn->prepare($q1);
+        $stmt->bind_param('s', $acc_no);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $c_type = $result->fetch_assoc();
+        $customer = $c_type['customer_type'];
+        if ($customer === 'child') {
+          return $this->check_balance($owner_id, $acc_no);
+        } elseif ($customer == 'teen') {
+          return ($this->check_balance($owner_id, $acc_no) - 500);
+        } elseif ($customer == 'adult') {
+          return ($this->check_balance($owner_id, $acc_no) - 1000);
+        } elseif ($customer == 'senior') {
+          return ($this->check_balance($owner_id, $acc_no) - 1000);
+        } else {
+          return -1;
+        }
+      } elseif ($t === 'checking') {
+        return $this->check_balance($owner_id, $acc_no);
+      } else {
+        return -1;
+      }
+    } catch (Exception $e) {
       return -1;
     }
   }
@@ -625,10 +668,11 @@ class DatabaseConn
         return false;
       }
 
-      $q4 = 'INSERT INTO Transactions (from_acc, to_acc, init_id, trans_time, amount) VALUES (?, ?, ?, ?, ?)';
+      $q4 = 'INSERT INTO Transactions (from_acc, to_acc, init_id, trans_time, amount,trans_type) VALUES (?, ?, ?, ?, ?,?)';
       $stmt4 = $this->conn->prepare($q4);
       $date = date('Y-m-d H:i:s');
-      $stmt4->bind_param('ssssd', $from_acc, $to_acc, $init_id, $date, $amount);
+      $t_type = 'TRNS';
+      $stmt4->bind_param('ssssds', $from_acc, $to_acc, $init_id, $date, $amount, $t_type);
       if (!($stmt4->execute())) {
         $this->conn->rollback();
         return false;
@@ -671,45 +715,54 @@ class DatabaseConn
   {
 
     if (!($this->conn instanceof mysqli)) return null;
+    try {
+      $q1 = 'SELECT * FROM Accounts WHERE acc_no = ? ';
+      $stmt = $this->conn->prepare($q1);
+      $stmt->bind_param('s', $acc_no);
+      $stmt->execute();
+      $result = $stmt->get_result();
+      $account = $result->fetch_assoc();
 
-    $q1 = 'SELECT * FROM Accounts WHERE acc_no = ? ';
-    $stmt = $this->conn->prepare($q1);
-    $stmt->bind_param('s', $acc_no);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $account = $result->fetch_assoc();
-
-    if ($account == null) return null;
-    return $account['type'];
+      if ($account == null) return null;
+      return $account['type'];
+    } catch (Exception $e) {
+      return null;
+    }
   }
 
   public function get_account_ownership(string $acc_no, string $username)
   {
+    try {
+      $q1 = 'SELECT owner_id FROM Accounts WHERE acc_no = ? ';
+      $stmt = $this->conn->prepare($q1);
+      $stmt->bind_param('s', $acc_no);
+      $stmt->execute();
+      $result = $stmt->get_result();
+      $account = $result->fetch_assoc();
 
-    $q1 = 'SELECT owner_id FROM Accounts WHERE acc_no = ? ';
-    $stmt = $this->conn->prepare($q1);
-    $stmt->bind_param('s', $acc_no);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $account = $result->fetch_assoc();
-
-    if ($account['owner_id'] === $username) return true;
-    return false;
+      if ($account['owner_id'] === $username) return true;
+      return false;
+    } catch (Throwable $th) {
+      return false;
+    }
   }
 
   public function check_username(string $username)
   {
     if (!($this->conn instanceof mysqli)) return null;
+    try {
+      $q1 = 'SELECT * FROM Accounts WHERE owner_id = ? ';
+      $stmt = $this->conn->prepare($q1);
+      $stmt->bind_param('s', $username);
+      $stmt->execute();
+      $result = $stmt->get_result();
+      $name = $result->fetch_assoc();
 
-    $q1 = 'SELECT * FROM Accounts WHERE owner_id = ? ';
-    $stmt = $this->conn->prepare($q1);
-    $stmt->bind_param('s', $username);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $name = $result->fetch_assoc();
-
-    if ($name == null) return false;
-    return true;
+      if ($name == null) return false;
+      return true;
+    } catch (Throwable $th) {
+      return false;
+    }
   }
 
 
@@ -718,14 +771,17 @@ class DatabaseConn
 
     if (!($this->conn instanceof mysqli)) return null;
 
-    $q1 = 'SELECT transactions FROM savings_accounts WHERE acc_no = ? ';
-    $stmt = $this->conn->prepare($q1);
-    $stmt->bind_param('s', $acc_no);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $count = $result->fetch_assoc();
-
-    return $count['transactions'];
+    try {
+      $q1 = 'SELECT transactions FROM savings_accounts WHERE acc_no = ? ';
+      $stmt = $this->conn->prepare($q1);
+      $stmt->bind_param('s', $acc_no);
+      $stmt->execute();
+      $result = $stmt->get_result();
+      $count = $result->fetch_assoc();
+      return $count['transactions'];
+    } catch (Throwable $th) {
+      return 6;
+    }
   }
 
   public function view_transaction_history(string $owner_id, string $acc_no, $start_date, $end_date)
@@ -795,7 +851,7 @@ class DatabaseConn
     if (!($this->conn instanceof mysqli)) return null;
 
     ($this->conn)->begin_transaction();
-    $response = ['result' => false, 'created_acc' => ''];
+    $response = ['result' => false, 'created_acc' => '', 'reason' => ''];
 
     try {
 
@@ -803,9 +859,9 @@ class DatabaseConn
       $date_str = gmdate('Y-m-d');
       $stmt = $this->conn->prepare($common_query);
       $stmt->bind_param('sssdss', $owner_id, $acc_no, $acc_type, $balance, $date_str, $branch_id);
-      $stmt->execute();
 
       if ($acc_type === "checking") {
+        $stmt->execute();
         $q0 = 'INSERT into checking_accounts (acc_no) values (?)';
         $stmt0 = $this->conn->prepare($q0);
         $stmt0->bind_param('s', $acc_no);
@@ -813,9 +869,14 @@ class DatabaseConn
         $response['created_acc'] = "Checking";
       } elseif ($acc_type === "savings") {
         $customer_type = $this->get_savings_acc_type($owner_id);
-        if ($customer_type === "") {
+        if (is_null($customer_type)) {
           return $response;
         }
+        if (($customer_type == "teen" && (int)$balance < 500) || ($customer_type == "adult" && (int)$balance < 1000) || ($customer_type == "senior" && (int)$balance < 1000)) {
+          $response['reason'] = "Insufficient balance";
+          return $response;
+        }
+        $stmt->execute();
         $q0 = 'INSERT into savings_accounts (acc_no, customer_type, transactions) values (?, ?, 0)';
         $stmt0 = $this->conn->prepare($q0);
         $stmt0->bind_param('ss', $acc_no, $customer_type);
@@ -831,6 +892,7 @@ class DatabaseConn
           $response['reason'] = "No such savings account found under your profile";
           return $response;
         }
+        $stmt->execute();
         $q0 = 'INSERT into fixed_deposits (acc_no, savings_acc_no, duration) values (?, ?, ?)';
         $stmt0 = $this->conn->prepare($q0);
         $stmt0->bind_param('ssi', $acc_no, $saving_acc_no, $duration);
@@ -857,7 +919,7 @@ class DatabaseConn
       $stmt0->execute();
       $stmt0->store_result();
       if ($stmt0->num_rows() == 0) {
-        return "";
+        return null;
       }
       $stmt0->bind_result($type);
       $stmt0->fetch();
@@ -871,7 +933,7 @@ class DatabaseConn
       $stmt->execute();
       $stmt->store_result();
       if ($stmt->num_rows() == 0) {
-        return "";
+        return null;
       }
       $stmt->bind_result($dob);
       $stmt->fetch();
@@ -889,11 +951,21 @@ class DatabaseConn
       } else {
         return "senior";
       }
-      return "";
+      return null;
     } catch (Exception $e) {
       ($this->conn)->rollback();
-      return "";
+      return null;
     }
+  }
+
+  private function validate($username, $pw): bool
+  {
+    $username_pattern = '/^[a-zA-Z0-9._]{5,12}$/';
+    $pw_pattern = '/^[\x21-\x7E]{8,15}$/';
+    if (preg_match($username_pattern, $username) && preg_match($pw_pattern, $pw)) {
+      return true;
+    }
+    return false;
   }
 
   public function close_conn()
@@ -902,19 +974,6 @@ class DatabaseConn
       $this->conn->close();
     }
     $this->__destruct();
-  }
-
-  private function validate($username, $pw): Bool
-  {
-    $username = htmlspecialchars($username);
-    $pw = htmlspecialchars($pw);
-    $username_pattern = '/^[a-zA-Z0-9._]{5,12}$/';
-    $pw_pattern = '/^[\x21-\x7E]{8,15}$/';
-    //$pw_pattern = '/^\S*(?=\S{8,15})(?=\S*[a-z])(?=\S*[A-Z])(?=\S*[\d])(?=\S*[\W])\S*$/';
-    if (preg_match($username_pattern, $username) && preg_match($pw_pattern, $pw)) {
-      return true;
-    }
-    return false;
   }
 
   public function __destruct()
