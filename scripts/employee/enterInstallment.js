@@ -11,6 +11,11 @@ submitBtn.onclick = (e) => {
   e.preventDefault();
   let loan_id = loan_idInput.value;
   let amount = amountInput.value;
+  console.log(loan_id, amount);
+  if (!amount || !loan_id) {
+    setModal(false, "Form should be filled correctly");
+    return;
+  }
 
 if (!balance_pattern.test(amount)) {
   setModal(false, "Invalid balance amount");

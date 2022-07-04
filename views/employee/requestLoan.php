@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="/styles/bootstrap-5.1.3-dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="/styles/form.css" />
     <script src="/styles/bootstrap-5.1.3-dist/js/bootstrap.min.js"></script>
-    <title>Enter Approved Loan</title>
+    <title>Request Loan</title>
     <link rel="icon" type="image/x-icon" href="/images/favicon.ico" />
 </head>
 
@@ -18,7 +18,7 @@
     @include(__DIR__ . '/../navbar.php'); ?>
 
     <div class="container box fade" style="background-color: #880808; color: white; border: #21081a solid 2px">
-        <h1>Enter Approved Loan</h1>
+        <h1>Request Loan</h1>
         <br />
         <div class="row">
             <div class="col-3"></div>

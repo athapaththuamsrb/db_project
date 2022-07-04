@@ -249,18 +249,22 @@ class DatabaseConn
         $stmt->close();
 
         if ($status0) { //update saving account balance
-          if($this->transaction(null, $savings_acc_no, $owner_id, $amount,"LOAN")){
+          if ($this->transaction(null, $savings_acc_no, $owner_id, $amount, "LOAN")) {
             $response['reason'] = 'Loan added successfully!';
             $response['result'] = true;
+          } else {
+            ($this->conn)->rollback();
+            $response['reason'] = 'Something Went Wrong!';
+            return $response;
           }
-        }else{
+        } else {
           $response['reason'] = 'Something Went Wrong!';
           return $response;
         }
-       
+
         ($this->conn)->commit();
 
-        
+
 
         return $response;
       } catch (Exception $e) {
@@ -317,7 +321,7 @@ class DatabaseConn
         }
 
         ($this->conn)->commit();
-        
+
 
         return $response;
       } catch (Exception $e) {
@@ -353,6 +357,9 @@ class DatabaseConn
         if ($loanStatus == 0) {
           $response['reason'] = 'Loan is not approved yet!';
           return $response;
+        }else if  ($loanStatus == 2){
+          $response['reason'] = 'Loan is already completely paid!';
+          return $response;
         }
         if (round($installment * $duration, 2) < $paid_amount + $amount) {
           $response['reason'] = 'Exceed the total amount';
@@ -370,10 +377,10 @@ class DatabaseConn
           $status = $stmt->execute();
           $response['reason'] = "Installment entered correctly!";
         }
-        if(!$status){
+        if (!$status) {
           $response['reason'] = 'Something Went Wrong!';
           return $response;
-        }else{
+        } else {
 
           $date = date("Y-m-d");
           $q4 = 'INSERT INTO loan_payments (loanID,amount,date,employee ) VALUES ( ?, ?, ?,?);';
@@ -383,12 +390,12 @@ class DatabaseConn
           $stmt->close();
         }
 
-        if(!$status0){
+        if (!$status0) {
+          ($this->conn)->rollback();
           $response['reason'] = 'Something Went Wrong!';
           return $response;
-        }else{
+        } else {
           $response['result'] = true;
-          
         }
 
 
@@ -427,7 +434,7 @@ class DatabaseConn
     return null;
   }
 
-  public function loanApprove(string $loanID,string $managerID)
+  public function loanApprove(string $loanID, string $managerID)
   {
     if (!($this->conn instanceof mysqli)) return false;
     if ($loanID) {
@@ -463,28 +470,20 @@ class DatabaseConn
         if (!$status) {
           $response['reason'] = 'Something Went Wrong!';
           return $response;
-        }else{
-          if ($this->transaction(null, $savingsAccount, $managerID, $total_amount,"LOAN")) {
+        } else {
+          if ($this->transaction(null, $savingsAccount, $managerID, $total_amount, "LOAN")) {
             $response['reason'] = 'Loan added successfully!';
             $response['result'] = true;
+          } else {
+            ($this->conn)->rollback();
+            $response['reason'] = 'Something Went Wrong!';
+            return $response;
           }
 
-
-            // $q3 = 'UPDATE Accounts SET balance = balance + ? WHERE acc_no = ?;';
-            // $stmt = $this->conn->prepare($q3);
-            // $stmt->bind_param('ds', $total_amount, $savingsAccount);
-            // $status1 = $stmt->execute();
         }
 
-        // if (!$status1) {
-        //   $response['reason'] = 'Something Went Wrong!';
-        //   return $response;
-        // } else {
-        //   $response['reason'] = 'Loan approved!';
-        //   $response['result'] = true;
-        // }
         ($this->conn)->commit();
-        
+
 
         return $response;
       } catch (Exception $e) {
@@ -634,7 +633,7 @@ class DatabaseConn
     }
   }
 
-  public function transaction(?string $from_acc, string $to_acc, string $init_id, float $amount, string $t_type="TRANS")
+  public function transaction(?string $from_acc, string $to_acc, string $init_id, float $amount, string $t_type = "TRANS")
   {
     if (!($this->conn instanceof mysqli)) return false;
 
