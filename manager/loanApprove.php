@@ -16,7 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             echo json_encode($response);
             die();
         }
-        $result = $dbcon->loanApprove($_POST['loanID']);
+        $result = $dbcon->loanApprove($_POST['loanID'], $user->getUsername());
         $response['success'] = $result['result'];
         $response['reason'] = $result['reason'];
         echo json_encode($response);
