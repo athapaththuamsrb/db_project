@@ -26,6 +26,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       echo json_encode($response);
       die();
     }
+    if (!preg_match('/^[0-9]{1,3}$/', $_POST['duration'])) {
+      $response['reason'] = "Invalid duration";
+      echo json_encode($response);
+      die();
+    }
     if ($_POST['duration']>120) {
       $response['reason'] = "You cannot apply loan for more than 10 years";
       echo json_encode($response);
