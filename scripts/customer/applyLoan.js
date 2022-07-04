@@ -30,6 +30,10 @@ if (!balance_pattern.test(amount)) {
   setModal(false, "Invalid balance amount");
   return;
 }
+if (!duration_pattern.test(duration)) {
+  setModal(false, "Invalid duration");
+  return;
+}
 if (duration>120) {
   setModal(false, "You cannot apply loan for more than 10 years");
   return;
