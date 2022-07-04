@@ -54,7 +54,7 @@ submitBtn.onclick = (e) => {
         setModal(false, "Sorry try again");
       }
     } catch (e) {
-      setModal(false, e);
+      setModal(false, "Something went wrong!");
     }
   });
   xhrSender.addField("sav_acc", sav_acc);

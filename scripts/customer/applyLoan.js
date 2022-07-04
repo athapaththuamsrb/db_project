@@ -61,7 +61,7 @@ if (duration>120) {
         }
       } catch (e) {
       
-      setModal(false, e);
+      setModal(false, "Something went wrong!");
     }
   });
   xhrSender.addField("fix_acc", fix_acc);

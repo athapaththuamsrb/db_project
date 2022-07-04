@@ -203,7 +203,7 @@ class DatabaseConn
 
   public function apply_loan(string $fix_acc, float $amount, int $duration, string $owner_id)
   {
-    if (!($this->conn instanceof mysqli)) return false;
+    if (!($this->conn instanceof mysqli)) return ['result' => false, 'reason' => '"Something went wrong!"'];
     if ($fix_acc && $amount && $owner_id) {
       ($this->conn)->begin_transaction();
       $response = ['result' => false, 'reason' => ''];
@@ -279,7 +279,7 @@ class DatabaseConn
 
   public function requestLoan(string $sav_acc, float $amount, float $duration)
   {
-    if (!($this->conn instanceof mysqli)) return false;
+    if (!($this->conn instanceof mysqli)) return ['result' => false, 'reason' => '"Something went wrong!"'];
     if ($sav_acc && $amount) {
       ($this->conn)->begin_transaction();
       $response = ['result' => false, 'reason' => ''];
@@ -336,7 +336,7 @@ class DatabaseConn
 
   public function enter_Installment(string $loan_id, float $amount, string $employee)
   {
-    if (!($this->conn instanceof mysqli)) return false;
+    if (!($this->conn instanceof mysqli)) return ['result' => false, 'reason' => '"Something went wrong!"'];
     if ($loan_id && $amount) {
       ($this->conn)->begin_transaction();
       $response = ['result' => false, 'reason' => ''];
@@ -404,10 +404,12 @@ class DatabaseConn
         return $response;
       } catch (Exception $e) {
         ($this->conn)->rollback();
-        return false;
+        $response['reason'] = 'Error!';
+        return $response;
       }
     }
-    return false;
+    $response['reason'] = 'Something Went Wrong!';
+    return $response;
   }
 
   public function getPendingApprovalLoans(): ?array

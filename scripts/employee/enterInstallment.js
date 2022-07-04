@@ -45,7 +45,7 @@ if (!loan_id_pattern.test(loan_id)) {
         setModal(false, "Sorry try again");
       }
     } catch (e) {
-      setModal(false, e);
+      setModal(false, "Something went wrong!");
     }
   });
   xhrSender.addField("loan_id", loan_id);
