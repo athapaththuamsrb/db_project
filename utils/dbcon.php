@@ -513,7 +513,7 @@ class DatabaseConn
       $stmt->fetch();
       $stmt->close();
 
-      $q1 = 'SELECT loans.loanID, loans.customer, loans.should_paid, loans.paid_amount, loans.should_paid-loans.paid_amount difference FROM `loans` JOIN Accounts ON loans.savingsAccount=Accounts.acc_no WHERE Accounts.type="savings" AND Accounts.branch_id=? AND loans.paid_amount < loans.should_paid';
+      $q1 = 'SELECT loans.loanID, loans.customer, FLOOR(DATEDIFF(NOW(),loans.date)/30)*loans.installment should_paid, loans.paid_amount, FLOOR(DATEDIFF(NOW(),loans.date)/30)*loans.installment - loans.paid_amount difference FROM `loans` JOIN Accounts ON loans.savingsAccount=Accounts.acc_no WHERE Accounts.type="savings" AND Accounts.branch_id=? AND loans.paid_amount < FLOOR(DATEDIFF(NOW(),loans.date)/30)*loans.installment';
       $stmt1 = $this->conn->prepare($q1);
       $stmt1->bind_param('i', $branch_id);
       $stmt1->execute();
