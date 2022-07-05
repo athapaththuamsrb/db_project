@@ -2,6 +2,7 @@
 require_once('auth.php');
 $user = (new Authenticator())->checkAuth();
 
+require_once($_SERVER['DOCUMENT_ROOT'] . '/utils/patterns.php');
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $response = ['success' => false, 'reason' => ''];
@@ -16,17 +17,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     echo json_encode($response);
     die();
   } else {
-    if (!preg_match('/^[0-9]{12}$/', $_POST['fix_acc'])) {
+    if (!preg_match(ACC_NO_PATTERN, $_POST['fix_acc'])) {
       $response['reason'] = "Invalid account number";
       echo json_encode($response);
       die();
     }
-    if (!preg_match('/^([0-9]+(\.?[0-9]?[0-9]?)?)$/', $_POST['amount'])) {
+    if (!preg_match(BALANCE_PATTERN, $_POST['amount'])) {
       $response['reason'] = "Invalid balance amount";
       echo json_encode($response);
       die();
     }
-    if (!preg_match('/^[0-9]{1,3}$/', $_POST['duration'])) {
+    if (!preg_match(DURATION_PATTERN, $_POST['duration'])) {
       $response['reason'] = "Invalid duration";
       echo json_encode($response);
       die();

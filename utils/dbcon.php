@@ -1,5 +1,6 @@
 <?php
 require_once('User.php');
+require_once('patterns.php');
 
 class DatabaseConn
 {
@@ -357,7 +358,7 @@ class DatabaseConn
         if ($loanStatus == 0) {
           $response['reason'] = 'Loan is not approved yet!';
           return $response;
-        }else if  ($loanStatus == 2){
+        } else if ($loanStatus == 2) {
           $response['reason'] = 'Loan is already completely paid!';
           return $response;
         }
@@ -481,7 +482,6 @@ class DatabaseConn
             $response['reason'] = 'Something Went Wrong!';
             return $response;
           }
-
         }
 
         ($this->conn)->commit();
@@ -960,9 +960,7 @@ class DatabaseConn
 
   private function validate($username, $pw): bool
   {
-    $username_pattern = '/^[a-zA-Z0-9._]{5,12}$/';
-    $pw_pattern = '/^[\x21-\x7E]{8,15}$/';
-    if (preg_match($username_pattern, $username) && preg_match($pw_pattern, $pw)) {
+    if (preg_match(USERNAME_PATTERN, $username) && preg_match(PASSWORD_PATTERN, $pw)) {
       return true;
     }
     return false;

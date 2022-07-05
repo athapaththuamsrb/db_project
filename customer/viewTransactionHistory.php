@@ -2,6 +2,8 @@
 require_once('auth.php');
 $user = (new Authenticator())->checkAuth();
 
+require_once($_SERVER['DOCUMENT_ROOT'] . '/utils/patterns.php');
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $response = ['success'=>false];
     if (!isset($_POST['acc_no']) || !$_POST['acc_no']) {
@@ -12,12 +14,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $owner_id = $user->getUsername();
     $acc_no = $_POST['acc_no'];
     
-    if (!preg_match('/^[a-zA-Z0-9._]{5,12}$/', $owner_id)) {
+    if (!preg_match(USERNAME_PATTERN, $owner_id)) {
         $response['reason'] = "Invalid username";
         echo json_encode($response);
         die();
     }
-    if (!preg_match('/^[0-9]{12}$/', $acc_no)) { 
+    if (!preg_match(ACC_NO_PATTERN, $acc_no)) { 
         $response['reason'] = "Invalid account number";
         echo json_encode($response);
         die();

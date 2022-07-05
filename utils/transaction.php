@@ -1,8 +1,6 @@
 <?php
-
-
 require_once('../utils/dbcon.php');
-
+require_once('patterns.php');
 
 function manageTransaction(string $type, string $username){
 
@@ -23,7 +21,7 @@ function manageTransaction(string $type, string $username){
         else if($to_acc === $from_acc){
             $msg = "Transfer to same account";
         }
-        else if( !preg_match('/^[0-9]{12}$/', $to_acc) || $dbconn->check_account($to_acc) === null ){
+        else if( !preg_match(ACC_NO_PATTERN, $to_acc) || $dbconn->check_account($to_acc) === null ){
             $msg = "Invalid Account Number";
         }
         else if(!$dbconn->get_account_ownership($from_acc, $username)){
@@ -60,13 +58,13 @@ function manageTransaction(string $type, string $username){
         else if($to_acc === $from_acc){
             $msg = "Transfer to same account";
         }
-        else if(!preg_match('/^[a-zA-Z0-9._]{5,12}$/', $ownername) || !$dbconn->check_username($ownername) ){
+        else if(!preg_match(USERNAME_PATTERN, $ownername) || !$dbconn->check_username($ownername) ){
             $msg = "Invalid User Name";
         }
-        else if(!preg_match('/^[0-9]{12}$/', $from_acc) || $dbconn->check_account($from_acc) === null  ){    
+        else if(!preg_match(ACC_NO_PATTERN, $from_acc) || $dbconn->check_account($from_acc) === null  ){    
             $msg = "Invalid From Account Number";
         } 
-        else if(!preg_match('/^[0-9]{12}$/', $to_acc) || $dbconn->check_account($to_acc) === null ){    
+        else if(!preg_match(ACC_NO_PATTERN, $to_acc) || $dbconn->check_account($to_acc) === null ){    
             $msg = "Invalid To Account Number";
         }
         else if($dbconn->check_account($from_acc) === 'fixed' || $dbconn->check_account($to_acc) === 'fixed'){

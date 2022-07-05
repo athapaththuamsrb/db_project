@@ -4,15 +4,7 @@ require_once('auth.php');
 $user = (new Authenticator())->checkAuth();
 $type = $user->getType();
 
-
-//$username = $user->getUsername();
-// function fail()
-// {
-//   header('Location: enterInstallment.php');
-//   //echo json_encode(['status' => false]);
-//   die();
-// }
-
+require_once($_SERVER['DOCUMENT_ROOT'] . '/utils/patterns.php');
 require_once('../utils/dbcon.php');
 $dbcon = DatabaseConn::get_conn();
 
@@ -29,12 +21,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     die();
 
   }else{
-    if (!preg_match('/^([0-9]+(\.?[0-9]?[0-9]?)?)$/', $_POST['amount'])) {
+    if (!preg_match(BALANCE_PATTERN, $_POST['amount'])) {
       $response['reason'] = "Invalid balance amount";
       echo json_encode($response);
       die();
     }
-    if (!preg_match('/^[0-9]{1,14}$/', $_POST['loan_id'])) {
+    if (!preg_match(LOAN_ID_PATTERN, $_POST['loan_id'])) {
       $response['reason'] = "Invalid loan ID";
       echo json_encode($response);
       die();

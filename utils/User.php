@@ -1,4 +1,5 @@
 <?php
+require_once('patterns.php');
 
 function validateNIC($nic): bool
 {
@@ -16,7 +17,7 @@ abstract class User
 
     public static function createUser($details): User
     {
-        if (!isset($details['username']) || !preg_match('/^[a-zA-Z0-9._]{5,12}$/', $details['username'])) {
+        if (!isset($details['username']) || !preg_match(USERNAME_PATTERN, $details['username'])) {
             throw new Exception('No valid username is provided');
         }
         if (!isset($details['name']) || !preg_match('/^[a-zA-Z.\s]{5,100}$/', $details['name'])) {
@@ -52,20 +53,20 @@ abstract class User
             throw new Exception('No valid date is provided');
         }
         $dob = null;
-        try{
+        try {
             $dob = new DateTime($details['DoB']);
-            if ($dob->getTimestamp() > (new DateTime('now'))->getTimestamp()){
+            if ($dob->getTimestamp() > (new DateTime('now'))->getTimestamp()) {
                 throw new Exception('invalid date');
             }
-        }catch (Exception $e){
+        } catch (Exception $e) {
             throw new Exception('Invalid date');
         }
         $NIC = null;
         if (isset($details['NIC']) && validateNIC($details['NIC'])) {
             $NIC = $details['NIC'];
-        }else if (isset($details['guardianNIC']) && validateNIC($details['guardianNIC'])) {
+        } else if (isset($details['guardianNIC']) && validateNIC($details['guardianNIC'])) {
             $NIC = $details['guardianNIC'];
-        }else{
+        } else {
             throw new Exception('No valid NIC is provided');
         }
         return new Individual($username, $name, $NIC, $dob);

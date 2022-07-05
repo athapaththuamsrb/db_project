@@ -2,6 +2,8 @@
 require_once('auth.php');
 $user = (new Authenticator())->checkAuth();
 
+require_once($_SERVER['DOCUMENT_ROOT'] . '/utils/patterns.php');
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $response = ['success' => false, 'reason'=>''];
 
@@ -14,22 +16,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     $owner_id = $_POST['owner_id']; $acc_no = $_POST['acc_no']; $acc_type = $_POST['acc_type']; $balance = $_POST['balance']; $branch_id = $_POST['branch_id'];
 
-    if (!preg_match('/^[a-zA-Z0-9._]{5,12}$/', $owner_id)) {
+    if (!preg_match(USERNAME_PATTERN, $owner_id)) {
         $response['reason'] = "Invalid username";
         echo json_encode($response);
         die();
     }
-    if (!preg_match('/^[0-9]{12}$/', $acc_no)) { 
+    if (!preg_match(ACC_NO_PATTERN, $acc_no)) { 
         $response['reason'] = "Invalid account number";
         echo json_encode($response);
         die();
     }
-    if (!preg_match('/^([0-9]+(\.?[0-9]?[0-9]?)?)$/', $balance)) {
+    if (!preg_match(BALANCE_PATTERN, $balance)) {
         $response['reason'] = "Invalid balance amount";
         echo json_encode($response);
         die();
     }
-    if (!preg_match('/^[0-9]{1,5}$/', $branch_id)) {
+    if (!preg_match(BRANCH_ID_PATTERN, $branch_id)) {
         $response['reason'] = "Invalid branch ID";
         echo json_encode($response);
         die();
@@ -42,7 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         else{
             $savings_acc_no = $_POST['savings_acc_no']; $duration = $_POST['duration'];
-            if (!preg_match('/^[0-9]{12}$/', $savings_acc_no)) { 
+            if (!preg_match(ACC_NO_PATTERN, $savings_acc_no)) { 
                 $response['reason'] = "Invalid savings account number";
                 echo json_encode($response);
                 die();
