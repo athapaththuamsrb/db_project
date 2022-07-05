@@ -49,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 echo json_encode($response);
                 die();
             }
-            if ($duration != "6" && $duration != "12" && $duration != "18"){
+            if ($duration != "6" && $duration != "12" && $duration != "36"){
                 $response['reason'] = "Invalid duration";
                 echo json_encode($response);
                 die();
