@@ -36,12 +36,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $start_date = null;
     }
     else {
+        if (!preg_match('/^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$/', $_POST['start_date'])){
+            $response['reason'] = "Invalid start date";
+            echo json_encode($response);
+            die();
+        }
         $start_date = new DateTime($_POST['start_date']);
     }
     if (!isset($_POST['end_date']) || !$_POST['end_date']) {
         $end_date = null;
     }
     else {
+        if (!preg_match('/^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$/', $_POST['end_date'])){
+            $response['reason'] = "Invalid end date";
+            echo json_encode($response);
+            die();
+        }
         $end_date =new DateTime($_POST['end_date']);
     }
     require_once('../utils/dbcon.php');
