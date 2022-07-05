@@ -34,7 +34,7 @@
       <div class="col-4"></div>
       <div class="col-4">
         <a href="viewTransactionHistory.php"><button style="height: 10vh; width: 100%; font-size: larger" type="button" class="btn btn-primary fun-item fade">
-            view Transaction History
+            View Transaction History
           </button></a>
       </div>
       <div class="col-4"></div>

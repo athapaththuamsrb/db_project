@@ -7,46 +7,24 @@ $result = $dbcon->getPendingApprovalLoans();
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" type="text/css" href="/styles/all.css" />
+    <link rel="stylesheet" href="/styles/bootstrap-5.1.3-dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/styles/table.css" />
+    <script src="/styles/bootstrap-5.1.3-dist/js/bootstrap.min.js"></script>
     <title>Approve Loans</title>
-    <style>
-        table {
-            margin: 0 auto;
-            font-size: large;
-            border: 1px solid black;
-        }
-
-        h1 {
-            text-align: center;
-            color: #006600;
-            font-size: xx-large;
-            font-family: 'Gill Sans', 'Gill Sans MT',
-                ' Calibri', 'Trebuchet MS', 'sans-serif';
-        }
-
-        td {
-            background-color: #E4F5D4;
-            border: 1px solid black;
-        }
-
-        th,
-        td {
-            font-weight: bold;
-            border: 1px solid black;
-            padding: 10px;
-            text-align: center;
-        }
-
-        td {
-            font-weight: lighter;
-        }
-    </style>
+    <link rel="icon" type="image/x-icon" href="/images/favicon.ico" />
 
 </head>
 
 <body>
-    <section>
-        <h1>Approve Loans</h1>
+    <?php @include(__DIR__ . '/../navbar.php'); ?>
+    <div class="container box fade" style="background-color: #880808; color: white; border: #21081a solid 2px">
+        <section>
+            <h1>Approve Loans</h1>
+            <div id="table">
                 <table>
                     <tr>
                         <th>loan ID</th>
@@ -77,14 +55,16 @@ $result = $dbcon->getPendingApprovalLoans();
                     }
                     ?>
                 </table>
-    </section>
-    <?php
-    include_once($_SERVER['DOCUMENT_ROOT'] . '/views/modal.php');
-    addModal('Loan Approve');
-    ?>
+            </div>
+        </section>
+        <?php @include(__DIR__ . '/../footer.php'); ?>
+        <?php
+        include_once($_SERVER['DOCUMENT_ROOT'] . '/views/modal.php');
+        addModal('Loan Approve');
+        ?>
 
-    <script src="/scripts/common.js"></script>
-    <script src="/scripts/manager/loanApprove.js"></script>
+        <script src="/scripts/common.js"></script>
+        <script src="/scripts/manager/loanApprove.js"></script>
 </body>
 
 </html>
