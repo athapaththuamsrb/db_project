@@ -26,7 +26,7 @@ $result = $dbcon->getPendingApprovalLoans();
         <section>
             <h1>Approve Loans</h1>
             <div id="table">
-                <table class="d-flex align-items-center justify-content-center">
+                <table class="d-flex align-items-center justify-content-center" style="margin-bottom: 5%;">
                     <tr>
                         <th>loan ID</th>
                         <th>Total Amount</th>
@@ -44,13 +44,13 @@ $result = $dbcon->getPendingApprovalLoans();
                         <tr>
                             <!-- FETCHING DATA FROM EACH
 					ROW OF EVERY COLUMN -->
-                            <td><?php print_r($result[$x][0]); ?></td>
-                            <td><?php print_r($result[$x][1]); ?></td>
-                            <td><?php print_r($result[$x][2]); ?></td>
-                            <td><?php print_r($result[$x][3]); ?></td>
-                            <td><?php print_r($result[$x][4]); ?></td>
-                            <td><?php print_r($result[$x][5]); ?></td>
-                            <td><button class="button" value=<?php print_r($result[$x][0]); ?>>Approve</button></td>
+                            <td><?php print_r(htmlentities($result[$x][0], ENT_HTML5)); ?></td>
+                            <td><?php print_r(htmlentities($result[$x][1], ENT_HTML5)); ?></td>
+                            <td><?php print_r(htmlentities($result[$x][2], ENT_HTML5)); ?></td>
+                            <td><?php print_r(htmlentities($result[$x][3], ENT_HTML5)); ?></td>
+                            <td><?php print_r(htmlentities($result[$x][4], ENT_HTML5)); ?></td>
+                            <td><?php print_r(htmlentities($result[$x][5], ENT_HTML5)); ?></td>
+                            <td><button class="button" value=<?php print_r(htmlentities($result[$x][0], ENT_QUOTES | ENT_HTML5)); ?>>Approve</button></td>
                         </tr>
                     <?php
                     }
@@ -58,14 +58,15 @@ $result = $dbcon->getPendingApprovalLoans();
                 </table>
             </div>
         </section>
-        <?php @include(__DIR__ . '/../footer.php'); ?>
-        <?php
-        include_once($_SERVER['DOCUMENT_ROOT'] . '/views/modal.php');
-        addModal('Loan Approve');
-        ?>
+    </div>
+    <?php @include(__DIR__ . '/../footer.php'); ?>
+    <?php
+    include_once($_SERVER['DOCUMENT_ROOT'] . '/views/modal.php');
+    addModal('Loan Approve');
+    ?>
 
-        <script src="/scripts/common.js"></script>
-        <script src="/scripts/manager/loanApprove.js"></script>
+    <script src="/scripts/common.js"></script>
+    <script src="/scripts/manager/loanApprove.js"></script>
 </body>
 
 </html>
