@@ -461,10 +461,10 @@ class DatabaseConn
           $response['reason'] = 'This loan is already approved!';
           return $response;
         }
-
-        $q0 = 'UPDATE loans SET loanStatus = 1 WHERE loanID = ?;';
+        $date = date("Y-m-d");
+        $q0 = 'UPDATE loans SET loanStatus = 1,date=? WHERE loanID = ?;';
         $stmt = $this->conn->prepare($q0);
-        $stmt->bind_param('s', $loanID);
+        $stmt->bind_param('ss', $date, $loanID);
         $status = $stmt->execute();
 
 
