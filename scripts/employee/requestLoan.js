@@ -14,13 +14,20 @@ submitBtn.onclick = (e) => {
   let sav_acc = sav_accInput.value;
   let duration = durationInput.value;
   let amount = amountInput.value;
-
+  if (!sav_acc || !duration || !amount) {
+    setModal(false, "Form should be filled correctly");
+    return;
+  }
   if (!acc_no_pattern.test(sav_acc)) {
     setModal(false, "Invalid account number");
     return;
   }
   if (!balance_pattern.test(amount)) {
-    setModal(false, "Invalid balance amount");
+    setModal(false, "Invalid amount");
+    return;
+  }
+  if (!duration_pattern.test(duration)) {
+    setModal(false, "Invalid duration");
     return;
   }
   if (duration > 120) {
@@ -34,20 +41,19 @@ submitBtn.onclick = (e) => {
 
       if (data.hasOwnProperty("success") && data["success"] === true) {
         clear();
-        // let created_acc = data["created_acc"];
-        // let msg = created_acc.concat(" ", "account successfully created!");
+        
         setModal(true, data["reason"]);
         return;
       }
       if (
-        data.hasOwnProperty("reason") /*&& data['reason'] instanceof String*/
+        data.hasOwnProperty("reason") 
       ) {
         setModal(false, data["reason"]);
       } else {
         setModal(false, "Sorry try again");
       }
     } catch (e) {
-      setModal(false, e);
+      setModal(false, "Something went wrong!");
     }
   });
   xhrSender.addField("sav_acc", sav_acc);

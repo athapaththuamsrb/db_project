@@ -22,7 +22,7 @@ let locInput = document.getElementById('location');
 let managerInput = document.getElementById('manager');
 let submitBtn = document.getElementById('submitBtn');
 
-idInput.onkeydown = event => { keyPressFn(event, /^[0-9]{1,5}$/, 'name'); };
+idInput.onkeydown = event => { keyPressFn(event, branch_id_pattern, 'name'); };
 nameInput.onkeydown = event => { keyPressFn(event, /^[a-zA-Z0-9.\-\x20]{2,30}$/, 'location'); };
 locInput.onkeydown = event => { keyPressFn(event, /^[a-zA-Z0-9.,\/\-\x20]{2,50}$/, 'manager'); };
 managerInput.onkeydown = event => { keyPressFn(event, username_pattern, ''); };
@@ -40,7 +40,7 @@ submitBtn.onclick = e => {
     let name = nameInput.value;
     let location = locInput.value;
     let manager = managerInput.value;
-    if (!/^[0-9]{1,5}$/.test(id)) {
+    if (!branch_id_pattern.test(id)) {
         setModal(false, "Invalid branch ID");
         return;
     }

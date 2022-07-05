@@ -4,15 +4,7 @@ require_once('auth.php');
 $user = (new Authenticator())->checkAuth();
 $type = $user->getType();
 
-
-//$username = $user->getUsername();
-// function fail()
-// {
-//   header('Location: enterInstallment.php');
-//   //echo json_encode(['status' => false]);
-//   die();
-// }
-
+require_once($_SERVER['DOCUMENT_ROOT'] . '/utils/patterns.php');
 require_once('../utils/dbcon.php');
 $dbcon = DatabaseConn::get_conn();
 
@@ -29,8 +21,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     die();
 
   }else{
-    if (!preg_match('/^([0-9]+(\.?[0-9]?[0-9]?)?)$/', $_POST['amount'])) {
+    if (!preg_match(BALANCE_PATTERN, $_POST['amount'])) {
       $response['reason'] = "Invalid balance amount";
+      echo json_encode($response);
+      die();
+    }
+    if (!preg_match(LOAN_ID_PATTERN, $_POST['loan_id'])) {
+      $response['reason'] = "Invalid loan ID";
       echo json_encode($response);
       die();
     }
@@ -41,35 +38,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     die();
 
   }
-
-
-  // $ownername = $_POST['ownername'];
-  // $to_acc = $_POST['to_acc'];
-  // $from_acc = $_POST['from_acc'];
-  // $amount = $_POST['amount'];
-
-  // $error = false;
-
-  // if (!$dbconn->check_username($ownername)) {
-  //   $error = "Invalid User Name";
-  // } else if ($dbconn->check_account($from_acc) === null) {
-  //   $error = "Invalid From Account Number";
-  // } else if (!$dbconn->get_account_ownership($from_acc, $ownername)) {
-  //   $error = "Username and Account Number don't match";
-  // } else if ($dbconn->check_account($to_acc) === null) {
-  //   $error = "Invalid To Account Number";
-  // } else if ($dbconn->check_account($from_acc) === 'savings' && $dbconn->check_transaction_count($from_acc) >= 5) {
-  //   $error = "Transaction Limit Reached";
-  // } else if ($dbconn->check_balance($ownername, $from_acc) < $amount) {
-  //   $error = "Insufficient Balance";
-  // } else {
-
-  //   $status = $dbconn->transaction($from_acc, $to_acc, $ownername, $amount);
-  //   header("Location: " . $_SERVER['PHP_SELF']);
-  // }
-
-
-  //unset($_POST);
 
 
 

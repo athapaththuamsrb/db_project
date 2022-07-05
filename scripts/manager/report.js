@@ -13,7 +13,7 @@ document.getElementById('lateLoanBtn').onclick = e => {
             a.click();
             window.URL.revokeObjectURL(url);
         } else {
-            console.log('PDF download error');
+            setModal(false, 'PDF download error');
         }
     });
     xhrSender.addField('type', 'loan');
@@ -35,7 +35,7 @@ document.getElementById('transactionBtn').onclick = e => {
             a.click();
             window.URL.revokeObjectURL(url);
         } else {
-            console.log('PDF download error');
+            setModal(false, 'PDF download error');
         }
     });
     xhrSender.addField('type', 'transaction');

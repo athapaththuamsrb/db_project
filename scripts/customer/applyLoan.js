@@ -17,13 +17,21 @@ submitBtn.onclick = (e) => {
   let fix_acc = fix_accInput.value;
   let duration = durationInput.value;
   let amount = amountInput.value;
-
+  console.log(fix_acc, duration, amount);
+  if (!amount || !duration || !fix_acc) {
+    setModal(false, "Form should be filled correctly");
+    return;
+  }
 if (!acc_no_pattern.test(fix_acc)) {
   setModal(false, "Invalid account number");
   return;
 }
 if (!balance_pattern.test(amount)) {
   setModal(false, "Invalid balance amount");
+  return;
+}
+if (!duration_pattern.test(duration)) {
+  setModal(false, "Invalid duration");
   return;
 }
 if (duration>120) {
@@ -53,7 +61,7 @@ if (duration>120) {
         }
       } catch (e) {
       
-      setModal(false, e);
+      setModal(false, "Something went wrong!");
     }
   });
   xhrSender.addField("fix_acc", fix_acc);

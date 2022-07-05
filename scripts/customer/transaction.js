@@ -41,9 +41,7 @@ confirmBtn.onclick = e => {
 
     let xhrSender = new XHRSender(document.URL, resp => {
         try {
-            console.log(resp);
             let data = JSON.parse(resp);
-            //console.log(data);
             if (data.hasOwnProperty('success') && data['success'] === true ) {
                 clear();
                 setModal(true,"Transaction Successful");
