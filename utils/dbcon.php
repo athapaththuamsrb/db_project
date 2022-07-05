@@ -531,7 +531,7 @@ class DatabaseConn
 
   }
 
-  public function transaction(string $from_acc, string $to_acc, string $init_id, float $amount)
+  public function transaction(?string $from_acc, string $to_acc, string $init_id, float $amount)
   {
     if (!($this->conn instanceof mysqli)) return false;
 
@@ -546,8 +546,8 @@ class DatabaseConn
           $this->conn->rollback();
           return false;
         }
-      }
-      if ($this->check_account($_POST["from_acc"]) === 'savings') {
+    
+      if ($this->check_account($from_acc) === 'savings') {
         $q2 = 'UPDATE savings_accounts SET transactions = transactions + 1  WHERE acc_no = ?';
         $stmt2 = $this->conn->prepare($q2);
         $stmt2->bind_param('s', $from_acc);
@@ -556,7 +556,7 @@ class DatabaseConn
           return false;
         }
       }
-
+    }
       $q3 = 'UPDATE Accounts SET balance = balance + ? WHERE acc_no = ?';
       $stmt3 = $this->conn->prepare($q3);
       $stmt3->bind_param('ds', $amount, $to_acc);
