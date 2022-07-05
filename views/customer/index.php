@@ -9,7 +9,7 @@
   <link rel="stylesheet" href="/styles/bootstrap-5.1.3-dist/css/bootstrap.min.css" />
   <link rel="stylesheet" href="/styles/dashboard.css" />
   <script src="/styles/bootstrap-5.1.3-dist/js/bootstrap.min.js"></script>
-  <title>Admin Dashboard</title>
+  <title>Customer Dashboard</title>
   <link rel="icon" type="image/x-icon" href="/images/favicon.ico" />
 </head>
 

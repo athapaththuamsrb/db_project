@@ -68,7 +68,7 @@
     <?php @include(__DIR__ . '/../footer.php'); ?>
     <?php
     include_once($_SERVER['DOCUMENT_ROOT'] . '/views/modal.php');
-    addModal('Enter Loan');
+    addModal('Request Loan');
     ?>
     <script src="/scripts/common.js"></script>
     <script src="/scripts/employee/requestLoan.js"></script>

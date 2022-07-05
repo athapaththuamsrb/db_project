@@ -29,7 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $start_date = null;
     }
     else {
-        if (!preg_match('/^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$/', $_POST['start_date'])){
+        if (!preg_match(DATE_PATTERN, $_POST['start_date'])){
             $response['reason'] = "Invalid start date";
             echo json_encode($response);
             die();
@@ -40,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $end_date = null;
     }
     else {
-        if (!preg_match('/^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$/', $_POST['end_date'])){
+        if (!preg_match(DATE_PATTERN, $_POST['end_date'])){
             $response['reason'] = "Invalid end date";
             echo json_encode($response);
             die();

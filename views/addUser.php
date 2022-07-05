@@ -38,7 +38,7 @@
                       <?php
                       foreach ($types as $type => $name) {
                       ?>
-                        <option value="<?php echo $type; ?>"><?php echo $name; ?></option>
+                        <option value="<?php echo htmlentities($type, ENT_QUOTES | ENT_HTML5); ?>"><?php echo htmlentities($name, ENT_HTML5); ?></option>
                       <?php
                       }
                     } else if (sizeof($types) === 1) {
@@ -47,7 +47,7 @@
                         <?php
                         foreach ($types as $type => $name) {
                         ?>
-                          <option value="<?php echo $type; ?>" selected><?php echo $name; ?></option>
+                          <option value="<?php echo htmlentities($type, ENT_QUOTES | ENT_HTML5); ?>" selected><?php echo htmlentities($name, ENT_HTML5); ?></option>
                         <?php
                         }
                         ?>

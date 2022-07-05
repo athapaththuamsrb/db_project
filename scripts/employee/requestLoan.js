@@ -14,7 +14,6 @@ submitBtn.onclick = (e) => {
   let sav_acc = sav_accInput.value;
   let duration = durationInput.value;
   let amount = amountInput.value;
-  // console.log(amount);
   if (!sav_acc || !duration || !amount) {
     setModal(false, "Form should be filled correctly");
     return;

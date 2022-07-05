@@ -42,7 +42,7 @@
                             <select name="from_acc" id="from_acc" required>
                                 <option value="" disabled selected></option>
                                 <?php foreach ($accounts as $x) { ?>
-                                    <option value="<?php echo $x ?>"><?php echo $x ?></option>
+                                    <option value="<?php echo htmlentities($x, ENT_QUOTES|ENT_HTML5); ?>"><?php echo htmlentities($x, ENT_HTML5); ?></option>
                                 <?php } ?>
 
                             </select>

@@ -10,7 +10,7 @@ function addModal($title)
     <div class="modal-content">
       <div class="modal-header" id="mHeader">
         <span class="close" id="close-span">&times;</span>
-        <h2><?php echo $title; ?></h2>
+        <h2><?php echo htmlentities($title, ENT_HTML5); ?></h2>
       </div>
       <div class="modal-body" id="mBody">
         <p></p>

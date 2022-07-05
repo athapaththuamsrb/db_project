@@ -15,7 +15,7 @@ function manageTransaction(string $type, string $username){
     
         $status = false;
 
-        if(!preg_match('/^[0-9]+(\.[0-9]{2})?$/', $amount)){
+        if(!preg_match(BALANCE_PATTERN, $amount)){
             $msg = "Please enter a valid amount";
         }
         else if($to_acc === $from_acc){
@@ -52,7 +52,7 @@ function manageTransaction(string $type, string $username){
         $amount = $_POST['amount'];
     
         $status = false;
-        if(!preg_match('/^[0-9]+(\.[0-9]{2})?$/', $amount)){
+        if(!preg_match(BALANCE_PATTERN, $amount)){
             $msg = "Please enter a valid amount";
         }
         else if($to_acc === $from_acc){
