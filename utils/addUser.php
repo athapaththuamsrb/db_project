@@ -35,10 +35,14 @@ function addUser(User $creator, array $allowed)
     
     require_once($_SERVER['DOCUMENT_ROOT'] . '/utils/User.php');
     require_once($_SERVER['DOCUMENT_ROOT'] . '/utils/dbcon.php');
-    $newUser = User::createUser($_POST);
+    try{
+        $newUser = User::createUser($_POST);
+    }catch(Throwable $e){
+        echo json_encode(['success' => false, 'reason' => $e->getMessage()]);
+        die();
+    }
     $dbcon = DatabaseConn::get_conn();
     if ($dbcon->createUser($newUser, $_POST['password'], $creator->getUsername())){
-        //header('Location: index.php');
         echo json_encode(['success' => true]);
         die();
     }else{

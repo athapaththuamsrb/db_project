@@ -107,7 +107,12 @@ class DatabaseConn
               }
               $stmt1->close();
             }
-            return User::createUser($details);
+            try{
+              $user = User::createUser($details);
+              return $user;
+            }catch (Throwable $e){
+              return null;
+            }
           }
         }
         $stmt->close();
