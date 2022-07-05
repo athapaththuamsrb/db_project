@@ -13,6 +13,7 @@ $result = $dbcon->getPendingApprovalLoans();
     <link rel="stylesheet" type="text/css" href="/styles/all.css" />
     <link rel="stylesheet" href="/styles/bootstrap-5.1.3-dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="/styles/table.css" />
+    <link rel="stylesheet" href="/styles/form.css" />
     <script src="/styles/bootstrap-5.1.3-dist/js/bootstrap.min.js"></script>
     <title>Approve Loans</title>
     <link rel="icon" type="image/x-icon" href="/images/favicon.ico" />
@@ -25,7 +26,7 @@ $result = $dbcon->getPendingApprovalLoans();
         <section>
             <h1>Approve Loans</h1>
             <div id="table">
-                <table>
+                <table class="d-flex align-items-center justify-content-center">
                     <tr>
                         <th>loan ID</th>
                         <th>Total Amount</th>
