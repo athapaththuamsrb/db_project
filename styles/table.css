@@ -10,8 +10,9 @@
   padding: 8px;
 }
 
-#table tr:nth-child(even) {
+#table tr {
   background-color: #f2f2f2;
+  color: black;
 }
 
 #table tr:hover {
