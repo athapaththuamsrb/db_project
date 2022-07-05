@@ -40,7 +40,7 @@ submitBtn.onclick = e => {
     let name = nameInput.value;
     let location = locInput.value;
     let manager = managerInput.value;
-    if (!/^[0-9]{1,5}$/.test(id)) {
+    if (!branch_id_pattern.test(id)) {
         setModal(false, "Invalid branch ID");
         return;
     }

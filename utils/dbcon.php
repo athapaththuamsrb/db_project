@@ -513,7 +513,7 @@ class DatabaseConn
       $stmt->fetch();
       $stmt->close();
 
-      $q1 = 'SELECT loans.loanID, loans.customer, FLOOR(DATEDIFF(NOW(),loans.date)/30)*loans.installment should_paid, loans.paid_amount, FLOOR(DATEDIFF(NOW(),loans.date)/30)*loans.installment - loans.paid_amount difference FROM `loans` JOIN Accounts ON loans.savingsAccount=Accounts.acc_no WHERE Accounts.type="savings" AND Accounts.branch_id=? AND loans.paid_amount < FLOOR(DATEDIFF(NOW(),loans.date)/30)*loans.installment';
+      $q1 = 'SELECT loans.loanID, loans.customer, LEAST(loans.duration, FLOOR(DATEDIFF(NOW(),loans.date)/30))*loans.installment should_paid, loans.paid_amount, LEAST(loans.duration, FLOOR(DATEDIFF(NOW(),loans.date)/30))*loans.installment - loans.paid_amount difference FROM `loans` JOIN Accounts ON loans.savingsAccount=Accounts.acc_no WHERE Accounts.type="savings" AND Accounts.branch_id=? AND loans.loanStatus=1 AND loans.paid_amount < LEAST(loans.duration, FLOOR(DATEDIFF(NOW(),loans.date)/30))*loans.installment';
       $stmt1 = $this->conn->prepare($q1);
       $stmt1->bind_param('i', $branch_id);
       $stmt1->execute();
@@ -546,7 +546,7 @@ class DatabaseConn
       $stmt->fetch();
       $stmt->close();
 
-      $q1 = 'SELECT T.trans_id, T.from_acc, T.to_acc, T.amount, T.trans_type, T.trans_time FROM (Transactions T INNER JOIN Accounts FA ON T.from_acc=FA.acc_no) INNER JOIN Accounts TA ON T.to_acc=TA.acc_no WHERE MONTH(T.trans_time)=MONTH(CURRENT_DATE) AND YEAR(T.trans_time)=YEAR(CURRENT_DATE) AND (FA.branch_id=? OR TA.branch_id=?) ORDER BY T.trans_id;';
+      $q1 = 'SELECT T.trans_id, T.from_acc, T.to_acc, T.amount, T.trans_type, T.trans_time FROM (Transactions T LEFT OUTER JOIN Accounts FA ON T.from_acc=FA.acc_no) INNER JOIN Accounts TA ON T.to_acc=TA.acc_no WHERE MONTH(T.trans_time)=MONTH(CURRENT_DATE) AND YEAR(T.trans_time)=YEAR(CURRENT_DATE) AND (FA.branch_id=? OR TA.branch_id=?) ORDER BY T.trans_id';
       $stmt1 = $this->conn->prepare($q1);
       $stmt1->bind_param('ii', $branch_id, $branch_id);
       $stmt1->execute();
@@ -635,7 +635,7 @@ class DatabaseConn
     }
   }
 
-  public function transaction(?string $from_acc, string $to_acc, string $init_id, float $amount, string $t_type = "TRANS")
+  public function transaction(?string $from_acc, string $to_acc, string $init_id, float $amount, string $t_type = "TRNS")
   {
     if (!($this->conn instanceof mysqli)) return false;
 
