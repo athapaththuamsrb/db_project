@@ -87,7 +87,7 @@ submitBtn.onclick = (e) => {
       setModal(false, "Invalid savings account number");
       return;
     }
-    if (duration != 6 && duration != 12 && duration != 36){
+    if (parseInt(duration) <= 0 || parseInt(duration) >= 100){
       setModal(false, "Invalid duration");
       return;
     }

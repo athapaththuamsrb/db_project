@@ -3,12 +3,13 @@ require_once('auth.php');
 $user = (new Authenticator())->checkAuth();
 
 require_once($_SERVER['DOCUMENT_ROOT'] . '/utils/patterns.php');
+require_once('../utils/dbcon.php');
+$conn = DatabaseConn::get_conn();
+$fd_arr = $conn->fd_account_types();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $response = ['success' => false, 'reason'=>''];
 
-    require_once('../utils/dbcon.php');
-    $conn = DatabaseConn::get_conn();
     if (!isset($_POST['owner_id']) || !$_POST['owner_id'] || !isset($_POST['acc_no']) || !$_POST['acc_no'] || !isset($_POST['acc_type']) || !$_POST['acc_type'] || !isset($_POST['balance']) || !$_POST['balance'] || !isset($_POST['branch_id']) || !$_POST['branch_id']) {
         $response['reason'] = "Insufficient data";
         echo json_encode($response);
@@ -49,7 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 echo json_encode($response);
                 die();
             }
-            if ($duration != "6" && $duration != "12" && $duration != "36"){
+            if (!array_key_exists($duration,$fd_arr)) {
                 $response['reason'] = "Invalid duration";
                 echo json_encode($response);
                 die();

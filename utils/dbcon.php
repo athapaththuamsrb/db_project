@@ -914,6 +914,31 @@ class DatabaseConn
     }
   }
 
+  public function fd_account_types()
+  {
+    if (!($this->conn instanceof mysqli)) return null;
+    $arr = array();
+    ($this->conn)->begin_transaction();
+    try {
+      $arr = array();
+      $q = 'SELECT duration, name FROM fd_interest';
+      $stmt = $this->conn->prepare($q);
+      $stmt->execute();
+      $result = $stmt->get_result();
+
+      while ($row = $result->fetch_assoc()) {
+        $duration = $row['duration'];
+        $name = $row['name'];
+        $arr[$duration] = $name;
+      }
+      ($this->conn)->commit();
+      return $arr;
+    } catch (Exception $e) {
+      ($this->conn)->rollback();
+      return [];
+    }
+  }
+
   public function get_savings_acc_type(string $owner_id)
   {
     if (!($this->conn instanceof mysqli)) return null;
