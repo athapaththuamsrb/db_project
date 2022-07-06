@@ -107,10 +107,10 @@ class DatabaseConn
               }
               $stmt1->close();
             }
-            try{
+            try {
               $user = User::createUser($details);
               return $user;
-            }catch (Throwable $e){
+            } catch (Throwable $e) {
               return null;
             }
           }
@@ -572,7 +572,6 @@ class DatabaseConn
   public function check_balance(string $owner_id, string $acc_no)
   {
     if (!($this->conn instanceof mysqli)) return -1;
-    ($this->conn)->begin_transaction();
     try {
       if (!$owner_id || !$acc_no) {
         return -1;
@@ -589,10 +588,8 @@ class DatabaseConn
       $stmt->bind_result($balance);
       $stmt->fetch();
       $stmt->close();
-      ($this->conn)->commit();
       return $balance;
     } catch (Exception $e) {
-      ($this->conn)->rollback();
       return -1;
     }
   }

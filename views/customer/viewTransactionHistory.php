@@ -69,13 +69,15 @@
         <div class="container">
             <div class="row">
                 <div class="col-2"></div>
-                <div class="col-6">
+                <div class="col-8">
                     <div id="table" hidden>
                     </div>
                 </div>
-                <div class="col-4"></div>
+                <div class="col-2"></div>
             </div>
         </div>
+        <br>
+        <br>
     </div>
     <?php @include(__DIR__ . '/../footer.php'); ?>
     <?php

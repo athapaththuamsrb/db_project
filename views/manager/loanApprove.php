@@ -25,37 +25,43 @@ $result = $dbcon->getPendingApprovalLoans();
     <div class="container box fade" style="background-color: #880808; color: white; border: #21081a solid 2px">
         <section>
             <h1>Approve Loans</h1>
-            <div id="table">
-                <table style="margin-bottom: 5%; margin-top: 1%; margin-left: 7%;">
-                    <tr>
-                        <th>loan ID</th>
-                        <th>Total Amount</th>
-                        <th>Date</th>
-                        <th>Customer</th>
-                        <th>Savings Account</th>
-                        <th>Duration</th>
-                        <th>Approve</th>
-                    </tr>
-                    <!-- PHP CODE TO FETCH DATA FROM ROWS -->
-                    <?php
-                    // LOOP TILL END OF DATA
-                    for ($x = 0; $x < sizeof($result); $x++) {
-                    ?>
-                        <tr>
-                            <!-- FETCHING DATA FROM EACH
+            <div class="row">
+                <div class="col-2"></div>
+                <div class="col-8">
+                    <div id="table">
+                        <table style="margin-bottom: 5%; margin-top: 1%; color:black">
+                            <tr>
+                                <th>loan ID</th>
+                                <th>Total Amount</th>
+                                <th>Date</th>
+                                <th>Customer</th>
+                                <th>Savings Account</th>
+                                <th>Duration</th>
+                                <th>Approve</th>
+                            </tr>
+                            <!-- PHP CODE TO FETCH DATA FROM ROWS -->
+                            <?php
+                            // LOOP TILL END OF DATA
+                            for ($x = 0; $x < sizeof($result); $x++) {
+                            ?>
+                                <tr>
+                                    <!-- FETCHING DATA FROM EACH
 					ROW OF EVERY COLUMN -->
-                            <td><?php print_r(htmlentities($result[$x][0], ENT_HTML5)); ?></td>
-                            <td><?php print_r(htmlentities($result[$x][1], ENT_HTML5)); ?></td>
-                            <td><?php print_r(htmlentities($result[$x][2], ENT_HTML5)); ?></td>
-                            <td><?php print_r(htmlentities($result[$x][3], ENT_HTML5)); ?></td>
-                            <td><?php print_r(htmlentities($result[$x][4], ENT_HTML5)); ?></td>
-                            <td><?php print_r(htmlentities($result[$x][5], ENT_HTML5)); ?></td>
-                            <td><button class="button" value=<?php print_r(htmlentities($result[$x][0], ENT_QUOTES | ENT_HTML5)); ?>>Approve</button></td>
-                        </tr>
-                    <?php
-                    }
-                    ?>
-                </table>
+                                    <td><?php print_r(htmlentities($result[$x][0], ENT_HTML5)); ?></td>
+                                    <td><?php print_r(htmlentities($result[$x][1], ENT_HTML5)); ?></td>
+                                    <td><?php print_r(htmlentities($result[$x][2], ENT_HTML5)); ?></td>
+                                    <td><?php print_r(htmlentities($result[$x][3], ENT_HTML5)); ?></td>
+                                    <td><?php print_r(htmlentities($result[$x][4], ENT_HTML5)); ?></td>
+                                    <td><?php print_r(htmlentities($result[$x][5], ENT_HTML5)); ?></td>
+                                    <td><button class="button" value=<?php print_r(htmlentities($result[$x][0], ENT_QUOTES | ENT_HTML5)); ?>>Approve</button></td>
+                                </tr>
+                            <?php
+                            }
+                            ?>
+                        </table>
+                    </div>
+                </div>
+                <div class="col-2"></div>
             </div>
         </section>
     </div>
