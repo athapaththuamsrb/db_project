@@ -107,10 +107,10 @@ class DatabaseConn
               }
               $stmt1->close();
             }
-            try{
+            try {
               $user = User::createUser($details);
               return $user;
-            }catch (Throwable $e){
+            } catch (Throwable $e) {
               return null;
             }
           }
@@ -518,7 +518,7 @@ class DatabaseConn
       $stmt->fetch();
       $stmt->close();
 
-      $q1 = 'SELECT loans.loanID, loans.customer, LEAST(loans.duration, FLOOR(DATEDIFF(NOW(),loans.date)/30))*loans.installment should_paid, loans.paid_amount, LEAST(loans.duration, FLOOR(DATEDIFF(NOW(),loans.date)/30))*loans.installment - loans.paid_amount difference FROM `loans` JOIN Accounts ON loans.savingsAccount=Accounts.acc_no WHERE Accounts.type="savings" AND Accounts.branch_id=? AND loans.loanStatus=1 AND loans.paid_amount < LEAST(loans.duration, FLOOR(DATEDIFF(NOW(),loans.date)/30))*loans.installment';
+      $q1 = 'SELECT loanID, customer, should_paid, paid_amount, difference FROM late_loan_view WHERE branch_id=? ORDER BY loanID';
       $stmt1 = $this->conn->prepare($q1);
       $stmt1->bind_param('i', $branch_id);
       $stmt1->execute();
@@ -551,7 +551,7 @@ class DatabaseConn
       $stmt->fetch();
       $stmt->close();
 
-      $q1 = 'SELECT T.trans_id, T.from_acc, T.to_acc, T.amount, T.trans_type, T.trans_time FROM (Transactions T LEFT OUTER JOIN Accounts FA ON T.from_acc=FA.acc_no) INNER JOIN Accounts TA ON T.to_acc=TA.acc_no WHERE MONTH(T.trans_time)=MONTH(CURRENT_DATE) AND YEAR(T.trans_time)=YEAR(CURRENT_DATE) AND (FA.branch_id=? OR TA.branch_id=?) ORDER BY T.trans_id';
+      $q1 = 'SELECT trans_id, from_acc, to_acc, amount, trans_type, trans_time FROM Transaction_view WHERE from_branch=? OR to_branch=? ORDER BY trans_id';
       $stmt1 = $this->conn->prepare($q1);
       $stmt1->bind_param('ii', $branch_id, $branch_id);
       $stmt1->execute();
@@ -572,7 +572,6 @@ class DatabaseConn
   public function check_balance(string $owner_id, string $acc_no)
   {
     if (!($this->conn instanceof mysqli)) return -1;
-    ($this->conn)->begin_transaction();
     try {
       if (!$owner_id || !$acc_no) {
         return -1;
@@ -589,10 +588,8 @@ class DatabaseConn
       $stmt->bind_result($balance);
       $stmt->fetch();
       $stmt->close();
-      ($this->conn)->commit();
       return $balance;
     } catch (Exception $e) {
-      ($this->conn)->rollback();
       return -1;
     }
   }
@@ -812,23 +809,23 @@ class DatabaseConn
       } else if ($type == "fd") {
         return $arr;
       } else if (is_null($start_date) && is_null($end_date)) {
-        $q0 = 'SELECT trans_id, from_acc, to_acc, init_id, trans_time, amount FROM Transactions WHERE from_acc = ? or to_acc = ?';
+        $q0 = 'SELECT trans_id, from_acc, to_acc, init_id, trans_time, amount, trans_type FROM Transactions WHERE from_acc = ? or to_acc = ?';
         $stmt = $this->conn->prepare($q0);
         $stmt->bind_param('ss', $acc_no, $acc_no);
       } else if (is_null($end_date)) {
         $start_date_str = $start_date->format('Y-m-d H:i:s');
-        $q0 = 'SELECT trans_id, from_acc, to_acc, init_id, trans_time, amount FROM Transactions WHERE (from_acc = ? or to_acc = ?) and trans_time >= ?';
+        $q0 = 'SELECT trans_id, from_acc, to_acc, init_id, trans_time, amount, trans_type FROM Transactions WHERE (from_acc = ? or to_acc = ?) and trans_time >= ?';
         $stmt = $this->conn->prepare($q0);
         $stmt->bind_param('sss', $acc_no, $acc_no, $start_date_str);
       } else if (is_null($start_date)) {
         $end_date_str = $end_date->format('Y-m-d') . ' 23:59:59';
-        $q0 = 'SELECT trans_id, from_acc, to_acc, init_id, trans_time, amount FROM Transactions WHERE (from_acc = ? or to_acc = ?) and trans_time <= ?';
+        $q0 = 'SELECT trans_id, from_acc, to_acc, init_id, trans_time, amount, trans_type FROM Transactions WHERE (from_acc = ? or to_acc = ?) and trans_time <= ?';
         $stmt = $this->conn->prepare($q0);
         $stmt->bind_param('sss', $acc_no, $acc_no, $end_date_str);
       } else {
         $start_date_str = $start_date->format('Y-m-d H:i:s');
         $end_date_str = $end_date->format('Y-m-d') . ' 23:59:59';
-        $q0 = 'SELECT trans_id, from_acc, to_acc, init_id, trans_time, amount FROM Transactions WHERE (from_acc = ? or to_acc = ?) and trans_time >= ? and trans_time <= ?';
+        $q0 = 'SELECT trans_id, from_acc, to_acc, init_id, trans_time, amount, trans_type FROM Transactions WHERE (from_acc = ? or to_acc = ?) and trans_time >= ? and trans_time <= ?';
         $stmt = $this->conn->prepare($q0);
         $stmt->bind_param('ssss', $acc_no, $acc_no, $start_date_str, $end_date_str);
       }
@@ -841,7 +838,8 @@ class DatabaseConn
         $init_id = $row['init_id'];
         $trans_time = $row['trans_time'];
         $amount = $row['amount'];
-        array_push($arr, array('trans_id' => $trans_id, 'from_acc' => $from_acc, 'to_acc' => $to_acc, 'init_id' => $init_id, 'trans_time' => $trans_time, 'amount' => $amount));
+        $trans_type = $row['trans_type'];
+        array_push($arr, array('trans_id' => $trans_id, 'from_acc' => $from_acc, 'to_acc' => $to_acc, 'init_id' => $init_id, 'trans_time' => $trans_time, 'amount' => $amount, 'trans_type' => $trans_type));
       }
       ($this->conn)->commit();
       return $arr;

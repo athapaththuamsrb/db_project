@@ -13,6 +13,7 @@ $result = $dbcon->getPendingApprovalLoans();
     <link rel="stylesheet" type="text/css" href="/styles/all.css" />
     <link rel="stylesheet" href="/styles/bootstrap-5.1.3-dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="/styles/table.css" />
+    <link rel="stylesheet" href="/styles/form.css" />
     <script src="/styles/bootstrap-5.1.3-dist/js/bootstrap.min.js"></script>
     <title>Approve Loans</title>
     <link rel="icon" type="image/x-icon" href="/images/favicon.ico" />
@@ -24,47 +25,54 @@ $result = $dbcon->getPendingApprovalLoans();
     <div class="container box fade" style="background-color: #880808; color: white; border: #21081a solid 2px">
         <section>
             <h1>Approve Loans</h1>
-            <div id="table">
-                <table>
-                    <tr>
-                        <th>loan ID</th>
-                        <th>Total Amount</th>
-                        <th>Date</th>
-                        <th>Customer</th>
-                        <th>Savings Account</th>
-                        <th>Duration</th>
-                        <th>Approve</th>
-                    </tr>
-                    <!-- PHP CODE TO FETCH DATA FROM ROWS -->
-                    <?php
-                    // LOOP TILL END OF DATA
-                    for ($x = 0; $x < sizeof($result); $x++) {
-                    ?>
-                        <tr>
-                            <!-- FETCHING DATA FROM EACH
+            <div class="row">
+                <div class="col-2"></div>
+                <div class="col-8">
+                    <div id="table">
+                        <table style="margin-bottom: 5%; margin-top: 1%; color:black">
+                            <tr>
+                                <th>loan ID</th>
+                                <th>Total Amount</th>
+                                <th>Date</th>
+                                <th>Customer</th>
+                                <th>Savings Account</th>
+                                <th>Duration</th>
+                                <th>Approve</th>
+                            </tr>
+                            <!-- PHP CODE TO FETCH DATA FROM ROWS -->
+                            <?php
+                            // LOOP TILL END OF DATA
+                            for ($x = 0; $x < sizeof($result); $x++) {
+                            ?>
+                                <tr>
+                                    <!-- FETCHING DATA FROM EACH
 					ROW OF EVERY COLUMN -->
-                            <td><?php print_r($result[$x][0]); ?></td>
-                            <td><?php print_r($result[$x][1]); ?></td>
-                            <td><?php print_r($result[$x][2]); ?></td>
-                            <td><?php print_r($result[$x][3]); ?></td>
-                            <td><?php print_r($result[$x][4]); ?></td>
-                            <td><?php print_r($result[$x][5]); ?></td>
-                            <td><button class="button" value=<?php print_r($result[$x][0]); ?>>Approve</button></td>
-                        </tr>
-                    <?php
-                    }
-                    ?>
-                </table>
+                                    <td><?php print_r(htmlentities($result[$x][0], ENT_HTML5)); ?></td>
+                                    <td><?php print_r(htmlentities($result[$x][1], ENT_HTML5)); ?></td>
+                                    <td><?php print_r(htmlentities($result[$x][2], ENT_HTML5)); ?></td>
+                                    <td><?php print_r(htmlentities($result[$x][3], ENT_HTML5)); ?></td>
+                                    <td><?php print_r(htmlentities($result[$x][4], ENT_HTML5)); ?></td>
+                                    <td><?php print_r(htmlentities($result[$x][5], ENT_HTML5)); ?></td>
+                                    <td><button class="button" value=<?php print_r(htmlentities($result[$x][0], ENT_QUOTES | ENT_HTML5)); ?>>Approve</button></td>
+                                </tr>
+                            <?php
+                            }
+                            ?>
+                        </table>
+                    </div>
+                </div>
+                <div class="col-2"></div>
             </div>
         </section>
-        <?php @include(__DIR__ . '/../footer.php'); ?>
-        <?php
-        include_once($_SERVER['DOCUMENT_ROOT'] . '/views/modal.php');
-        addModal('Loan Approve');
-        ?>
+    </div>
+    <?php @include(__DIR__ . '/../footer.php'); ?>
+    <?php
+    include_once($_SERVER['DOCUMENT_ROOT'] . '/views/modal.php');
+    addModal('Loan Approve');
+    ?>
 
-        <script src="/scripts/common.js"></script>
-        <script src="/scripts/manager/loanApprove.js"></script>
+    <script src="/scripts/common.js"></script>
+    <script src="/scripts/manager/loanApprove.js"></script>
 </body>
 
 </html>
