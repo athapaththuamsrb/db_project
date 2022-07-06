@@ -61,7 +61,7 @@
                     <div class="row">
                         <div class="col-2"></div>
                         <div class="col-4 item">
-                            <button type="submit" name="confirm" id="confirm" class="btn btn-info" style="width: 150%">
+                            <button type="submit" name="confirm" id="submitBtn" class="btn btn-info" style="width: 150%">
                                 Confirm
                             </button>
                         </div>
