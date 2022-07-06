@@ -59,9 +59,9 @@ submitBtn.onclick = e => {
                 let transactionData = data['data'];
                 if (!transactionData || transactionData.length==0) return;
                 let tblBuilder = new TableBuilder();
-                tblBuilder.addHeadingRow('Transaction ID', 'From', 'To', 'Amount', 'Time');
+                tblBuilder.addHeadingRow('Transaction ID', 'From', 'To', 'Amount', 'Time', 'Type');
                 transactionData.forEach(transaction => {
-                    tblBuilder.addRow(transaction['trans_id'], transaction['from_acc'], transaction['to_acc'], transaction['amount'], transaction['trans_time']);
+                    tblBuilder.addRow(transaction['trans_id'], transaction['from_acc'], transaction['to_acc'], transaction['amount'], transaction['trans_time'],  transaction['trans_type']);
                 });
                 let table = tblBuilder.build();
                 tblDiv.appendChild(table);

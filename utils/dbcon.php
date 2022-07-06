@@ -812,23 +812,23 @@ class DatabaseConn
       } else if ($type == "fd") {
         return $arr;
       } else if (is_null($start_date) && is_null($end_date)) {
-        $q0 = 'SELECT trans_id, from_acc, to_acc, init_id, trans_time, amount FROM Transactions WHERE from_acc = ? or to_acc = ?';
+        $q0 = 'SELECT trans_id, from_acc, to_acc, init_id, trans_time, amount, trans_type FROM Transactions WHERE from_acc = ? or to_acc = ?';
         $stmt = $this->conn->prepare($q0);
         $stmt->bind_param('ss', $acc_no, $acc_no);
       } else if (is_null($end_date)) {
         $start_date_str = $start_date->format('Y-m-d H:i:s');
-        $q0 = 'SELECT trans_id, from_acc, to_acc, init_id, trans_time, amount FROM Transactions WHERE (from_acc = ? or to_acc = ?) and trans_time >= ?';
+        $q0 = 'SELECT trans_id, from_acc, to_acc, init_id, trans_time, amount, trans_type FROM Transactions WHERE (from_acc = ? or to_acc = ?) and trans_time >= ?';
         $stmt = $this->conn->prepare($q0);
         $stmt->bind_param('sss', $acc_no, $acc_no, $start_date_str);
       } else if (is_null($start_date)) {
         $end_date_str = $end_date->format('Y-m-d') . ' 23:59:59';
-        $q0 = 'SELECT trans_id, from_acc, to_acc, init_id, trans_time, amount FROM Transactions WHERE (from_acc = ? or to_acc = ?) and trans_time <= ?';
+        $q0 = 'SELECT trans_id, from_acc, to_acc, init_id, trans_time, amount, trans_type FROM Transactions WHERE (from_acc = ? or to_acc = ?) and trans_time <= ?';
         $stmt = $this->conn->prepare($q0);
         $stmt->bind_param('sss', $acc_no, $acc_no, $end_date_str);
       } else {
         $start_date_str = $start_date->format('Y-m-d H:i:s');
         $end_date_str = $end_date->format('Y-m-d') . ' 23:59:59';
-        $q0 = 'SELECT trans_id, from_acc, to_acc, init_id, trans_time, amount FROM Transactions WHERE (from_acc = ? or to_acc = ?) and trans_time >= ? and trans_time <= ?';
+        $q0 = 'SELECT trans_id, from_acc, to_acc, init_id, trans_time, amount, trans_type FROM Transactions WHERE (from_acc = ? or to_acc = ?) and trans_time >= ? and trans_time <= ?';
         $stmt = $this->conn->prepare($q0);
         $stmt->bind_param('ssss', $acc_no, $acc_no, $start_date_str, $end_date_str);
       }
@@ -841,7 +841,8 @@ class DatabaseConn
         $init_id = $row['init_id'];
         $trans_time = $row['trans_time'];
         $amount = $row['amount'];
-        array_push($arr, array('trans_id' => $trans_id, 'from_acc' => $from_acc, 'to_acc' => $to_acc, 'init_id' => $init_id, 'trans_time' => $trans_time, 'amount' => $amount));
+        $trans_type = $row['trans_type'];
+        array_push($arr, array('trans_id' => $trans_id, 'from_acc' => $from_acc, 'to_acc' => $to_acc, 'init_id' => $init_id, 'trans_time' => $trans_time, 'amount' => $amount, 'trans_type' => $trans_type));
       }
       ($this->conn)->commit();
       return $arr;
