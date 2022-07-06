@@ -26,7 +26,7 @@ $result = $dbcon->getPendingApprovalLoans();
         <section>
             <h1>Approve Loans</h1>
             <div id="table">
-                <table class="d-flex align-items-center justify-content-center" style="margin-bottom: 5%;">
+                <table style="margin-bottom: 5%; margin-top: 1%; margin-left: 7%;">
                     <tr>
                         <th>loan ID</th>
                         <th>Total Amount</th>

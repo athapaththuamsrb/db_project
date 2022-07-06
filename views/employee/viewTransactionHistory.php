@@ -77,12 +77,12 @@
         </div>
         <div class="container">
             <div class="row">
-                <div class="col-3"></div>
+                <div class="col-2"></div>
                 <div class="col-6">
                     <div id="table" hidden>
                     </div>
                 </div>
-                <div class="col-3"></div>
+                <div class="col-4"></div>
             </div>
         </div>
 

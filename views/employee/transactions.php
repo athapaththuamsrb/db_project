@@ -18,7 +18,7 @@
     <?php @include(__DIR__ . '/../navbar.php'); ?>
 
     <div class="container box fade" style="background-color: #880808; color: white; border: #21081a solid 2px">
-        <h1>Tranfer Money</h1>
+        <h1>Transfer Money</h1>
         <br />
         <div class="row">
             <div class="col-3"></div>
