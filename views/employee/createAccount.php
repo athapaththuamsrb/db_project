@@ -86,9 +86,13 @@
               <div class="col-1 item"></div>
               <div class="col-3 item">
                 <select name="duration" id="duration">
-                  <option value="6" selected>6 month</option>
-                  <option value="12">1 year</option>
-                  <option value="36">3 year</option>
+                  <?php
+                  foreach($fd_arr as $key=>$value){
+                  ?>
+                  <option value="<?php echo $key; ?>"><?php echo $value; ?></option>
+                  <?php
+                  }
+                  ?>
                 </select>
               </div>
             </div>
