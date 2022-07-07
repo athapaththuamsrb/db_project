@@ -89,7 +89,7 @@
                   <?php
                   foreach($fd_arr as $key=>$value){
                   ?>
-                  <option value="<?php echo $key; ?>"><?php echo $value; ?></option>
+                  <option value="<?php echo htmlentities($key, ENT_QUOTES | ENT_HTML5); ?>"><?php echo htmlentities($value, ENT_HTML5); ?></option>
                   <?php
                   }
                   ?>

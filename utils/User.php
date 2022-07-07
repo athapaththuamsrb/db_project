@@ -15,7 +15,7 @@ abstract class User
     /** @var \string */
     private $name;
 
-    public static function createUser($details): User
+    public static function createUser(array $details): User
     {
         if (!isset($details['username']) || !preg_match(USERNAME_PATTERN, $details['username'])) {
             throw new Exception('No valid username is provided');
@@ -56,7 +56,7 @@ abstract class User
         try {
             $dob = new DateTime($details['DoB']);
             if ($dob->getTimestamp() > (new DateTime('now'))->getTimestamp()) {
-                throw new Exception('invalid date');
+                throw new Exception('Invalid date');
             }
         } catch (Exception $e) {
             throw new Exception('Invalid date');

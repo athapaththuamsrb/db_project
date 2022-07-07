@@ -44,7 +44,7 @@ if (!preg_match(USERNAME_PATTERN, $manager)) {
 
 require_once($_SERVER['DOCUMENT_ROOT'] . '/utils/dbcon.php');
 $dbcon = DatabaseConn::get_conn();
-if ($dbcon->createBranch($branch_id, $branch_name, $location, $manager, $creator)) {
+if ($dbcon && $dbcon->createBranch($branch_id, $branch_name, $location, $manager, $creator)) {
     echo json_encode(['success' => true]);
     die();
 } else {
