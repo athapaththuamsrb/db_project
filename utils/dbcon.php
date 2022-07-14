@@ -682,8 +682,10 @@ class DatabaseConn
       ($this->conn)->commit();
       return true;
     } catch (Exception $e) {
-      ($this->conn)->rollback();
-      return false;
+        ($this->conn)->rollback();
+        if($e->getMessage() ); //TODO
+        return false;
+
     }
   }
 
@@ -715,7 +717,6 @@ class DatabaseConn
 
   public function check_account(String $acc_no)
   {
-
     if (!($this->conn instanceof mysqli)) return null;
     try {
       $q1 = 'SELECT * FROM Accounts WHERE acc_no = ? ';

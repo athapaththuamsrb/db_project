@@ -66,7 +66,6 @@ confirmBtn.onclick = e => {
                 setModal(false, "Try Again");
             } 
         } catch (e) {
-            console.log(e);
             setModal(false,'Error occured');
         }
     });
