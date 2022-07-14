@@ -255,7 +255,8 @@ class DatabaseConn
         $stmt->close();
 
         if ($status0) { //update saving account balance
-          if ($this->transaction(null, $savings_acc_no, $owner_id, $amount, "LOAN")) {
+          $tr_status = $this->transaction(null, $savings_acc_no, $owner_id, $amount, "LOAN");
+          if ($tr_status && isset($tr_status['success']) && $tr_status['success']) {
             $response['reason'] = 'Loan added successfully!';
             $response['result'] = true;
           } else {
@@ -479,7 +480,8 @@ class DatabaseConn
           $response['reason'] = 'Something Went Wrong!';
           return $response;
         } else {
-          if ($this->transaction(null, $savingsAccount, $managerID, $total_amount, "LOAN")) {
+          $tr_status = $this->transaction(null, $savingsAccount, $managerID, $total_amount, "LOAN");
+          if ($tr_status && isset($tr_status['success']) && $tr_status['success']) {
             $response['reason'] = 'Loan added successfully!';
             $response['result'] = true;
           } else {
@@ -637,9 +639,10 @@ class DatabaseConn
     }
   }
 
-  public function transaction(?string $from_acc, string $to_acc, string $init_id, float $amount, string $t_type = "TRNS")
+  public function transaction(?string $from_acc, string $to_acc, string $init_id, float $amount, string $t_type = "TRNS"): array
   {
-    if (!($this->conn instanceof mysqli)) return false;
+    $res = ['success' => false];
+    if (!($this->conn instanceof mysqli)) return $res;
 
     ($this->conn)->begin_transaction();
     ($this->conn)->autocommit(false);
@@ -650,25 +653,25 @@ class DatabaseConn
         $stmt1->bind_param('ds', $amount, $from_acc);
         if (!($stmt1->execute())) {
           $this->conn->rollback();
-          return false;
+          return $res;
         }
-    
-      if ($this->check_account($from_acc) === 'savings') {
-        $q2 = 'UPDATE savings_accounts SET transactions = transactions + 1  WHERE acc_no = ?';
-        $stmt2 = $this->conn->prepare($q2);
-        $stmt2->bind_param('s', $from_acc);
-        if (!($stmt2->execute())) {
-          $this->conn->rollback();
-          return false;
+
+        if ($this->check_account($from_acc) === 'savings') {
+          $q2 = 'UPDATE savings_accounts SET transactions = transactions + 1  WHERE acc_no = ?';
+          $stmt2 = $this->conn->prepare($q2);
+          $stmt2->bind_param('s', $from_acc);
+          if (!($stmt2->execute())) {
+            $this->conn->rollback();
+            return $res;
+          }
         }
       }
-    }
       $q3 = 'UPDATE Accounts SET balance = balance + ? WHERE acc_no = ?';
       $stmt3 = $this->conn->prepare($q3);
       $stmt3->bind_param('ds', $amount, $to_acc);
       if (!($stmt3->execute())) {
         $this->conn->rollback();
-        return false;
+        return $res;
       }
 
       $q4 = 'INSERT INTO Transactions (from_acc, to_acc, init_id, trans_time, amount,trans_type) VALUES (?, ?, ?, ?, ?,?)';
@@ -677,16 +680,20 @@ class DatabaseConn
       $stmt4->bind_param('ssssds', $from_acc, $to_acc, $init_id, $date, $amount, $t_type);
       if (!($stmt4->execute())) {
         $this->conn->rollback();
-        return false;
+        return $res;
       }
       ($this->conn)->commit();
-      return true;
+      $res['success'] = true;
+      return $res;
     } catch (Exception $e) {
-        ($this->conn)->rollback();
-        if($e->getMessage() ); //TODO
-        return false;
-
+      ($this->conn)->rollback();
+      $msg = $e->getMessage();
+      $tag = "CustomError: ";
+      if ($msg && strncmp($msg, $tag, strlen($tag))==0) {
+        $res['msg'] = substr($msg, strlen($tag));
+      }
     }
+    return $res;
   }
 
   public function get_accounts_list(string $owner_id)
