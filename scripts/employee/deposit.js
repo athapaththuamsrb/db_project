@@ -10,7 +10,7 @@ function clear() {
     owner_name.value = '';
     dw.value = '';    
 }
-console.log("sam");
+//console.log("sam");
 
 confirmBtn.onclick = e => {
     e.preventDefault();

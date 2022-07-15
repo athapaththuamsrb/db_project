@@ -22,7 +22,7 @@ function manageDeposit(string $username)
         $dw = $_POST['dw'];
         $status = false;
 
-        fail("fuck");
+        //fail("fuck");
 
         if (!preg_match(BALANCE_PATTERN, $amount)) {
             fail("Please enter a valid amount");
