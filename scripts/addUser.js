@@ -4,6 +4,7 @@ let dobInput = document.getElementById('dob');
 let nicInput = document.getElementById('nic');
 let guardianNicInput = document.getElementById('guardian_nic');
 let ownerNicInput = document.getElementById('owner_nic');
+let empBranchInput = document.getElementById('emp_branch');
 let nameInput = document.getElementById('name');
 let unameInput = document.getElementById('username');
 let passwdInput = document.getElementById('password');
@@ -109,11 +110,13 @@ function clear() {
     if (nicInput) nicInput.value = '';
     if (guardianNicInput) guardianNicInput.value = '';
     if (ownerNicInput) ownerNicInput.value = '';
+    if (empBranchInput) empBranchInput.value = '';
 }
 
 if (nicInput) nicInput.onkeydown = event => { keyPressFn(event, nic_pattern, 'name'); };
 if (guardianNicInput) guardianNicInput.onkeydown = event => { keyPressFn(event, nic_pattern, 'name'); };
 if (ownerNicInput) ownerNicInput.onkeydown = event => { keyPressFn(event, nic_pattern, 'name'); };
+if (empBranchInput) empBranchInput.onkeydown = event => { keyPressFn(event, branch_id_pattern, 'name'); };
 nameInput.onkeydown = event => { keyPressFn(event, /^[a-zA-Z.\s]{5,100}$/, 'username'); };
 unameInput.onkeydown = event => { keyPressFn(event, username_pattern, 'password'); };
 passwdInput.onkeydown = event => { keyPressFn(event, password_pattern, 'cnfpassword'); };
@@ -130,6 +133,7 @@ submitBtn.onclick = e => {
     let nic = null;
     let guardian_nic = null;
     let owner_nic = null;
+    let emp_branch = null;
     if (!/^[a-zA-Z.\s]{5,100}$/.test(name)) {
         setModal(false, "Invalid name");
         return;
@@ -174,6 +178,12 @@ submitBtn.onclick = e => {
                 return;
             }
         }
+    } else if (empBranchInput) {
+        emp_branch = empBranchInput.value;
+        if (!emp_branch || !branch_id_pattern.test(emp_branch)) {
+            setModal(false, "Invalid Branch ID");
+            return;
+        }
     }
     let xhrSender = new XHRSender(document.URL, resp => {
         try {
@@ -202,5 +212,6 @@ submitBtn.onclick = e => {
     if (nic) xhrSender.addField('NIC', nic);
     else if (guardian_nic) xhrSender.addField('guardianNIC', guardian_nic);
     if (owner_nic) xhrSender.addField('ownerNIC', owner_nic);
+    if (emp_branch) xhrSender.addField('branch', emp_branch);
     xhrSender.send();
 };

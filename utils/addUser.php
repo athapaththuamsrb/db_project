@@ -42,7 +42,7 @@ function addUser(User $creator, array $allowed)
         die();
     }
     $dbcon = DatabaseConn::get_conn();
-    if ($dbcon->createUser($newUser, $_POST['password'], $creator->getUsername())){
+    if ($dbcon && $dbcon->createUser($newUser, $_POST['password'], $creator->getUsername())){
         echo json_encode(['success' => true]);
         die();
     }else{

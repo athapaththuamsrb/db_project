@@ -5,7 +5,7 @@ $user = (new Authenticator())->checkAuth();
 require_once($_SERVER['DOCUMENT_ROOT'] . '/utils/patterns.php');
 require_once('../utils/dbcon.php');
 $conn = DatabaseConn::get_conn();
-$fd_arr = $conn->fd_account_types();
+$fd_arr = $conn ? $conn->fd_account_types() : [];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $response = ['success' => false, 'reason'=>''];

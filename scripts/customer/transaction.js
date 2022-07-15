@@ -1,13 +1,17 @@
 let from_account = document.getElementById("from_acc");
 let to_account = document.getElementById("to_acc");
 let trans_amount = document.getElementById("amount");
-let confirmBtn = document.getElementById("confirm");
+let confirmBtn = document.getElementById("submitBtn");
 
-function keyPressFn(e, nxt) {
+function keyPressFn(e, pattern, nxt) {
     if (e.keyCode === 13) {
         e.preventDefault();
+        let value = e.target.value.trim();
+        if (!pattern.test(value)) {
+            return;
+        }
         if (nxt == '') {
-            document.getElementById("confirm").click();
+            document.getElementById("submitBtn").click();
         } else {
             let nextElem = document.getElementById(nxt);
             if (nextElem) {
@@ -16,6 +20,9 @@ function keyPressFn(e, nxt) {
         }
     }
 }
+
+to_account.onkeydown = event => { keyPressFn(event, acc_no_pattern, 'amount'); };
+trans_amount.onkeydown = event => { keyPressFn(event, balance_pattern, ''); };
 
 function clear() {
     from_account.value = '';

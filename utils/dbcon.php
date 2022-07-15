@@ -91,26 +91,39 @@ class DatabaseConn
                   }
                   $stmt2->close();
                 } else if ($customer_type === 'organization') {
-                  $q2 = 'SELECT owner_NIC FROM organization WHERE username=?';
-                  $stmt2 = $this->conn->prepare($q2);
-                  $stmt2->bind_param('s', $username);
-                  $stmt2->execute();
-                  $stmt2->store_result();
-                  $rowcount = $stmt2->num_rows();
+                  $q3 = 'SELECT owner_NIC FROM organization WHERE username=?';
+                  $stmt3 = $this->conn->prepare($q3);
+                  $stmt3->bind_param('s', $username);
+                  $stmt3->execute();
+                  $stmt3->store_result();
+                  $rowcount = $stmt3->num_rows();
                   if ($rowcount == 1) {
-                    $stmt2->bind_result($ownerNIC);
-                    $stmt2->fetch();
+                    $stmt3->bind_result($ownerNIC);
+                    $stmt3->fetch();
                     $details['ownerNIC'] = $ownerNIC;
                   }
-                  $stmt2->close();
+                  $stmt3->close();
                 }
               }
               $stmt1->close();
+            } else if ($type === 'employee') {
+              $q4 = 'SELECT branch FROM employee WHERE username=?';
+              $stmt4 = $this->conn->prepare($q4);
+              $stmt4->bind_param('s', $username);
+              $stmt4->execute();
+              $stmt4->store_result();
+              $rowcount = $stmt4->num_rows();
+              if ($rowcount == 1) {
+                $stmt4->bind_result($branch);
+                $stmt4->fetch();
+                $details['branch'] = $branch;
+              }
+              $stmt4->close();
             }
-            try{
+            try {
               $user = User::createUser($details);
               return $user;
-            }catch (Throwable $e){
+            } catch (Throwable $e) {
               return null;
             }
           }
@@ -153,14 +166,21 @@ class DatabaseConn
             $status &= $stmt2->execute();
             $stmt2->close();
           } else if ($user instanceof Individual) {
-            $q2 = 'INSERT INTO individual (username, NIC, DoB) VALUES (?, ?, ?);';
-            $stmt2 = $this->conn->prepare($q2);
+            $q3 = 'INSERT INTO individual (username, NIC, DoB) VALUES (?, ?, ?);';
+            $stmt3 = $this->conn->prepare($q3);
             $NIC = $user->getNIC();
             $dobStr = $user->getDoB()->format('D M d Y \G\M\TO');
-            $stmt2->bind_param('sss', $username, $NIC, $dobStr);
-            $status &= $stmt2->execute();
-            $stmt2->close();
+            $stmt3->bind_param('sss', $username, $NIC, $dobStr);
+            $status &= $stmt3->execute();
+            $stmt3->close();
           }
+        } else if ($status && $user instanceof Employee) {
+          $branch = $user->getBranch();
+          $q4 = 'INSERT INTO employee (username, branch) VALUES (?, ?);';
+          $stmt4 = $this->conn->prepare($q4);
+          $stmt4->bind_param('ss', $username, $branch);
+          $status &= $stmt4->execute();
+          $stmt4->close();
         }
         if ($status) ($this->conn)->commit();
         else ($this->conn)->rollback();
@@ -518,7 +538,7 @@ class DatabaseConn
       $stmt->fetch();
       $stmt->close();
 
-      $q1 = 'SELECT loans.loanID, loans.customer, LEAST(loans.duration, FLOOR(DATEDIFF(NOW(),loans.date)/30))*loans.installment should_paid, loans.paid_amount, LEAST(loans.duration, FLOOR(DATEDIFF(NOW(),loans.date)/30))*loans.installment - loans.paid_amount difference FROM `loans` JOIN Accounts ON loans.savingsAccount=Accounts.acc_no WHERE Accounts.type="savings" AND Accounts.branch_id=? AND loans.loanStatus=1 AND loans.paid_amount < LEAST(loans.duration, FLOOR(DATEDIFF(NOW(),loans.date)/30))*loans.installment';
+      $q1 = 'SELECT loanID, customer, should_paid, paid_amount, difference FROM late_loan_view WHERE branch_id=? ORDER BY loanID';
       $stmt1 = $this->conn->prepare($q1);
       $stmt1->bind_param('i', $branch_id);
       $stmt1->execute();
@@ -551,7 +571,7 @@ class DatabaseConn
       $stmt->fetch();
       $stmt->close();
 
-      $q1 = 'SELECT T.trans_id, T.from_acc, T.to_acc, T.amount, T.trans_type, T.trans_time FROM (Transactions T LEFT OUTER JOIN Accounts FA ON T.from_acc=FA.acc_no) INNER JOIN Accounts TA ON T.to_acc=TA.acc_no WHERE MONTH(T.trans_time)=MONTH(CURRENT_DATE) AND YEAR(T.trans_time)=YEAR(CURRENT_DATE) AND (FA.branch_id=? OR TA.branch_id=?) ORDER BY T.trans_id';
+      $q1 = 'SELECT trans_id, from_acc, to_acc, amount, trans_type, trans_time FROM Transaction_view WHERE from_branch=? OR to_branch=? ORDER BY trans_id';
       $stmt1 = $this->conn->prepare($q1);
       $stmt1->bind_param('ii', $branch_id, $branch_id);
       $stmt1->execute();
@@ -572,7 +592,6 @@ class DatabaseConn
   public function check_balance(string $owner_id, string $acc_no)
   {
     if (!($this->conn instanceof mysqli)) return -1;
-    ($this->conn)->begin_transaction();
     try {
       if (!$owner_id || !$acc_no) {
         return -1;
@@ -589,10 +608,8 @@ class DatabaseConn
       $stmt->bind_result($balance);
       $stmt->fetch();
       $stmt->close();
-      ($this->conn)->commit();
       return $balance;
     } catch (Exception $e) {
-      ($this->conn)->rollback();
       return -1;
     }
   }
@@ -655,6 +672,7 @@ class DatabaseConn
           $this->conn->rollback();
           return false;
         }
+
         if ($this->check_account($from_acc) === 'savings') {
           $q2 = 'UPDATE savings_accounts SET transactions = transactions + 1  WHERE acc_no = ?';
           $stmt2 = $this->conn->prepare($q2);
@@ -665,7 +683,6 @@ class DatabaseConn
           }
         }
       }
-
       $q3 = 'UPDATE Accounts SET balance = balance + ? WHERE acc_no = ?';
       $stmt3 = $this->conn->prepare($q3);
       $stmt3->bind_param('ds', $amount, $to_acc);

@@ -15,7 +15,7 @@ abstract class User
     /** @var \string */
     private $name;
 
-    public static function createUser($details): User
+    public static function createUser(array $details): User
     {
         if (!isset($details['username']) || !preg_match(USERNAME_PATTERN, $details['username'])) {
             throw new Exception('No valid username is provided');
@@ -35,7 +35,11 @@ abstract class User
         } else if ($type === 'manager') {
             return new Manager($username, $name);
         } else if ($type === 'employee') {
-            return new Employee($username, $name);
+            if (!isset($details['branch']) || !$details['branch']) {
+                throw new Exception('No valid branch is provided');
+            }
+            $branch = $details['branch'];
+            return new Employee($username, $name, $branch);
         }
 
         if (!isset($details['customer_type']) || !in_array($details['customer_type'], ['organization', 'individual'])) {
@@ -56,7 +60,7 @@ abstract class User
         try {
             $dob = new DateTime($details['DoB']);
             if ($dob->getTimestamp() > (new DateTime('now'))->getTimestamp()) {
-                throw new Exception('invalid date');
+                throw new Exception('Invalid date');
             }
         } catch (Exception $e) {
             throw new Exception('Invalid date');
@@ -113,9 +117,18 @@ class Manager extends User
 
 class Employee extends User
 {
-    function __construct(string $uname, string $name)
+    /** @var \string */
+    private $branch;
+
+    function __construct(string $uname, string $name, string $branch)
     {
         parent::__construct($uname, 'employee', $name);
+        $this->branch = $branch;
+    }
+
+    public function getBranch(): string
+    {
+        return $this->branch;
     }
 }
 
