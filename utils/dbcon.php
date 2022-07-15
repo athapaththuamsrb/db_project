@@ -234,7 +234,7 @@ class DatabaseConn
       ($this->conn)->begin_transaction();
       $response = ['result' => false, 'reason' => ''];
       try {
-        $q0 = 'SELECT balance,savings_acc_no FROM Accounts NATURAL JOIN fixed_deposits WHERE owner_id = ? and acc_no = ?';
+        $q0 = 'SELECT balance,savings_acc_no FROM Accounts INNER JOIN fixed_deposits ON Accounts.acc_no = fixed_deposits.acc_no WHERE Accounts.owner_id = ? and fixed_deposits.acc_no = ?';
         $stmt = $this->conn->prepare($q0);
         $stmt->bind_param('ss', $owner_id, $fix_acc);
         $stmt->execute();
@@ -267,10 +267,10 @@ class DatabaseConn
         $date = date("Y-m-d");
         $paid = 0;
         $loanStatus = 1;
-        $installment = (($amount + ($amount * 0.2 / 12) * 24) / $duration); //20% for year
-        $q2 = 'INSERT INTO loans ( total_amount,paid_amount, date, customer,savingsAccount,fixedAccount,duration,installment,loanStatus) VALUES (?,?, ?, ?, ?,? , ? , ? , ?);';
+        $installment = (($amount + ($amount * 0.2 / 12) * $duration) / $duration); //20% for year
+        $q2 = 'INSERT INTO loans ( total_amount,paid_amount, date,savingsAccount,fixedAccount,duration,installment,loanStatus) VALUES (?, ?, ?, ?,? , ? , ? , ?);';
         $stmt = $this->conn->prepare($q2);
-        $stmt->bind_param('ddssssidi', $amount, $paid, $date, $owner_id, $savings_acc_no, $fix_acc, $duration, $installment, $loanStatus);
+        $stmt->bind_param('ddsssidi', $amount, $paid, $date, $savings_acc_no, $fix_acc, $duration, $installment, $loanStatus);
         $status0 = $stmt->execute();
         $stmt->close();
 
@@ -310,7 +310,7 @@ class DatabaseConn
       ($this->conn)->begin_transaction();
       $response = ['result' => false, 'reason' => ''];
       try {
-        $q0 = 'SELECT owner_id,type FROM Accounts WHERE acc_no = ?';
+        $q0 = 'SELECT type FROM Accounts WHERE acc_no = ?';
         $stmt = $this->conn->prepare($q0);
         $stmt->bind_param('s', $sav_acc);
         $stmt->execute();
@@ -319,7 +319,7 @@ class DatabaseConn
           $response['reason'] = 'No account associate with the entered number!';
           return $response;
         }
-        $stmt->bind_result($customer, $type);
+        $stmt->bind_result( $type);
         $stmt->fetch();
         $stmt->close();
         if ($type != "savings") {
@@ -331,10 +331,10 @@ class DatabaseConn
         $date = date("Y-m-d");
         $paid = 0;
         $loanStatus = 0;
-        $installment = (($amount + ($amount * 0.2 / 12) * 24) / $duration); //20% for year
-        $q2 = 'INSERT INTO loans ( total_amount,paid_amount, date, customer,savingsAccount,duration,installment,loanStatus) VALUES (?, ?, ?, ?,? , ? , ? , ?);';
+        $installment = (($amount + ($amount * 0.2 / 12) * $duration) / $duration); //20% for year
+        $q2 = 'INSERT INTO loans ( total_amount,paid_amount, date,savingsAccount,duration,installment,loanStatus) VALUES ( ?, ?, ?,? , ? , ? , ?);';
         $stmt = $this->conn->prepare($q2);
-        $stmt->bind_param('ddsssddi', $amount, $paid, $date, $customer, $sav_acc, $duration, $installment, $loanStatus);
+        $stmt->bind_param('ddssddi', $amount, $paid, $date, $sav_acc, $duration, $installment, $loanStatus);
         $status0 = $stmt->execute();
         $stmt->close();
 
@@ -387,10 +387,10 @@ class DatabaseConn
           $response['reason'] = 'Loan is already completely paid!';
           return $response;
         }
-        if (round($installment * $duration, 2) < $paid_amount + $amount) {
+        if (round($installment * $duration, 2) < round($paid_amount + $amount,2)) {
           $response['reason'] = 'Exceed the total amount';
           return $response;
-        } else if (round($installment * $duration, 2) == $paid_amount + $amount) {
+        } else if (round($installment * $duration, 2) == round($paid_amount + $amount, 2)) {
           $q3 = 'UPDATE loans SET paid_amount = paid_amount + ? , loanStatus = 2 WHERE loanID = ?;';
           $stmt = $this->conn->prepare($q3);
           $stmt->bind_param('ds', $amount, $loan_id);
@@ -450,7 +450,7 @@ class DatabaseConn
       $data = [];
       while ($row = $result->fetch_assoc()) {
         $arr = [
-          $row['loanID'], $row['total_amount'], $row['date'], $row['customer'], $row['savingsAccount'], $row['duration']
+          $row['loanID'], $row['total_amount'], $row['date'], $row['savingsAccount'], $row['duration']
         ];
         array_push($data, $arr);
       }

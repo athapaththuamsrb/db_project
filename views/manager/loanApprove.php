@@ -34,7 +34,7 @@ $result = $dbcon->getPendingApprovalLoans();
                                 <th>loan ID</th>
                                 <th>Total Amount</th>
                                 <th>Date</th>
-                                <th>Customer</th>
+                              
                                 <th>Savings Account</th>
                                 <th>Duration</th>
                                 <th>Approve</th>
@@ -50,9 +50,9 @@ $result = $dbcon->getPendingApprovalLoans();
                                     <td><?php print_r(htmlentities($result[$x][0], ENT_HTML5)); ?></td>
                                     <td><?php print_r(htmlentities($result[$x][1], ENT_HTML5)); ?></td>
                                     <td><?php print_r(htmlentities($result[$x][2], ENT_HTML5)); ?></td>
+                                    
                                     <td><?php print_r(htmlentities($result[$x][3], ENT_HTML5)); ?></td>
                                     <td><?php print_r(htmlentities($result[$x][4], ENT_HTML5)); ?></td>
-                                    <td><?php print_r(htmlentities($result[$x][5], ENT_HTML5)); ?></td>
                                     <td><button class="button" value=<?php print_r(htmlentities($result[$x][0], ENT_QUOTES | ENT_HTML5)); ?>>Approve</button></td>
                                 </tr>
                             <?php
