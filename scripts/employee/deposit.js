@@ -15,7 +15,7 @@ function clear() {
 confirmBtn.onclick = e => {
     e.preventDefault();
     let from_acc_value = from_account.value;
-    //let dw_value = dw.value;
+    let dw_value = dw.value;
     let amount_value = trans_amount.value;
     let owner_name_value = owner_name.value;
 
@@ -58,7 +58,7 @@ confirmBtn.onclick = e => {
     });
 
     xhrSender.addField('ownername', owner_name_value);
-    //xhrSender.addField('dw', dw_value);
+    xhrSender.addField('dw', dw_value);
     xhrSender.addField('from_acc', from_acc_value);
     xhrSender.addField('amount', amount_value);
 

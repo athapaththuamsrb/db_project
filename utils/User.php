@@ -35,7 +35,11 @@ abstract class User
         } else if ($type === 'manager') {
             return new Manager($username, $name);
         } else if ($type === 'employee') {
-            return new Employee($username, $name);
+            if (!isset($details['branch']) || !$details['branch']) {
+                throw new Exception('No valid branch is provided');
+            }
+            $branch = $details['branch'];
+            return new Employee($username, $name, $branch);
         }
 
         if (!isset($details['customer_type']) || !in_array($details['customer_type'], ['organization', 'individual'])) {
@@ -113,9 +117,18 @@ class Manager extends User
 
 class Employee extends User
 {
-    function __construct(string $uname, string $name)
+    /** @var \string */
+    private $branch;
+
+    function __construct(string $uname, string $name, string $branch)
     {
         parent::__construct($uname, 'employee', $name);
+        $this->branch = $branch;
+    }
+
+    public function getBranch(): string
+    {
+        return $this->branch;
     }
 }
 

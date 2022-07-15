@@ -11,7 +11,6 @@ function fail(string $msg)
 
 function manageDeposit(string $username)
 {
-
     $response = ['success' => false];
     $dbconn = DatabaseConn::get_conn();
     if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['amount']) && isset($_POST['from_acc']) && isset($_POST['dw'])) {
@@ -20,9 +19,6 @@ function manageDeposit(string $username)
         $from_acc = $_POST['from_acc'];
         $amount = $_POST['amount'];
         $dw = $_POST['dw'];
-        $status = false;
-
-        //fail("fuck");
 
         if (!preg_match(BALANCE_PATTERN, $amount)) {
             fail("Please enter a valid amount");
@@ -30,16 +26,25 @@ function manageDeposit(string $username)
             fail("Invalid Account Number");
         } else if (!preg_match(USERNAME_PATTERN, $ownername) || !$dbconn->check_username($ownername)) {
             fail("Invalid User Name");
-        } else if ($dbconn->check_account($from_acc) === 'fixed') {
+        } else if ($dbconn->check_account($from_acc) === 'fd') {
             fail("Transactions cannot be done on fixed deposits");
         } else if ($dbconn->check_account($from_acc) === 'savings' && $dbconn->check_transaction_count($from_acc) >= 5) {
             fail("Transaction Limit Reached");
         } else if (!$dbconn->get_account_ownership($from_acc, $ownername)) {
             fail("Username and Account Number don't match");
-        } 
-        if($dw === 'withdraw'){$type = 'WTDW';}
-        else{$type = 'DPST';}
-        $status = $dbconn->transaction($from_acc, null, $username, $amount, $type);
+        }
+        if ($dw === 'withdraw') {
+            $type = 'WTDW';
+        } else if ($dw === 'deposit') {
+            $type = 'DPST';
+        }else {
+            fail("Invalid type");
+        }
+        $to_acc = $type==='DPST' ? $from_acc : null;
+        if ($type==='DPST'){
+            $from_acc = null;
+        }
+        $status = $dbconn->transaction($from_acc, $to_acc, $username, $amount, $type);
         if ($status != null) $response = $status;
     }
 

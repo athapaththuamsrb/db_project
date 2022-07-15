@@ -33,7 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             echo json_encode($response);
             die();
         }
-        $result = $dbcon->requestLoan($_POST['sav_acc'], $_POST['amount'], $_POST['duration']);
+        $result = $dbcon->requestLoan($_POST['sav_acc'], $_POST['amount'], $_POST['duration'], $user->getUsername());
         $response['success'] = $result['result'];
         $response['reason'] = $result['reason'];
         echo json_encode($response);

@@ -33,7 +33,7 @@
                 if (isset($types) && is_array($types) && sizeof($types) > 0) {
                   if (sizeof($types) > 1) {
                 ?>
-                    <select name="type" id="type" style="width: 130%" lass="custom-select mr-sm-2" required>
+                    <select name="type" id="type" style="width: 130%" class="custom-select mr-sm-2" required>
                       <option selected>Choose...</option>
                       <?php
                       foreach ($types as $type => $name) {
@@ -43,7 +43,7 @@
                       }
                     } else if (sizeof($types) === 1) {
                       ?>
-                      <select name="type" id="type" style="width: 130%" lass="custom-select mr-sm-2" required disabled>
+                      <select name="type" id="type" style="width: 130%" class="custom-select mr-sm-2" required disabled>
                         <?php
                         foreach ($types as $type => $name) {
                         ?>
@@ -67,7 +67,7 @@
                 </div>
                 <div class="col-1 item"></div>
                 <div class="col-3 item">
-                  <select id="customer_type" style="width: 130%" lass="custom-select mr-sm-2" required>
+                  <select id="customer_type" style="width: 130%" class="custom-select mr-sm-2" required>
                     <option value="individual" selected>Individual</option>
                     <option value="organization">Organization</option>
                   </select>
@@ -113,6 +113,16 @@
                   </div>
                 </div>
               </div>
+            <?php } else if ($creator->getType() === 'manager') { ?>
+              <div id="emp_branch_div" class="row">
+                  <div class="col-3 item">
+                    <label for="emp_branch"> Branch</label>
+                  </div>
+                  <div class="col-1 item"></div>
+                  <div class="col-3 item">
+                    <input type="text" id="emp_branch" required />
+                  </div>
+                </div>
             <?php } ?>
             <div class="row">
               <div class="col-3 item">
