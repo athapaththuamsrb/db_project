@@ -443,7 +443,7 @@ class DatabaseConn
     if (!($this->conn instanceof mysqli)) return null;
     try {
 
-      $q1 = 'SELECT * FROM loans WHERE loanStatus = 0';
+      $q1 = 'SELECT * FROM pending_loans';
       $stmt1 = $this->conn->prepare($q1);
       $stmt1->execute();
       $result = $stmt1->get_result();
