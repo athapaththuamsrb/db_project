@@ -45,7 +45,7 @@ function manageTransaction(string $type, string $username)
                 fail("Username and Account Number don't match");
             }
         }
-        $status = $dbconn->transaction($from_acc, $to_acc, $username, $amount);
+        $status = $dbconn->transaction($from_acc, $to_acc, $username, $amount, 'TRNS');
         if ($status != null) $response = $status;
     }
 

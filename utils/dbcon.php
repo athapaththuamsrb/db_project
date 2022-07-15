@@ -639,7 +639,7 @@ class DatabaseConn
     }
   }
 
-  public function transaction(?string $from_acc, string $to_acc, string $init_id, float $amount, string $t_type = "TRNS"): array
+  public function transaction(?string $from_acc, ?string $to_acc, string $init_id, float $amount, string $t_type ): array
   {
     $res = ['success' => false];
     if (!($this->conn instanceof mysqli)) return $res;
@@ -648,6 +648,7 @@ class DatabaseConn
     ($this->conn)->autocommit(false);
     try {
       if ($from_acc != null) {
+        if($t_type == 'DPST'){ $amount = (-$amount);}
         $q1 = 'UPDATE Accounts SET balance = balance - ? WHERE acc_no = ?';
         $stmt1 = $this->conn->prepare($q1);
         $stmt1->bind_param('ds', $amount, $from_acc);
@@ -666,6 +667,7 @@ class DatabaseConn
           }
         }
       }
+      if($t_type == 'TRNS'){
       $q3 = 'UPDATE Accounts SET balance = balance + ? WHERE acc_no = ?';
       $stmt3 = $this->conn->prepare($q3);
       $stmt3->bind_param('ds', $amount, $to_acc);
@@ -673,10 +675,11 @@ class DatabaseConn
         $this->conn->rollback();
         return $res;
       }
-
+    }
       $q4 = 'INSERT INTO Transactions (from_acc, to_acc, init_id, trans_time, amount,trans_type) VALUES (?, ?, ?, ?, ?,?)';
       $stmt4 = $this->conn->prepare($q4);
       $date = date('Y-m-d H:i:s');
+      $amount = abs($amount);
       $stmt4->bind_param('ssssds', $from_acc, $to_acc, $init_id, $date, $amount, $t_type);
       if (!($stmt4->execute())) {
         $this->conn->rollback();
