@@ -667,7 +667,7 @@ class DatabaseConn
           }
         }
       }
-      if($t_type == 'TRNS'){
+      if($t_type !== 'WTDW' && $t_type !== 'DPST'){
       $q3 = 'UPDATE Accounts SET balance = balance + ? WHERE acc_no = ?';
       $stmt3 = $this->conn->prepare($q3);
       $stmt3->bind_param('ds', $amount, $to_acc);
