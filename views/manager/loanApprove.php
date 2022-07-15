@@ -28,7 +28,7 @@ $result = $dbcon->getPendingApprovalLoans($user->getUsername());
         <section>
             <h1>Approve Loans</h1>
             <div class="row">
-                <div class="col-2"></div>
+                <div class="col-3"></div>
                 <div class="col-8">
                     <div id="table">
                         <table style="margin-bottom: 5%; margin-top: 1%; color:black">
@@ -38,7 +38,7 @@ $result = $dbcon->getPendingApprovalLoans($user->getUsername());
                                 <th>Date</th>
 
                                 <th>Savings Account</th>
-                                <th>Duration</th>
+                                <th style="width: 120px;">Duration</th>
                                 <th>Approve</th>
                             </tr>
                             <!-- PHP CODE TO FETCH DATA FROM ROWS -->
@@ -55,7 +55,7 @@ $result = $dbcon->getPendingApprovalLoans($user->getUsername());
 
                                     <td><?php print_r(htmlentities($result[$x][3], ENT_HTML5)); ?></td>
                                     <td><?php print_r(htmlentities($result[$x][4], ENT_HTML5)); ?></td>
-                                    <td><button class="button" value=<?php print_r(htmlentities($result[$x][0], ENT_QUOTES | ENT_HTML5)); ?>>Approve</button></td>
+                                    <td><button class="btn btn-secondary" value=<?php print_r(htmlentities($result[$x][0], ENT_QUOTES | ENT_HTML5)); ?>>Approve</button></td>
                                 </tr>
                             <?php
                             }
@@ -63,7 +63,7 @@ $result = $dbcon->getPendingApprovalLoans($user->getUsername());
                         </table>
                     </div>
                 </div>
-                <div class="col-2"></div>
+                <div class="col-1"></div>
             </div>
         </section>
     </div>

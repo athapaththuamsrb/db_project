@@ -1,6 +1,9 @@
 <?php
 require_once('auth.php');
 $user = (new Authenticator())->checkAuth();
+if (! $user instanceof Employee){
+    die();
+}
 
 require_once($_SERVER['DOCUMENT_ROOT'] . '/utils/patterns.php');
 require_once('../utils/dbcon.php');
@@ -10,12 +13,14 @@ $fd_arr = $conn ? $conn->fd_account_types() : [];
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $response = ['success' => false, 'reason'=>''];
 
-    if (!isset($_POST['owner_id']) || !$_POST['owner_id'] || !isset($_POST['acc_no']) || !$_POST['acc_no'] || !isset($_POST['acc_type']) || !$_POST['acc_type'] || !isset($_POST['balance']) || !$_POST['balance'] || !isset($_POST['branch_id']) || !$_POST['branch_id']) {
+    $branch_id = $user->getBranch();
+
+    if (!isset($_POST['owner_id']) || !$_POST['owner_id'] || !isset($_POST['acc_no']) || !$_POST['acc_no'] || !isset($_POST['acc_type']) || !$_POST['acc_type'] || !isset($_POST['balance']) || !$_POST['balance'] || is_null($branch_id)) {
         $response['reason'] = "Insufficient data";
         echo json_encode($response);
         die();
     }
-    $owner_id = $_POST['owner_id']; $acc_no = $_POST['acc_no']; $acc_type = $_POST['acc_type']; $balance = $_POST['balance']; $branch_id = $_POST['branch_id'];
+    $owner_id = $_POST['owner_id']; $acc_no = $_POST['acc_no']; $acc_type = $_POST['acc_type']; $balance = $_POST['balance'];
 
     if (!preg_match(USERNAME_PATTERN, $owner_id)) {
         $response['reason'] = "Invalid username";

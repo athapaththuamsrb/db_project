@@ -2,11 +2,11 @@ function getType() {
   const typeValue = document.getElementById("type").value;
   if (typeValue === "fd") {
     document.getElementById("fd_visible").style.display = "block";
-    branch_idInput.onkeydown = event => { keyPressFn(event, branch_id_pattern, 'savings_acc_no', "Invalid branch ID"); };
+    balanceInput.onkeydown = event => { keyPressFn(event, balance_pattern, 'savings_acc_no', "Invalid balance"); };
     savings_acc_noInput.onkeydown = event => { keyPressFn(event, acc_no_pattern, '', "Invalid savings account number"); };
   } else {
     document.getElementById("fd_visible").style.display = "none";
-    branch_idInput.onkeydown = event => { keyPressFn(event, branch_id_pattern, '', "Invalid branch ID"); };
+    balanceInput.onkeydown = event => { keyPressFn(event, balance_pattern, '', "Invalid balance"); };
   }
 }
 
@@ -33,7 +33,6 @@ let owner_idInput = document.getElementById("owner_id");
 let acc_noInput = document.getElementById("acc_no");
 let acc_typeInput = document.getElementById("type");
 let balanceInput = document.getElementById("balance");
-let branch_idInput = document.getElementById("branch_id");
 let durationInput = document.getElementById("duration");
 let savings_acc_noInput = document.getElementById("savings_acc_no");
 let submitBtn = document.getElementById("submitBtn");
@@ -45,7 +44,6 @@ function clear() {
   acc_noInput.value = "";
   acc_typeInput.value = "savings";
   balanceInput.value = "";
-  branch_idInput.value = "";
   durationInput.value = "6";
   document.getElementById("fd_visible").style.display = "none";
   savings_acc_noInput.value = "";
@@ -53,7 +51,6 @@ function clear() {
 
 owner_idInput.onkeydown = event => { keyPressFn(event, username_pattern, 'acc_no', "Invalid username"); };
 acc_noInput.onkeydown = event => { keyPressFn(event, acc_no_pattern, 'acc_type', "Invalid account number"); };
-balanceInput.onkeydown = event => { keyPressFn(event, balance_pattern, 'branch_id', "Invalid balance"); };
 
 
 submitBtn.onclick = (e) => {
@@ -62,7 +59,6 @@ submitBtn.onclick = (e) => {
   let acc_no = acc_noInput.value;
   let acc_type = acc_typeInput.options[acc_typeInput.selectedIndex].value;
   let balance = balanceInput.value;
-  let branch_id = branch_idInput.value;
   let duration = durationInput.options[durationInput.selectedIndex].value;
   let savings_acc_no = savings_acc_noInput.value;
 
@@ -76,10 +72,6 @@ submitBtn.onclick = (e) => {
   }
   if (!balance_pattern.test(balance)) {
     setModal(false, "Invalid balance amount");
-    return;
-  }
-  if (!branch_id_pattern.test(branch_id)) {
-    setModal(false, "Invalid branch ID");
     return;
   }
   if (acc_type === "fd"){ 
@@ -119,7 +111,6 @@ submitBtn.onclick = (e) => {
   xhrSender.addField("acc_no", acc_no);
   xhrSender.addField("acc_type", acc_type);
   xhrSender.addField("balance", balance);
-  xhrSender.addField("branch_id", branch_id);
   xhrSender.addField("duration", duration);
   xhrSender.addField("savings_acc_no", savings_acc_no);
   xhrSender.send();

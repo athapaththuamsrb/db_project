@@ -67,16 +67,6 @@
             </div>
           </div>
 
-          <div class="row">
-            <div class="col-4 item">
-              <label for="branch_id">Branch ID : </label>
-            </div>
-            <div class="col-1 item"></div>
-            <div class="col-3 item">
-              <input type="text" name="branch_id" id="branch_id" required />
-            </div>
-          </div>
-
           <!-- should be visible only if fd is selected for type -->
           <div id="fd_visible" style="display: none">
             <div class="row">
