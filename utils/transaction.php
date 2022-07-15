@@ -27,7 +27,7 @@ function manageTransaction(string $type, string $username)
             fail("Invalid Account Number");
         } else if (!preg_match(ACC_NO_PATTERN, $from_acc) || $dbconn->check_account($from_acc) === null) {
             fail("Invalid From Account Number");
-        } else if ($dbconn->check_account($from_acc) === 'fixed' || $dbconn->check_account($to_acc) === 'fixed') {
+        } else if ($dbconn->check_account($from_acc) === 'fd' || $dbconn->check_account($to_acc) === 'fd') {
             fail("Transactions cannot be done on fixed deposits");
         } else if ($dbconn->check_account($from_acc) === 'savings' && $dbconn->check_transaction_count($from_acc) >= 5) {
             fail("Transaction Limit Reached");
