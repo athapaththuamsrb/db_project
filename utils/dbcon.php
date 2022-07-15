@@ -193,6 +193,39 @@ class DatabaseConn
     return false;
   }
 
+  public function changePasswd(string $username, string $curpass, string $newpass): bool
+  {
+    if (!($this->conn instanceof mysqli)) return false;
+    try {
+      ($this->conn)->begin_transaction();
+      $q = 'SELECT password FROM users WHERE username=?';
+      $stmt = $this->conn->prepare($q);
+      $stmt->bind_param('s', $username);
+      $stmt->execute();
+      $stmt->store_result();
+      $rowcount = $stmt->num_rows();
+      if ($rowcount !== 1) return false;
+      $stmt->bind_result($pw_hash);
+      $stmt->fetch();
+      $stmt->close();
+      if (!password_verify($curpass, $pw_hash)) return false;
+
+      $hashed = password_hash($newpass, PASSWORD_BCRYPT, ['cost' => 12]);
+      $q1 = 'UPDATE users SET password = ? WHERE username = ?';
+      $stmt1 = $this->conn->prepare($q1);
+      $stmt1->bind_param('ss', $hashed, $username);
+      if (!($stmt1->execute())) {
+        $this->conn->rollback();
+        return false;
+      }
+      $this->conn->commit();
+      return true;
+    } catch (Exception $e) {
+      ($this->conn)->rollback();
+      return false;
+    }
+  }
+
   public function createBranch(string $branch_id, string $branch_name, string $location, string $manager, string $creator): bool
   {
     if (!($this->conn instanceof mysqli)) return false;

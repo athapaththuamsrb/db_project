@@ -37,6 +37,15 @@
       </div>
       <div class="col-4"></div>
     </div>
+    <div class="row item">
+      <div class="col-4"></div>
+      <div class="col-4">
+        <a href="changePassword.php"><button style="height: 10vh; width: 100%; font-size: larger" type="button" class="btn btn-primary fun-item fade">
+            Change Password
+          </button></a>
+      </div>
+      <div class="col-4"></div>
+    </div>
   </div>
   <?php @include(__DIR__ . '/../footer.php'); ?>
 </body>
