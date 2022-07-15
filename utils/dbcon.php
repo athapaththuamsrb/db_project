@@ -303,7 +303,7 @@ class DatabaseConn
     return $response;
   }
 
-  public function requestLoan(string $sav_acc, float $amount, float $duration)
+  public function requestLoan(string $sav_acc, float $amount, float $duration, string $employee)
   {
     if (!($this->conn instanceof mysqli)) return ['result' => false, 'reason' => '"Something went wrong!"'];
     if ($sav_acc && $amount) {
@@ -319,7 +319,7 @@ class DatabaseConn
           $response['reason'] = 'No account associate with the entered number!';
           return $response;
         }
-        $stmt->bind_result( $type);
+        $stmt->bind_result($type);
         $stmt->fetch();
         $stmt->close();
         if ($type != "savings") {
@@ -342,8 +342,20 @@ class DatabaseConn
           $response['reason'] = 'Something Went Wrong!';
           return $response;
         } else {
-          $response['reason'] = 'Loan requested successfully!';
-          $response['result'] = true;
+          $q3 = 'INSERT INTO loan_requests (loanID,employee) VALUES ( ?, ?);';
+          $stmt = $this->conn->prepare($q3);
+          $insert_id = $this->conn->insert_id;
+          $stmt->bind_param('ss', $insert_id, $employee);
+          $status3 = $stmt->execute();
+          $stmt->close();
+          if ($status3) {
+            $response['reason'] = 'Loan requested successfully!';
+            $response['result'] = true;
+          } else {
+            ($this->conn)->rollback();
+            $response['reason'] = 'Something Went Wrong!';
+            return $response;
+          }
         }
 
         ($this->conn)->commit();
@@ -387,7 +399,7 @@ class DatabaseConn
           $response['reason'] = 'Loan is already completely paid!';
           return $response;
         }
-        if (round($installment * $duration, 2) < round($paid_amount + $amount,2)) {
+        if (round($installment * $duration, 2) < round($paid_amount + $amount, 2)) {
           $response['reason'] = 'Exceed the total amount';
           return $response;
         } else if (round($installment * $duration, 2) == round($paid_amount + $amount, 2)) {
@@ -438,13 +450,27 @@ class DatabaseConn
     return $response;
   }
 
-  public function getPendingApprovalLoans(): ?array
+  public function getPendingApprovalLoans(string $manager): ?array
   {
     if (!($this->conn instanceof mysqli)) return null;
     try {
+      $q0 = 'SELECT id FROM branch WHERE manager_id = ?';
+      $stmt = $this->conn->prepare($q0);
+      $stmt->bind_param('s', $manager);
+      $stmt->execute();
+      $stmt->store_result();
 
-      $q1 = 'SELECT * FROM pending_loans';
+      if ($stmt->num_rows() == 0) {
+        $response['reason'] = 'No branch manager with this username';
+        return $response;
+      }
+      $stmt->bind_result($branchId);
+      $stmt->fetch();
+      $stmt->close();
+
+      $q1 = 'SELECT * FROM pending_loans WHERE branch = ?';
       $stmt1 = $this->conn->prepare($q1);
+      $stmt1->bind_param('s', $branchId);
       $stmt1->execute();
       $result = $stmt1->get_result();
       $data = [];
