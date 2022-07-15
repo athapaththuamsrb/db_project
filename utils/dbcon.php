@@ -878,7 +878,18 @@ class DatabaseConn
         if (is_null($customer_type)) {
           return $response;
         }
-        if (($customer_type == "teen" && (int)$balance < 500) || ($customer_type == "adult" && (int)$balance < 1000) || ($customer_type == "senior" && (int)$balance < 1000)) {
+        $balance_query = 'SELECT minimum FROM savings_interest WHERE c_type=?';
+        $balance_stmt = $this->conn->prepare($balance_query);
+        $balance_stmt->bind_param('s', $customer_type);
+        $balance_stmt->execute();
+        $balance_stmt->store_result();
+        if ($balance_stmt->num_rows() == 0) {
+          return $response;
+        }
+        $balance_stmt->bind_result($minimum_balance);
+        $balance_stmt->fetch();
+        $balance_stmt->close();
+        if ($balance < $minimum_balance) {
           $response['reason'] = "Insufficient balance";
           return $response;
         }
